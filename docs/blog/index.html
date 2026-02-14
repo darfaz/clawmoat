@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — ClawMoat</title>
+<meta name="description" content="Security insights for AI agents. From the ClawMoat team.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+
+nav{background:rgba(15,23,42,.95);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+.hero{padding:100px 0 60px;text-align:center}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:12px}
+.hero p{color:var(--gray);font-size:1.1rem}
+
+.posts{padding:0 0 100px}
+.post-card{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:32px;margin-bottom:24px;transition:border-color .2s}
+.post-card:hover{border-color:var(--blue)}
+.post-card h2{font-size:1.4rem;margin-bottom:8px}
+.post-card h2 a{color:var(--white)}
+.post-card h2 a:hover{color:var(--blue);text-decoration:none}
+.post-meta{color:var(--gray);font-size:.85rem;margin-bottom:12px}
+.post-desc{color:var(--gray);font-size:.95rem;line-height:1.7}
+.tags{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tag{background:rgba(59,130,246,.12);color:var(--blue);padding:4px 12px;border-radius:20px;font-size:.8rem}
+</style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <h1>Blog</h1>
+    <p>Security insights for the agentic AI era</p>
+  </div>
+
+  <div class="posts">
+    <div class="post-card">
+      <h2><a href="/blog/securing-ai-agents">Your AI Agent Has Shell Access. Here's How to Secure It.</a></h2>
+      <div class="post-meta">February 13, 2026 · 4 min read</div>
+      <p class="post-desc">AI agents now have shell, browser, and email access. CrowdStrike, Cisco, and OWASP all flagged the risks this month. Here's an open-source security layer to protect your agents at runtime.</p>
+      <div class="tags">
+        <span class="tag">security</span>
+        <span class="tag">ai</span>
+        <span class="tag">opensource</span>
+        <span class="tag">node</span>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <h2><a href="/blog/owasp-agentic-ai-top10">OWASP Top 10 for Agentic AI: What It Means for Your AI Agent</a></h2>
+      <div class="post-meta">February 13, 2026 · 6 min read</div>
+      <p class="post-desc">OWASP released a dedicated Top 10 for Agentic AI in 2026. We break down all 10 risks and show how ClawMoat addresses each one.</p>
+      <div class="tags">
+        <span class="tag">security</span>
+        <span class="tag">ai</span>
+        <span class="tag">owasp</span>
+        <span class="tag">opensource</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
