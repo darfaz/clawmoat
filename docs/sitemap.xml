@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://clawmoat.com/</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/securing-ai-agents</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/owasp-agentic-ai-top10</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/thanks</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.3</priority>
+  </url>
+</urlset>
