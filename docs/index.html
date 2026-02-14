@@ -408,7 +408,10 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
         <li>Email &amp; webhook alerts</li>
         <li>30-day audit retention</li>
       </ul>
-      <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+      <div style="display:flex;gap:8px;flex-direction:column">
+        <a href="#" onclick="checkout('pro-monthly');return false" class="btn btn-primary">$9.99/mo</a>
+        <a href="#" onclick="checkout('pro-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$99/year — save 17%</a>
+      </div>
     </div>
     <div class="price-card">
       <h3>Team</h3>
@@ -422,7 +425,10 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
         <li>90-day audit retention</li>
         <li>Priority support</li>
       </ul>
-      <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+      <div style="display:flex;gap:8px;flex-direction:column">
+        <a href="#" onclick="checkout('team-monthly');return false" class="btn btn-primary">$49/mo</a>
+        <a href="#" onclick="checkout('team-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$499/year — save 15%</a>
+      </div>
     </div>
     <div class="price-card">
       <h3>Enterprise</h3>
@@ -521,5 +527,22 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </div>
 </footer>
 
+<script>
+const API_URL = 'https://clawmoat-server-production.up.railway.app';
+async function checkout(plan) {
+  try {
+    const res = await fetch(API_URL + '/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else alert('Something went wrong. Please try again or email hello@clawmoat.com');
+  } catch (e) {
+    alert('Something went wrong. Please try again or email hello@clawmoat.com');
+  }
+}
+</script>
 </body>
 </html>

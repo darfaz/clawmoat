@@ -1,0 +1,12 @@
+{
+  "name": "clawmoat-server",
+  "version": "0.1.0",
+  "description": "ClawMoat SaaS backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "stripe": "^14.0.0"
+  }
+}
