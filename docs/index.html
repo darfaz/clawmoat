@@ -464,10 +464,23 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="section-label">Early Access</div>
   <h2 class="section-title">Get ClawMoat Pro before launch</h2>
   <p class="section-sub" style="margin:16px auto 0">Join the waitlist for early access to the cloud dashboard, ML classifier, and team features.</p>
-  <form class="cta-form" onsubmit="event.preventDefault();this.innerHTML='<p style=\'color:var(--emerald);font-size:1.1rem;padding:14px\'>🏰 You\'re on the list! We\'ll be in touch.</p>'">
-    <input type="email" placeholder="you@company.com" required aria-label="Email">
+  <form class="cta-form" id="waitlist-form" action="https://formsubmit.co/hello@clawmoat.com" method="POST">
+    <input type="email" name="email" placeholder="you@company.com" required aria-label="Email">
+    <input type="hidden" name="_subject" value="🏰 New ClawMoat Waitlist Signup">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="https://clawmoat.com/thanks.html">
+    <input type="hidden" name="_template" value="table">
     <button type="submit" class="btn btn-primary">Join Waitlist</button>
   </form>
+  <script>
+  document.getElementById('waitlist-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var f=this,d=new FormData(f);
+    fetch(f.action,{method:'POST',body:d,headers:{'Accept':'application/json'}})
+    .then(function(r){if(r.ok){f.innerHTML='<p style="color:var(--emerald);font-size:1.1rem;padding:14px">🏰 You\'re on the list! We\'ll be in touch.</p>'}else{f.innerHTML='<p style="color:var(--red);padding:14px">Something went wrong. Email us at hello@clawmoat.com</p>'}})
+    .catch(function(){f.innerHTML='<p style="color:var(--red);padding:14px">Something went wrong. Email us at hello@clawmoat.com</p>'});
+  });
+  </script>
 </div>
 </section>
 
