@@ -1,6 +1,6 @@
 {
   "name": "clawmoat",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Security moat for AI agents. Runtime protection against prompt injection, tool misuse, and data exfiltration.",
   "main": "src/index.js",
   "bin": {
