@@ -36,6 +36,9 @@ switch (command) {
   case 'audit':
     cmdAudit(args.slice(1));
     break;
+  case 'watch':
+    cmdWatch(args.slice(1));
+    break;
   case 'test':
     cmdTest();
     break;
@@ -232,6 +235,33 @@ function cmdTest() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
+function cmdWatch(args) {
+  const agentDir = args[0] || path.join(process.env.HOME, '.openclaw/agents/main');
+  const { watchSessions } = require('../src/middleware/openclaw');
+
+  console.log(`${BOLD}🏰 ClawMoat Live Monitor${RESET}`);
+  console.log(`${DIM}Watching: ${agentDir}${RESET}`);
+  console.log(`${DIM}Press Ctrl+C to stop${RESET}\n`);
+
+  const monitor = watchSessions({ agentDir });
+  if (!monitor) process.exit(1);
+
+  // Print summary every 60s
+  setInterval(() => {
+    const summary = monitor.getSummary();
+    if (summary.scanned > 0) {
+      console.log(`${DIM}[ClawMoat] Stats: ${summary.scanned} scanned, ${summary.blocked} blocked, ${summary.warnings} warnings${RESET}`);
+    }
+  }, 60000);
+
+  process.on('SIGINT', () => {
+    monitor.stop();
+    const summary = monitor.getSummary();
+    console.log(`\n${BOLD}Session Summary:${RESET} ${summary.scanned} scanned, ${summary.blocked} blocked, ${summary.warnings} warnings`);
+    process.exit(0);
+  });
+}
+
 function extractContent(entry) {
   if (typeof entry.content === 'string') return entry.content;
   if (Array.isArray(entry.content)) {
@@ -252,6 +282,7 @@ ${BOLD}USAGE${RESET}
   clawmoat scan --file <path>     Scan file contents
   cat file.txt | clawmoat scan    Scan from stdin
   clawmoat audit [session-dir]    Audit OpenClaw session logs
+  clawmoat watch [agent-dir]      Live monitor OpenClaw sessions
   clawmoat test                   Run detection test suite
   clawmoat version                Show version
 

@@ -1,0 +1,7 @@
+site/
+test/
+.github/
+*.log
+.env
+coverage/
+.DS_Store
