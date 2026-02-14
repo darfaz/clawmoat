@@ -222,6 +222,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <a href="#features">Features</a>
     <a href="#demo">Demo</a>
     <a href="#pricing">Pricing</a>
+    <a href="/compare.html">Compare</a>
     <a href="/blog/">Blog</a>
     <a href="https://github.com/darfaz/clawmoat">GitHub</a>
     <a href="#waitlist" class="btn-sm">Get Early Access</a>
@@ -427,6 +428,53 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 <span class="output">   Score: <span class="safe">0.02</span></span>
 <span class="output">   Action: <span class="safe">ALLOWED</span></span>
     </div>
+  </div>
+</div>
+</section>
+
+<!-- Badge -->
+<section id="badge">
+<div class="container">
+  <div class="section-label">Security Badge</div>
+  <h2 class="section-title">Show your security score</h2>
+  <p class="section-sub">Run an audit and add a security badge to your README — like a CI badge, but for AI agent security.</p>
+
+  <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:40px">
+    <img src="/badge/score-Aplus.svg" alt="Score A+" height="20">
+    <img src="/badge/score-A.svg" alt="Score A" height="20">
+    <img src="/badge/score-B.svg" alt="Score B" height="20">
+    <img src="/badge/score-C.svg" alt="Score C" height="20">
+    <img src="/badge/score-D.svg" alt="Score D" height="20">
+    <img src="/badge/score-F.svg" alt="Score F" height="20">
+  </div>
+
+  <div class="terminal" style="max-width:720px;margin:0 auto">
+    <div class="terminal-bar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-title">clawmoat — badge</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> <span class="cmd">clawmoat audit --badge</span>
+
+<span class="output">🏰 ClawMoat Session Audit</span>
+<span class="safe">✓ session-001.jsonl</span><span class="output">: clean</span>
+<span class="safe">✓ session-002.jsonl</span><span class="output">: clean</span>
+
+<span class="output">Summary: 2 sessions scanned, 0 total findings</span>
+
+<span class="info">🏷️  Security Badge</span>
+<span class="output">   Grade: A+</span>
+<span class="output">   SVG saved: ./clawmoat-badge.svg</span>
+
+<span class="output">   Add to README:</span>
+<span class="safe">   ![ClawMoat Security Score](https://img.shields.io/badge/ClawMoat-A%2B-brightgreen)</span>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:32px">
+    <p style="color:var(--gray);font-size:.9rem;max-width:480px;margin:0 auto">Badges use <a href="https://shields.io" style="color:var(--blue)">shields.io</a> URLs for README embeds, or a local SVG for custom hosting. Run <code style="background:var(--navy-light);padding:2px 8px;border-radius:4px;font-size:.85rem">clawmoat audit --badge</code> after any audit.</p>
   </div>
 </div>
 </section>

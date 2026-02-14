@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat vs Competitors — AI Security Guardrails Comparison</title>
+<meta name="description" content="Compare ClawMoat against NeMo Guardrails, Guardrails AI, Lakera Guard, LLM Guard, and CalypsoAI. Feature-by-feature breakdown of AI security solutions.">
+<meta name="keywords" content="AI security comparison, prompt injection detection, LLM guardrails, ClawMoat vs NeMo Guardrails, Lakera Guard alternative, LLM Guard comparison">
+<meta property="og:title" content="ClawMoat vs Competitors — AI Security Guardrails Comparison">
+<meta property="og:description" content="Feature-by-feature comparison of leading AI agent security solutions. See how ClawMoat stacks up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clawmoat.com/compare.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ClawMoat vs Competitors — AI Guardrails Comparison">
+<meta name="twitter:description" content="Compare ClawMoat against NeMo Guardrails, Guardrails AI, Lakera Guard, LLM Guard, and CalypsoAI.">
+<link rel="canonical" href="https://clawmoat.com/compare.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links a.active{color:var(--white)}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:8px 18px;border-radius:8px;font-weight:600;font-size:.85rem}
+.nav-links .btn-sm:hover{opacity:.9}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+/* Hero */
+.hero{padding:140px 0 60px;text-align:center}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.1;margin-bottom:16px;letter-spacing:-.03em}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.1rem;color:var(--gray);max-width:640px;margin:0 auto 12px}
+.hero .updated{font-size:.8rem;color:var(--navy-mid);margin-top:8px}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:40px 0 80px;-webkit-overflow-scrolling:touch}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;min-width:900px}
+.compare-table th,.compare-table td{padding:14px 16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+.compare-table th{position:sticky;top:64px;background:var(--navy-light);z-index:10;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--gray)}
+.compare-table th:first-child{text-align:left;color:var(--white)}
+.compare-table td:first-child{text-align:left;font-weight:600;color:var(--white);white-space:nowrap}
+.compare-table tr:hover td{background:rgba(59,130,246,.04)}
+.compare-table .col-clawmoat{background:rgba(59,130,246,.06)}
+.compare-table th.col-clawmoat{background:linear-gradient(180deg,rgba(59,130,246,.18),rgba(16,185,129,.08));color:var(--white);font-size:.9rem}
+
+/* Cell styles */
+.yes{color:var(--emerald);font-weight:700;font-size:1.1rem}
+.no{color:var(--red);font-weight:700;font-size:1.1rem}
+.partial{color:var(--amber);font-weight:600;font-size:.85rem}
+.cell-note{display:block;font-size:.72rem;color:var(--gray);font-weight:400;margin-top:2px}
+.pricing{font-weight:700;font-size:.95rem}
+.pricing.free{color:var(--emerald)}
+.pricing.paid{color:var(--amber)}
+.pricing.enterprise{color:var(--gray)}
+.complexity{font-weight:600;font-size:.85rem;padding:4px 10px;border-radius:8px;display:inline-block}
+.complexity.easy{background:rgba(16,185,129,.15);color:var(--emerald)}
+.complexity.medium{background:rgba(245,158,11,.15);color:var(--amber)}
+.complexity.hard{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* Category row */
+.cat-row td{background:var(--navy-light)!important;font-weight:700;text-transform:uppercase;font-size:.75rem;letter-spacing:.1em;color:var(--blue);padding:10px 16px;border-bottom:2px solid rgba(59,130,246,.2)}
+
+/* Legend */
+.legend{margin:0 0 60px;padding:28px;background:var(--navy-light);border-radius:14px;border:1px solid rgba(255,255,255,.06)}
+.legend h3{font-size:1rem;margin-bottom:12px}
+.legend-items{display:flex;gap:32px;flex-wrap:wrap;font-size:.85rem;color:var(--gray)}
+.legend-items span{display:flex;align-items:center;gap:6px}
+
+/* CTA */
+.cta{text-align:center;padding:80px 0;background:var(--navy-light);border-top:1px solid rgba(59,130,246,.1)}
+.cta h2{font-size:1.8rem;font-weight:700;margin-bottom:12px}
+.cta p{color:var(--gray);margin-bottom:28px;font-size:1.05rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB;text-decoration:none}
+
+/* Footer */
+footer{padding:40px 0;text-align:center;color:var(--gray);font-size:.8rem;border-top:1px solid rgba(255,255,255,.04)}
+footer a{color:var(--gray)}
+
+/* Mobile */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+  .menu-toggle{display:block}
+  .table-wrap{margin:20px -12px 60px;padding:0 12px}
+  .compare-table th,.compare-table td{padding:10px 10px;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/#features">Features</a>
+    <a href="/compare.html" class="active">Compare</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="/#waitlist" class="btn-sm">Get Early Access</a>
+  </div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+<div class="container">
+  <h1>How ClawMoat <span class="highlight">Compares</span></h1>
+  <p>An honest look at the AI agent security landscape. We think ClawMoat is the best choice for most teams — but we'll let the features speak for themselves.</p>
+  <div class="updated">Last updated: February 2026</div>
+</div>
+</section>
+
+<!-- Comparison Table -->
+<section>
+<div class="container">
+<div class="table-wrap">
+<table class="compare-table">
+<thead>
+<tr>
+  <th>Feature</th>
+  <th class="col-clawmoat">🏰 ClawMoat</th>
+  <th>NeMo Guardrails</th>
+  <th>Guardrails AI</th>
+  <th>Lakera Guard</th>
+  <th>LLM Guard</th>
+  <th>CalypsoAI</th>
+</tr>
+</thead>
+<tbody>
+<!-- Basics -->
+<tr class="cat-row"><td colspan="7">Basics</td></tr>
+<tr>
+  <td>Open Source</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">MIT licensed</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Apache 2.0</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Apache 2.0</span></td>
+  <td><span class="no">❌</span><span class="cell-note">SaaS only</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">MIT</span></td>
+  <td><span class="no">❌</span><span class="cell-note">Proprietary</span></td>
+</tr>
+<tr>
+  <td>Zero Dependencies</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">stdlib only</span></td>
+  <td><span class="no">❌</span><span class="cell-note">LangChain, etc.</span></td>
+  <td><span class="no">❌</span><span class="cell-note">Heavy deps</span></td>
+  <td><span class="partial">N/A</span><span class="cell-note">API service</span></td>
+  <td><span class="no">❌</span><span class="cell-note">ML libraries</span></td>
+  <td><span class="partial">N/A</span><span class="cell-note">SaaS platform</span></td>
+</tr>
+<tr>
+  <td>Setup Complexity</td>
+  <td class="col-clawmoat"><span class="complexity easy">1-liner</span></td>
+  <td><span class="complexity medium">Config files</span></td>
+  <td><span class="complexity medium">Config + schema</span></td>
+  <td><span class="complexity easy">API key</span></td>
+  <td><span class="complexity medium">Config + models</span></td>
+  <td><span class="complexity hard">Enterprise deploy</span></td>
+</tr>
+
+<!-- Security Features -->
+<tr class="cat-row"><td colspan="7">Security Features</td></tr>
+<tr>
+  <td>Prompt Injection Detection</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Multi-layer heuristics</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">LLM-based rails</span></td>
+  <td><span class="partial">⚠️ Limited</span><span class="cell-note">Via validators</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">ML models — best-in-class</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">ML scanner</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Enterprise models</span></td>
+</tr>
+<tr>
+  <td>Jailbreak Detection</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Pattern + semantic</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Dialog rails</span></td>
+  <td><span class="partial">⚠️ Basic</span><span class="cell-note">Regex validators</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Strong coverage</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Model-based</span></td>
+  <td><span class="yes">✅</span></td>
+</tr>
+<tr>
+  <td>PII / Secret Scanning</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Built-in patterns</span></td>
+  <td><span class="no">❌</span><span class="cell-note">Not built-in</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Good validators</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">PII detection</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Presidio-based</span></td>
+  <td><span class="yes">✅</span></td>
+</tr>
+<tr>
+  <td>Tool Call Validation</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Schema + policy enforcement</span></td>
+  <td><span class="partial">⚠️ Partial</span><span class="cell-note">Action control</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="partial">⚠️ Partial</span><span class="cell-note">API-level</span></td>
+</tr>
+<tr>
+  <td>Memory Poisoning Detection</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Context integrity checks</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+</tr>
+<tr>
+  <td>Exfiltration Detection</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">URL/data leak scanning</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="partial">⚠️ Limited</span><span class="cell-note">Content filtering</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="partial">⚠️ Partial</span><span class="cell-note">DLP features</span></td>
+</tr>
+
+<!-- Platform -->
+<tr class="cat-row"><td colspan="7">Platform</td></tr>
+<tr>
+  <td>Policy Engine</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Declarative YAML</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Colang DSL</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">XML/RAIL spec</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="partial">⚠️ Basic</span><span class="cell-note">Scanner config</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Policy dashboard</span></td>
+</tr>
+<tr>
+  <td>Session Audit</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Full session logging</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">API logs</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="yes">✅</span><span class="cell-note">Enterprise audit</span></td>
+</tr>
+<tr>
+  <td>OpenClaw Integration</td>
+  <td class="col-clawmoat"><span class="yes">✅</span><span class="cell-note">Native middleware</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+  <td><span class="no">❌</span></td>
+</tr>
+
+<!-- Pricing -->
+<tr class="cat-row"><td colspan="7">Pricing</td></tr>
+<tr>
+  <td>Pricing</td>
+  <td class="col-clawmoat"><span class="pricing free">Free</span><span class="cell-note">OSS core forever</span></td>
+  <td><span class="pricing free">Free</span><span class="cell-note">OSS</span></td>
+  <td><span class="pricing paid">Free + $99/mo</span><span class="cell-note">Pro tier</span></td>
+  <td><span class="pricing paid">Free tier + paid</span><span class="cell-note">Per API call</span></td>
+  <td><span class="pricing free">Free</span><span class="cell-note">OSS</span></td>
+  <td><span class="pricing enterprise">Enterprise</span><span class="cell-note">Custom pricing</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <h3>How to Read This</h3>
+  <div class="legend-items">
+    <span><span class="yes">✅</span> Full support</span>
+    <span><span class="partial">⚠️</span> Partial / limited</span>
+    <span><span class="no">❌</span> Not available</span>
+  </div>
+  <p style="margin-top:12px;font-size:.82rem;color:var(--gray)">
+    This comparison reflects publicly available information as of February 2026. We strive for accuracy — if something's wrong, <a href="https://github.com/darfaz/clawmoat/issues">open an issue</a> and we'll fix it.
+  </p>
+</div>
+
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+<div class="container">
+  <h2>Ready to Protect Your Agents?</h2>
+  <p>Get started with ClawMoat in one line of code.</p>
+  <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ Star on GitHub</a>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+  <p>🏰 ClawMoat — Security moat for AI agents · <a href="https://github.com/darfaz/clawmoat">GitHub</a> · <a href="/">Home</a></p>
+</div>
+</footer>
+
+</body>
+</html>
