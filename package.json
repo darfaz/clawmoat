@@ -1,0 +1,35 @@
+{
+  "name": "clawmoat",
+  "version": "0.1.0",
+  "description": "Security moat for AI agents. Runtime protection against prompt injection, tool misuse, and data exfiltration.",
+  "main": "src/index.js",
+  "bin": {
+    "clawmoat": "bin/clawmoat.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "ai-security",
+    "agent-security",
+    "prompt-injection",
+    "guardrails",
+    "openclaw",
+    "llm-security",
+    "agentic-ai"
+  ],
+  "author": "Dar Fazulyanov",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darfaz/clawmoat"
+  },
+  "homepage": "https://clawmoat.com",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
