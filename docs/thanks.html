@@ -3,26 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You're on the list! — ClawMoat</title>
+<title>Welcome to ClawMoat — Thank You!</title>
+<meta name="description" content="Thank you for subscribing to ClawMoat Pro/Team.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0F172A;color:#F8FAFC;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}
-.card{max-width:480px}
-h1{font-size:3rem;margin-bottom:16px}
-p{color:#94A3B8;font-size:1.1rem;margin-bottom:32px;line-height:1.6}
-a{color:#10B981;font-weight:600;text-decoration:none}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
+
+nav{background:rgba(15,23,42,.95);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{max-width:1140px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+.thanks{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 24px;position:relative}
+.thanks::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,.1) 0%,transparent 70%);pointer-events:none}
+.thanks-content{position:relative;z-index:1;max-width:560px}
+.thanks-icon{font-size:5rem;margin-bottom:24px;display:block}
+.thanks h1{font-size:2.2rem;font-weight:800;margin-bottom:16px;letter-spacing:-.02em}
+.thanks h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.thanks p{color:var(--gray);font-size:1.1rem;margin-bottom:16px}
+.thanks .note{background:var(--navy-light);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:20px 24px;margin:32px 0;text-align:left}
+.thanks .note h3{color:var(--emerald);font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.thanks .note p{font-size:.95rem;margin-bottom:0}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer;margin-top:24px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB;text-decoration:none}
+
+footer{border-top:1px solid rgba(255,255,255,.06);padding:24px 0;color:var(--gray);font-size:.85rem;text-align:center}
 </style>
 </head>
 <body>
-<div class="card">
-<h1>🏰</h1>
-<h2 style="font-size:1.8rem;margin-bottom:12px">You're on the list!</h2>
-<p>We'll notify you when ClawMoat Pro launches with the cloud dashboard, ML classifier, and team features.</p>
-<p>In the meantime, try the open-source CLI:</p>
-<pre style="background:#1E293B;padding:16px;border-radius:10px;margin:16px 0;text-align:left;font-size:.9rem;color:#10B981">npm install -g clawmoat
-clawmoat test</pre>
-<a href="https://github.com/darfaz/clawmoat">View on GitHub →</a> &nbsp;·&nbsp; <a href="https://clawmoat.com">Back to site</a>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="thanks">
+  <div class="thanks-content">
+    <span class="thanks-icon">🎉</span>
+    <h1>Welcome to <span class="highlight">ClawMoat</span>!</h1>
+    <p>Your subscription is confirmed. You're now protected by the full ClawMoat security stack.</p>
+
+    <div class="note">
+      <h3>📧 Check Your Email</h3>
+      <p>We've sent setup instructions to your email address. You'll find your API key, dashboard link, and a quick-start guide to get ClawMoat Pro/Team running in minutes.</p>
+    </div>
+
+    <div class="note">
+      <h3>🚀 What's Next</h3>
+      <p>Add your API key to <code style="background:var(--navy);padding:2px 6px;border-radius:4px;font-size:.9rem">clawmoat.yml</code>, enable the cloud dashboard, and start monitoring your agents in real time.</p>
+    </div>
+
+    <a href="/" class="btn btn-primary">← Back to ClawMoat</a>
+  </div>
 </div>
+
+<footer>
+  <div>© 2026 ClawMoat. Built for the OpenClaw community. 🏰</div>
+</footer>
+
 </body>
 </html>

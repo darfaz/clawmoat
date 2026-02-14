@@ -1,7 +1,24 @@
 /**
  * ClawMoat — Security moat for AI agents
  * 
- * Main API: scan messages, audit tool calls, check for secrets.
+ * Runtime protection against prompt injection, jailbreaks, tool misuse,
+ * secret/PII leakage, data exfiltration, memory poisoning, and supply chain attacks.
+ * 
+ * @module clawmoat
+ * @example
+ * const ClawMoat = require('clawmoat');
+ * const moat = new ClawMoat();
+ * 
+ * // Scan inbound message for injection/jailbreak threats
+ * const result = moat.scanInbound(userMessage);
+ * if (!result.safe) console.log('Threat detected:', result.findings);
+ * 
+ * // Scan outbound text for secret/PII leaks
+ * const out = moat.scanOutbound(responseText);
+ * 
+ * // Evaluate a tool call against security policies
+ * const policy = moat.evaluateTool('exec', { command: 'rm -rf /' });
+ * if (policy.decision === 'deny') console.log('Blocked:', policy.reason);
  */
 
 const { scanPromptInjection } = require('./scanners/prompt-injection');
@@ -16,7 +33,45 @@ const { evaluateToolCall } = require('./policies/engine');
 const { SecurityLogger } = require('./utils/logger');
 const { loadConfig } = require('./utils/config');
 
+/**
+ * @typedef {Object} ScanFinding
+ * @property {string} type - Finding category (e.g. 'prompt_injection', 'secret_detected', 'pii_detected')
+ * @property {string} subtype - Specific detection pattern name
+ * @property {string} severity - 'low' | 'medium' | 'high' | 'critical'
+ * @property {string} [matched] - The matched text (may be redacted for secrets)
+ * @property {number} [position] - Character position in the scanned text
+ */
+
+/**
+ * @typedef {Object} ScanResult
+ * @property {boolean} safe - true if no threats found
+ * @property {ScanFinding[]} findings - Array of detected issues
+ * @property {string|null} severity - Maximum severity across findings
+ * @property {string} action - 'allow' | 'log' | 'warn' | 'block'
+ */
+
+/**
+ * @typedef {Object} ToolDecision
+ * @property {string} decision - 'allow' | 'deny' | 'warn' | 'review'
+ * @property {string} tool - Tool name evaluated
+ * @property {string} [reason] - Human-readable explanation
+ * @property {string} [severity] - Severity of the policy violation
+ */
+
+/**
+ * Main ClawMoat security scanner class.
+ * Instantiate with optional config to scan text and evaluate tool calls.
+ */
 class ClawMoat {
+  /**
+   * Create a ClawMoat instance.
+   * @param {Object} [opts] - Options
+   * @param {Object} [opts.config] - Configuration object (overrides file-based config)
+   * @param {string} [opts.configPath] - Path to clawmoat.yml config file
+   * @param {string} [opts.logFile] - Path to write security event logs
+   * @param {boolean} [opts.quiet] - Suppress console output
+   * @param {Function} [opts.onEvent] - Callback for each security event
+   */
   constructor(opts = {}) {
     this.config = opts.config || loadConfig(opts.configPath);
     this.logger = new SecurityLogger({
@@ -30,8 +85,11 @@ class ClawMoat {
   }
 
   /**
-   * Scan inbound text (messages, emails, web content, tool output)
-   * Returns { safe, findings[], severity, action }
+   * Scan inbound text for prompt injection, jailbreaks, suspicious URLs, and memory poisoning.
+   * @param {string} text - Text to scan (message, email, web content, tool output)
+   * @param {Object} [opts] - Options
+   * @param {string} [opts.context] - Source context ('message' | 'email' | 'web' | 'tool_output')
+   * @returns {ScanResult} Scan result with findings and recommended action
    */
   scanInbound(text, opts = {}) {
     this.stats.scanned++;
@@ -98,7 +156,11 @@ class ClawMoat {
   }
 
   /**
-   * Scan outbound text for secrets/PII leakage
+   * Scan outbound text for secrets, PII, and data exfiltration attempts.
+   * @param {string} text - Outbound text to scan
+   * @param {Object} [opts] - Options
+   * @param {string} [opts.context] - Source context for logging
+   * @returns {ScanResult} Scan result with findings and recommended action
    */
   scanOutbound(text, opts = {}) {
     this.stats.scanned++;
@@ -151,7 +213,10 @@ class ClawMoat {
   }
 
   /**
-   * Evaluate a tool call against policies
+   * Evaluate a tool call against security policies.
+   * @param {string} tool - Tool name (e.g. 'exec', 'read', 'write', 'browser')
+   * @param {Object} args - Tool arguments to evaluate
+   * @returns {ToolDecision} Policy decision with explanation
    */
   evaluateTool(tool, args) {
     const result = evaluateToolCall(tool, args, this.config.policies || {});
@@ -173,7 +238,10 @@ class ClawMoat {
   }
 
   /**
-   * Full scan: check text as both inbound threat AND outbound leak
+   * Full bidirectional scan: check text as both inbound threat AND outbound leak.
+   * @param {string} text - Text to scan
+   * @param {Object} [opts] - Options passed to both scanInbound and scanOutbound
+   * @returns {{ safe: boolean, inbound: ScanResult, outbound: ScanResult, findings: ScanFinding[] }}
    */
   scan(text, opts = {}) {
     const inbound = this.scanInbound(text, opts);
@@ -205,7 +273,9 @@ class ClawMoat {
   }
 
   /**
-   * Scan a skill for supply chain threats
+   * Scan a skill directory or file for supply chain threats (malicious code patterns).
+   * @param {string} skillPath - Path to skill directory or file
+   * @returns {{ clean: boolean, findings: ScanFinding[], severity: string|null }}
    */
   scanSkill(skillPath) {
     const result = scanSkill(skillPath);
