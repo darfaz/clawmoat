@@ -7,6 +7,11 @@
 const { scanPromptInjection } = require('./scanners/prompt-injection');
 const { scanJailbreak } = require('./scanners/jailbreak');
 const { scanSecrets } = require('./scanners/secrets');
+const { scanPII } = require('./scanners/pii');
+const { scanUrls } = require('./scanners/urls');
+const { scanMemoryPoison } = require('./scanners/memory-poison');
+const { scanExfiltration } = require('./scanners/exfiltration');
+const { scanSkill, scanSkillContent } = require('./scanners/supply-chain');
 const { evaluateToolCall } = require('./policies/engine');
 const { SecurityLogger } = require('./utils/logger');
 const { loadConfig } = require('./utils/config');
@@ -50,6 +55,24 @@ class ClawMoat {
       }
     }
 
+    // URL scan
+    if (this.config.detection?.url_scanning !== false) {
+      const urls = scanUrls(text, opts);
+      if (!urls.clean) {
+        results.findings.push(...urls.findings);
+        results.safe = false;
+      }
+    }
+
+    // Memory poisoning scan
+    if (this.config.detection?.memory_poison !== false) {
+      const mp = scanMemoryPoison(text, opts);
+      if (!mp.clean) {
+        results.findings.push(...mp.findings);
+        results.safe = false;
+      }
+    }
+
     // Determine action
     if (!results.safe) {
       const maxSev = this._maxSeverity(results.findings);
@@ -86,6 +109,24 @@ class ClawMoat {
       const secrets = scanSecrets(text, { direction: 'outbound', ...opts });
       if (!secrets.clean) {
         results.findings.push(...secrets.findings);
+        results.safe = false;
+      }
+    }
+
+    // PII scanning
+    if (this.config.detection?.pii !== false) {
+      const pii = scanPII(text, opts);
+      if (!pii.clean) {
+        results.findings.push(...pii.findings);
+        results.safe = false;
+      }
+    }
+
+    // Exfiltration scanning
+    if (this.config.detection?.exfiltration !== false) {
+      const exfil = scanExfiltration(text, opts);
+      if (!exfil.clean) {
+        results.findings.push(...exfil.findings);
         results.safe = false;
       }
     }
@@ -163,6 +204,25 @@ class ClawMoat {
     };
   }
 
+  /**
+   * Scan a skill for supply chain threats
+   */
+  scanSkill(skillPath) {
+    const result = scanSkill(skillPath);
+
+    if (!result.clean) {
+      const maxSev = this._maxSeverity(result.findings);
+      this.logger.log({
+        type: 'supply_chain_threat',
+        severity: maxSev,
+        message: `${result.findings.length} issue(s) in skill: ${skillPath}`,
+        details: { findings: result.findings },
+      });
+    }
+
+    return result;
+  }
+
   _maxSeverity(findings) {
     const rank = { low: 0, medium: 1, high: 2, critical: 3 };
     return findings.reduce(
@@ -177,4 +237,10 @@ module.exports.ClawMoat = ClawMoat;
 module.exports.scanPromptInjection = scanPromptInjection;
 module.exports.scanJailbreak = scanJailbreak;
 module.exports.scanSecrets = scanSecrets;
+module.exports.scanPII = scanPII;
+module.exports.scanUrls = scanUrls;
+module.exports.scanMemoryPoison = scanMemoryPoison;
+module.exports.scanExfiltration = scanExfiltration;
+module.exports.scanSkill = scanSkill;
+module.exports.scanSkillContent = scanSkillContent;
 module.exports.evaluateToolCall = evaluateToolCall;
