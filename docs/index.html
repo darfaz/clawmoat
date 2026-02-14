@@ -28,8 +28,12 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
 
 /* Hero */
-.hero{padding:160px 0 100px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+.hero{padding:160px 0 100px;text-align:center;position:relative;overflow:hidden}
+.hero-video-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.hero-video{width:100%;height:100%;object-fit:cover;opacity:.3}
+.hero-video-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(15,23,42,.6) 0%,rgba(15,23,42,.85) 50%,rgba(15,23,42,1) 100%)}
+.hero .container{position:relative;z-index:1}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none;z-index:1}
 .hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-.03em}
 .hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:1.2rem;color:var(--gray);max-width:640px;margin:0 auto 40px}
@@ -170,6 +174,12 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 
 <!-- Hero -->
 <section class="hero">
+<div class="hero-video-container">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto">
+    <source src="https://videos.pexels.com/video-files/3130284/3130284-hd_1280_720_30fps.mp4" type="video/mp4">
+  </video>
+  <div class="hero-video-overlay"></div>
+</div>
 <div class="container">
   <h1>Build a <span class="highlight">moat</span> around<br>your AI agents</h1>
   <p>Runtime protection against prompt injection, tool misuse, and data exfiltration — for OpenClaw and every agentic AI system.</p>
@@ -180,7 +190,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="hero-badges">
     <span>🛡️ OWASP Top 10 Coverage</span>
     <span>⚡ Zero Dependencies</span>
-    <span>✅ 20/20 Tests Passing</span>
+    <span>✅ 37/37 Tests Passing</span>
     <span>📦 MIT License</span>
   </div>
 </div>
