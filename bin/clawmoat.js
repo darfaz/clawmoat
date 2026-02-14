@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const ClawMoat = require('../src/index');
 const { scanSkillContent } = require('../src/scanners/supply-chain');
+const { calculateGrade, generateBadgeSVG, getShieldsURL } = require('../src/badge');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -108,7 +109,9 @@ function cmdScan(args) {
 }
 
 function cmdAudit(args) {
-  const sessionDir = args[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
+  const badgeFlag = args.includes('--badge');
+  const filteredArgs = args.filter(a => a !== '--badge');
+  const sessionDir = filteredArgs[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
 
   if (!fs.existsSync(sessionDir)) {
     console.error(`Session directory not found: ${sessionDir}`);
@@ -168,6 +171,21 @@ function cmdAudit(args) {
   const summary = moat.getSummary();
   if (summary.events.byType) {
     console.log(`${DIM}Breakdown: ${JSON.stringify(summary.events.byType)}${RESET}`);
+  }
+
+  // Badge generation
+  if (badgeFlag) {
+    const criticalFindings = 0; // TODO: track critical findings separately
+    const grade = calculateGrade({ totalFindings, criticalFindings, filesScanned });
+    const svg = generateBadgeSVG(grade);
+    const badgePath = path.join(process.cwd(), 'clawmoat-badge.svg');
+    fs.writeFileSync(badgePath, svg);
+    console.log(`\n${BOLD}🏷️  Security Badge${RESET}`);
+    console.log(`   Grade: ${grade}`);
+    console.log(`   SVG saved: ${badgePath}`);
+    console.log(`   Shields.io: ${getShieldsURL(grade)}`);
+    console.log(`\n   ${DIM}Add to README:${RESET}`);
+    console.log(`   ![ClawMoat Security Score](${getShieldsURL(grade)})`);
   }
 
   process.exit(totalFindings > 0 ? 1 : 0);
@@ -367,6 +385,7 @@ ${BOLD}USAGE${RESET}
   clawmoat scan --file <path>     Scan file contents
   cat file.txt | clawmoat scan    Scan from stdin
   clawmoat audit [session-dir]    Audit OpenClaw session logs
+  clawmoat audit --badge          Audit + generate security score badge SVG
   clawmoat watch [agent-dir]      Live monitor OpenClaw sessions
   clawmoat test                   Run detection test suite
   clawmoat version                Show version
