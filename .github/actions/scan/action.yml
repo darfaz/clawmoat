@@ -1,0 +1,127 @@
+name: 'ClawMoat Scan'
+description: 'Scan for prompt injection, secret leaks, and policy violations in AI agent projects'
+author: 'ClawMoat'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  paths:
+    description: 'Paths to scan (space-separated)'
+    required: false
+    default: '.'
+  fail-on:
+    description: 'Minimum severity to fail the build: critical, high, medium, low, none'
+    required: false
+    default: 'critical'
+  format:
+    description: 'Output format: summary, json, annotations'
+    required: false
+    default: 'summary'
+  version:
+    description: 'ClawMoat version to install (default: latest)'
+    required: false
+    default: 'latest'
+
+outputs:
+  findings:
+    description: 'Number of findings detected'
+    value: ${{ steps.scan.outputs.findings }}
+  critical:
+    description: 'Number of critical findings'
+    value: ${{ steps.scan.outputs.critical }}
+  high:
+    description: 'Number of high findings'
+    value: ${{ steps.scan.outputs.high }}
+  exit-code:
+    description: 'Exit code from the scan (0 = pass)'
+    value: ${{ steps.scan.outputs.exit_code }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install ClawMoat
+      shell: bash
+      run: |
+        if [ "${{ inputs.version }}" = "latest" ]; then
+          npm install -g clawmoat
+        else
+          npm install -g clawmoat@${{ inputs.version }}
+        fi
+        echo "✅ ClawMoat $(clawmoat --version) installed"
+
+    - name: Run ClawMoat Scan
+      id: scan
+      shell: bash
+      env:
+        CLAWMOAT_FAIL_ON: ${{ inputs.fail-on }}
+        CLAWMOAT_FORMAT: ${{ inputs.format }}
+      run: |
+        set +e
+
+        SCAN_ARGS="--fail-on ${CLAWMOAT_FAIL_ON} --format ${CLAWMOAT_FORMAT}"
+
+        # Run scan and capture output
+        OUTPUT=$(clawmoat scan ${SCAN_ARGS} ${{ inputs.paths }} 2>&1)
+        EXIT_CODE=$?
+
+        echo "${OUTPUT}"
+
+        # Parse counts from output
+        FINDINGS=$(echo "${OUTPUT}" | grep -oP 'Total:\s*\K\d+' || echo "0")
+        CRITICAL=$(echo "${OUTPUT}" | grep -oP 'Critical:\s*\K\d+' || echo "0")
+        HIGH=$(echo "${OUTPUT}" | grep -oP 'High:\s*\K\d+' || echo "0")
+
+        echo "findings=${FINDINGS}" >> "$GITHUB_OUTPUT"
+        echo "critical=${CRITICAL}" >> "$GITHUB_OUTPUT"
+        echo "high=${HIGH}" >> "$GITHUB_OUTPUT"
+        echo "exit_code=${EXIT_CODE}" >> "$GITHUB_OUTPUT"
+
+        # Write summary
+        if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+          echo "## 🏰 ClawMoat Scan Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "${OUTPUT}" >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        exit ${EXIT_CODE}
+
+    - name: Comment on PR
+      if: github.event_name == 'pull_request' && always()
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        FINDINGS="${{ steps.scan.outputs.findings }}"
+        CRITICAL="${{ steps.scan.outputs.critical }}"
+        HIGH="${{ steps.scan.outputs.high }}"
+        EXIT_CODE="${{ steps.scan.outputs.exit_code }}"
+
+        if [ "${EXIT_CODE}" = "0" ]; then
+          STATUS="✅ **Pass**"
+        else
+          STATUS="⛔ **Fail**"
+        fi
+
+        BODY="## 🏰 ClawMoat Scan ${STATUS}
+
+        | Severity | Count |
+        |----------|-------|
+        | Critical | ${CRITICAL} |
+        | High | ${HIGH} |
+        | Total | ${FINDINGS} |
+
+        *Threshold: fail on \`${{ inputs.fail-on }}\` or above*"
+
+        # Post or update comment
+        PR_NUM="${{ github.event.pull_request.number }}"
+        EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+          --jq '.[] | select(.body | contains("🏰 ClawMoat Scan")) | .id' | head -1)
+
+        if [ -n "${EXISTING}" ]; then
+          gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+            -X PATCH -f body="${BODY}" || true
+        else
+          gh pr comment "${PR_NUM}" --body "${BODY}" || true
+        fi

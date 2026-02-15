@@ -1,0 +1,51 @@
+# Example: ClawMoat security scan on every PR
+# Save as .github/workflows/clawmoat.yml in your repository
+
+name: ClawMoat Security Scan
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write  # needed for PR comments
+
+jobs:
+  scan:
+    name: 🏰 ClawMoat Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Basic usage — scan everything, fail on critical
+      - name: ClawMoat Scan
+        uses: darfaz/clawmoat/.github/actions/scan@main
+        with:
+          paths: '.'
+          fail-on: 'critical'
+          format: 'summary'
+
+  scan-strict:
+    name: 🏰 ClawMoat Strict Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Strict — fail on any high+ finding, scan only src/
+      - name: ClawMoat Scan (strict)
+        uses: darfaz/clawmoat/.github/actions/scan@main
+        with:
+          paths: 'src/ prompts/'
+          fail-on: 'high'
+          format: 'summary'

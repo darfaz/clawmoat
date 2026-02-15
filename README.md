@@ -54,6 +54,36 @@ openclaw skills add clawmoat
 
 Automatically scans inbound messages, audits tool calls, blocks violations, and logs events.
 
+## GitHub Action
+
+Add ClawMoat to your CI pipeline to catch prompt injection and secret leaks before they merge:
+
+```yaml
+# .github/workflows/clawmoat.yml
+name: ClawMoat Scan
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: darfaz/clawmoat/.github/actions/scan@main
+        with:
+          paths: '.'
+          fail-on: 'critical'    # critical | high | medium | low | none
+          format: 'summary'
+```
+
+Results appear as PR comments and job summaries. See [`examples/github-action-workflow.yml`](examples/github-action-workflow.yml) for more patterns.
+
 ## Features
 
 | Feature | Description | Status |
