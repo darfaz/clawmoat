@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/🏰-ClawMoat-0F172A?style=for-the-badge&labelColor=10B981" alt="ClawMoat">
+  <img src="logo.png" alt="ClawMoat" width="400">
 </p>
 
-<h1 align="center">🏰 ClawMoat</h1>
+<h1 align="center">ClawMoat</h1>
 <p align="center"><strong>Security moat for AI agents</strong></p>
 <p align="center">Runtime protection against prompt injection, tool misuse, and data exfiltration.</p>
 
