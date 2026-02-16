@@ -492,69 +492,71 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 <div class="container">
   <div class="section-label">Pricing</div>
   <h2 class="section-title">Protect every agent, any scale</h2>
-  <p class="section-sub">Open source core is free forever. SaaS adds dashboards, analytics, and team features.</p>
+  <p class="section-sub">Open source core is free forever. All paid plans include a <strong>30-day free trial</strong> and <strong>14-day money-back guarantee</strong>.</p>
   <div class="pricing-grid">
     <div class="price-card">
       <h3>Free</h3>
       <div class="price">$0</div>
-      <div class="desc">Open source CLI &amp; OpenClaw skill</div>
+      <div class="desc">Open source CLI — forever free</div>
       <ul>
         <li>Prompt injection scanning</li>
         <li>Jailbreak detection</li>
         <li>Secret scanning</li>
         <li>Policy engine (YAML)</li>
-        <li>Local audit logs</li>
         <li>Community support</li>
       </ul>
       <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">Install Free</a>
     </div>
-    <div class="price-card popular">
-      <h3>Pro</h3>
-      <div class="price">$9.99<span>/mo</span></div>
-      <div class="desc">$99/year (save 17%) — for individual developers</div>
+    <div class="price-card">
+      <h3>Pro Skill</h3>
+      <div class="price">$29</div>
+      <div class="desc">One-time purchase — own it forever</div>
       <ul>
         <li>Everything in Free</li>
-        <li>Cloud dashboard</li>
+        <li>OpenClaw security skill</li>
+        <li>Real-time scanning</li>
+        <li>Custom policy rules</li>
+        <li>Scan history &amp; audit log</li>
+        <li>1 year of pattern updates</li>
+      </ul>
+      <a href="#" onclick="checkout('pro-skill');return false" class="btn btn-primary">Buy $29 — one time</a>
+      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">14-day money-back guarantee</p>
+    </div>
+    <div class="price-card popular">
+      <h3>Shield</h3>
+      <div class="price">$9.99<span>/mo</span></div>
+      <div class="desc">First month free — continuous protection</div>
+      <ul>
+        <li>Everything in Pro Skill</li>
+        <li>Continuous pattern updates</li>
+        <li>Slack/Telegram/Discord alerts</li>
+        <li>Cloud audit log sync</li>
         <li>ML classifier (hosted)</li>
-        <li>LLM judge layer</li>
-        <li>Email &amp; webhook alerts</li>
-        <li>30-day audit retention</li>
+        <li>Priority support</li>
       </ul>
       <div style="display:flex;gap:8px;flex-direction:column">
-        <a href="#" onclick="checkout('pro-monthly');return false" class="btn btn-primary">$9.99/mo</a>
-        <a href="#" onclick="checkout('pro-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$99/year — save 17%</a>
+        <a href="#" onclick="checkout('shield-monthly');return false" class="btn btn-primary">Start free trial</a>
+        <a href="#" onclick="checkout('shield-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$99/year — save 17%</a>
       </div>
+      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">30 days free · 14-day refund guarantee</p>
     </div>
     <div class="price-card">
       <h3>Team</h3>
       <div class="price">$49<span>/mo</span></div>
-      <div class="desc">$499/year (save 15%) — for teams with multiple agents</div>
+      <div class="desc">First month free — multi-agent security</div>
       <ul>
-        <li>Everything in Pro</li>
+        <li>Everything in Shield</li>
         <li>5 team members</li>
-        <li>Shared policies</li>
-        <li>Behavioral analysis</li>
-        <li>90-day audit retention</li>
-        <li>Priority support</li>
-      </ul>
-      <div style="display:flex;gap:8px;flex-direction:column">
-        <a href="#" onclick="checkout('team-monthly');return false" class="btn btn-primary">$49/mo</a>
-        <a href="#" onclick="checkout('team-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$499/year — save 15%</a>
-      </div>
-    </div>
-    <div class="price-card">
-      <h3>Enterprise</h3>
-      <div class="price">Custom</div>
-      <div class="desc">On-prem, compliance, SLA</div>
-      <ul>
-        <li>Everything in Team</li>
-        <li>Unlimited members</li>
-        <li>Self-hosted option</li>
-        <li>SSO / SAML</li>
+        <li>Shared policy packs</li>
+        <li>Multi-agent monitoring</li>
         <li>Compliance reports</li>
         <li>Dedicated support</li>
       </ul>
-      <a href="mailto:hello@clawmoat.com" class="btn btn-outline">Contact Sales</a>
+      <div style="display:flex;gap:8px;flex-direction:column">
+        <a href="#" onclick="checkout('team-monthly');return false" class="btn btn-primary">Start free trial</a>
+        <a href="#" onclick="checkout('team-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$499/year — save 15%</a>
+      </div>
+      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">30 days free · 14-day refund guarantee</p>
     </div>
   </div>
 </div>

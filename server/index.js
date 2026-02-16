@@ -6,10 +6,13 @@ const PORT = process.env.PORT || 3000;
 const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 
 const PRICES = {
-  'pro-monthly':  process.env.PRICE_PRO_MONTHLY  || 'price_1T0an4AUiOw2ZIorxQRyAxvQ',
-  'pro-yearly':   process.env.PRICE_PRO_YEARLY   || 'price_1T0an4AUiOw2ZIorfHx7RowT',
-  'team-monthly': process.env.PRICE_TEAM_MONTHLY || 'price_1T0aqrAUiOw2ZIorh4gjBPGt',
-  'team-yearly':  process.env.PRICE_TEAM_YEARLY  || 'price_1T0asRAUiOw2ZIorxAi69uwl',
+  // One-time purchase
+  'pro-skill':     process.env.PRICE_PRO_SKILL     || 'price_1T1avaAUiOw2ZIordarLcoff',
+  // Subscriptions (30-day free trial)
+  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T1avaAUiOw2ZIorQXuxNyM3',
+  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T1avaAUiOw2ZIorAtBLXBOg',
+  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1T1avaAUiOw2ZIorAqeOaahQ',
+  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1T1avbAUiOw2ZIorDLUicwin',
 };
 
 function cors(res) {
@@ -58,8 +61,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
+      const mode = body.plan === 'pro-skill' ? 'payment' : 'subscription';
       const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
+        mode,
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${SITE_URL}/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${SITE_URL}/#pricing`,
