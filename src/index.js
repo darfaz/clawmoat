@@ -28,6 +28,7 @@ const { scanPII } = require('./scanners/pii');
 const { scanUrls } = require('./scanners/urls');
 const { scanMemoryPoison } = require('./scanners/memory-poison');
 const { scanExfiltration } = require('./scanners/exfiltration');
+const { scanExcessiveAgency } = require('./scanners/excessive-agency');
 const { scanSkill, scanSkillContent } = require('./scanners/supply-chain');
 const { evaluateToolCall } = require('./policies/engine');
 const { SecurityLogger } = require('./utils/logger');
@@ -118,6 +119,15 @@ class ClawMoat {
       const urls = scanUrls(text, opts);
       if (!urls.clean) {
         results.findings.push(...urls.findings);
+        results.safe = false;
+      }
+    }
+
+    // Excessive agency scan
+    if (this.config.detection?.excessive_agency !== false) {
+      const ea = scanExcessiveAgency(text, opts);
+      if (!ea.clean) {
+        results.findings.push(...ea.findings);
         results.safe = false;
       }
     }
@@ -311,6 +321,7 @@ module.exports.scanPII = scanPII;
 module.exports.scanUrls = scanUrls;
 module.exports.scanMemoryPoison = scanMemoryPoison;
 module.exports.scanExfiltration = scanExfiltration;
+module.exports.scanExcessiveAgency = scanExcessiveAgency;
 module.exports.scanSkill = scanSkill;
 module.exports.scanSkillContent = scanSkillContent;
 module.exports.evaluateToolCall = evaluateToolCall;

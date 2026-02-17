@@ -20,6 +20,21 @@
 
 ---
 
+## Why ClawMoat?
+
+Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your agents have real capabilities — shell access, file I/O, web browsing, email. That's powerful, but one prompt injection in an email or scraped webpage can hijack your agent into exfiltrating secrets, running malicious commands, or poisoning its own memory.
+
+**ClawMoat is the missing security layer.** Drop it in front of your agent and get:
+
+- 🛡️ **Prompt injection detection** — multi-layer scanning catches instruction overrides, delimiter attacks, encoded payloads
+- 🔐 **Secret & PII scanning** — 30+ credential patterns + PII detection on outbound text
+- ⚡ **Zero dependencies** — pure Node.js, no ML models to download, sub-millisecond scans
+- 🔧 **CI/CD ready** — GitHub Actions workflow included, fail builds on security violations
+- 📋 **Policy engine** — YAML-based rules for shell, file, browser, and network access
+- 🏰 **OWASP coverage** — maps to all 10 risks in the OWASP Top 10 for Agentic AI
+
+**Works with any agent framework.** ClawMoat scans text — it doesn't care if it came from LangChain, CrewAI, AutoGen, or your custom agent.
+
 ## The Problem
 
 AI agents have shell access, browser control, email, and file system access. A single prompt injection in an email or webpage can hijack your agent into exfiltrating data, running malicious commands, or impersonating you.
@@ -176,7 +191,7 @@ ClawMoat maps to the [OWASP Top 10 for Agentic AI (2026)](https://genai.owasp.or
 | OWASP Risk | Description | ClawMoat Protection | Status |
 |-----------|-------------|---------------------|--------|
 | **ASI01** | Prompt Injection & Manipulation | Multi-layer injection scanning on all inbound content | ✅ |
-| **ASI02** | Excessive Agency & Permissions | Policy engine enforces least-privilege per tool | ✅ |
+| **ASI02** | Excessive Agency & Permissions | Escalation detection + policy engine enforces least-privilege | ✅ |
 | **ASI03** | Insecure Tool Use | Command validation & argument sanitization | ✅ |
 | **ASI04** | Insufficient Output Validation | Output scanning for secrets, PII, dangerous code | ✅ |
 | **ASI05** | Memory & Context Poisoning | Context integrity checks on memory retrievals | 🔜 |
@@ -197,7 +212,8 @@ clawmoat/
 │   │   ├── prompt-injection.js
 │   │   ├── jailbreak.js
 │   │   ├── secrets.js
-│   │   └── pii.js
+│   │   ├── pii.js
+│   │   └── excessive-agency.js
 │   ├── policies/             # Policy enforcement
 │   │   ├── engine.js
 │   │   ├── exec.js
