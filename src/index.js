@@ -31,6 +31,7 @@ const { scanExfiltration } = require('./scanners/exfiltration');
 const { scanExcessiveAgency } = require('./scanners/excessive-agency');
 const { scanSkill, scanSkillContent } = require('./scanners/supply-chain');
 const { evaluateToolCall } = require('./policies/engine');
+const { HostGuardian, TIERS } = require('./guardian');
 const { SecurityLogger } = require('./utils/logger');
 const { loadConfig } = require('./utils/config');
 
@@ -83,6 +84,29 @@ class ClawMoat {
       onEvent: opts.onEvent,
     });
     this.stats = { scanned: 0, blocked: 0, warnings: 0 };
+
+    // Initialize Host Guardian if configured
+    if (this.config.guardian) {
+      this.guardian = new HostGuardian({
+        mode: this.config.guardian.mode || 'standard',
+        workspace: this.config.guardian.workspace,
+        safeZones: this.config.guardian.safe_zones,
+        forbiddenZones: this.config.guardian.forbidden_zones,
+        logFile: opts.logFile,
+        quiet: opts.quiet,
+        onViolation: opts.onViolation,
+      });
+    }
+  }
+
+  /**
+   * Create and return a Host Guardian instance for laptop-hosted agent security.
+   * Can be used standalone without full ClawMoat config.
+   * @param {Object} opts - Guardian options (mode, workspace, safeZones, etc.)
+   * @returns {HostGuardian}
+   */
+  static createGuardian(opts = {}) {
+    return new HostGuardian(opts);
   }
 
   /**
@@ -325,3 +349,5 @@ module.exports.scanExcessiveAgency = scanExcessiveAgency;
 module.exports.scanSkill = scanSkill;
 module.exports.scanSkillContent = scanSkillContent;
 module.exports.evaluateToolCall = evaluateToolCall;
+module.exports.HostGuardian = HostGuardian;
+module.exports.TIERS = TIERS;

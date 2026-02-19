@@ -108,7 +108,90 @@ Results appear as PR comments and job summaries. See [`examples/github-action-wo
 | 📋 **Policy Engine** | YAML rules for shell, files, browser, network | ✅ v0.1 |
 | 🕵️ **Jailbreak Detection** | Heuristic + classifier pipeline | ✅ v0.1 |
 | 📊 **Session Audit Trail** | Full tamper-evident action log | ✅ v0.1 |
-| 🧠 **Behavioral Analysis** | Anomaly detection on agent behavior | 🔜 v0.3 |
+| 🧠 **Behavioral Analysis** | Anomaly detection on agent behavior | 🔜 v0.5 |
+| 🏠 **Host Guardian** | Runtime security for laptop-hosted agents | ✅ v0.4 |
+
+## 🏠 Host Guardian — Security for Laptop-Hosted Agents
+
+Running an AI agent on your actual laptop? **Host Guardian** is the trust layer that makes it safe. It monitors every file access, command, and network request — blocking dangerous actions before they execute.
+
+### Permission Tiers
+
+Start locked down, open up as trust grows:
+
+| Mode | File Read | File Write | Shell | Network | Use Case |
+|------|-----------|------------|-------|---------|----------|
+| **Observer** | Workspace only | ❌ | ❌ | ❌ | Testing a new agent |
+| **Worker** | Workspace only | Workspace only | Safe commands | Fetch only | Daily use |
+| **Standard** | System-wide | Workspace only | Most commands | ✅ | Power users |
+| **Full** | Everything | Everything | Everything | ✅ | Audit-only mode |
+
+### Quick Start
+
+```js
+const { HostGuardian } = require('clawmoat');
+
+const guardian = new HostGuardian({ mode: 'standard' });
+
+// Check before every tool call
+guardian.check('read', { path: '~/.ssh/id_rsa' });
+// => { allowed: false, reason: 'Protected zone: SSH keys', severity: 'critical' }
+
+guardian.check('exec', { command: 'rm -rf /' });
+// => { allowed: false, reason: 'Dangerous command blocked: Recursive force delete', severity: 'critical' }
+
+guardian.check('exec', { command: 'git status' });
+// => { allowed: true, decision: 'allow' }
+
+// Runtime mode switching
+guardian.setMode('worker');  // Lock down further
+
+// Full audit trail
+console.log(guardian.report());
+```
+
+### What It Protects
+
+**🔒 Forbidden Zones** (always blocked):
+- SSH keys, GPG keys, AWS/GCloud/Azure credentials
+- Browser cookies & login data, password managers
+- Crypto wallets, `.env` files, `.netrc`
+- System files (`/etc/shadow`, `/etc/sudoers`)
+
+**⚡ Dangerous Commands** (blocked by tier):
+- Destructive: `rm -rf`, `mkfs`, `dd`
+- Escalation: `sudo`, `chmod +s`, `su -`
+- Network: reverse shells, `ngrok`, `curl | bash`
+- Persistence: `crontab`, modifying `.bashrc`
+- Exfiltration: `curl --data`, `scp` to unknown hosts
+
+**📋 Audit Trail**: Every action recorded with timestamps, verdicts, and reasons. Generate reports anytime.
+
+### Configuration
+
+```js
+const guardian = new HostGuardian({
+  mode: 'worker',
+  workspace: '~/.openclaw/workspace',
+  safeZones: ['~/projects', '~/Documents'],     // Additional allowed paths
+  forbiddenZones: ['~/tax-returns'],             // Custom protected paths
+  onViolation: (tool, args, verdict) => {        // Alert callback
+    notify(`⚠️ Blocked: ${verdict.reason}`);
+  },
+});
+```
+
+Or via `clawmoat.yml`:
+
+```yaml
+guardian:
+  mode: standard
+  workspace: ~/.openclaw/workspace
+  safe_zones:
+    - ~/projects
+  forbidden_zones:
+    - ~/tax-returns
+```
 
 ## Architecture
 
