@@ -5,21 +5,21 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClawMoat — Security Moat for AI Agents</title>
-<meta name="description" content="Runtime protection against prompt injection, tool misuse, and data exfiltration for AI agents. Open source core with SaaS dashboards.">
+<title>ClawMoat — Your Machine. Your Agent. Your Rules.</title>
+<meta name="description" content="The trust layer between AI agents and your laptop. Run self-hosted agents fearlessly with runtime security, permission tiers, and full audit trails.">
 <link rel="canonical" href="https://clawmoat.com/">
 
 <!-- Open Graph -->
-<meta property="og:title" content="ClawMoat — Security Moat for AI Agents">
-<meta property="og:description" content="Runtime protection against prompt injection, tool misuse, and data exfiltration for AI agents. Open source core with SaaS dashboards.">
+<meta property="og:title" content="ClawMoat — Your Machine. Your Agent. Your Rules.">
+<meta property="og:description" content="The trust layer between AI agents and your laptop. Run self-hosted agents fearlessly with runtime security, permission tiers, and full audit trails.">
 <meta property="og:image" content="https://clawmoat.com/og-image.png">
 <meta property="og:url" content="https://clawmoat.com">
 <meta property="og:type" content="website">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ClawMoat — Security Moat for AI Agents">
-<meta name="twitter:description" content="Runtime protection against prompt injection, tool misuse, and data exfiltration for AI agents.">
+<meta name="twitter:title" content="ClawMoat — Your Machine. Your Agent. Your Rules.">
+<meta name="twitter:description" content="The trust layer between AI agents and your laptop. Run self-hosted agents fearlessly with runtime security, permission tiers, and full audit trails.">
 <meta name="twitter:image" content="https://clawmoat.com/og-image.png">
 
 <!-- Structured Data -->
@@ -30,28 +30,28 @@
   "name": "ClawMoat",
   "applicationCategory": "SecurityApplication",
   "operatingSystem": "Node.js",
-  "description": "Runtime protection against prompt injection, tool misuse, and data exfiltration for AI agents.",
+  "description": "The trust layer between AI agents and your laptop. Run self-hosted agents fearlessly with runtime security, permission tiers, and full audit trails.",
   "offers": [
     {
       "@type": "Offer",
       "name": "Free",
       "price": "0",
       "priceCurrency": "USD",
-      "description": "Open source CLI & OpenClaw skill"
+      "description": "Open source Host Guardian, scanners & CLI"
     },
     {
       "@type": "Offer",
       "name": "Pro",
-      "price": "9.99",
+      "price": "14.99",
       "priceCurrency": "USD",
-      "description": "Cloud dashboard, ML classifier, LLM judge layer"
+      "description": "Threat intelligence, persistent audit logs, dashboard, real-time alerts"
     },
     {
       "@type": "Offer",
       "name": "Team",
       "price": "49",
       "priceCurrency": "USD",
-      "description": "Team features, shared policies, behavioral analysis"
+      "description": "Fleet dashboard, centralized policy, compliance reports"
     }
   ],
   "url": "https://clawmoat.com",
@@ -66,7 +66,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
 a{color:var(--blue);text-decoration:none}
@@ -157,6 +157,29 @@ section{padding:100px 0}
 .terminal-body .safe{color:var(--emerald)}
 .terminal-body .info{color:var(--blue)}
 
+/* Permission Tiers */
+.tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+@media(max-width:768px){.tiers-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.tiers-grid{grid-template-columns:1fr}}
+.tier-card{background:var(--navy);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:24px;text-align:center;transition:border-color .2s}
+.tier-card:hover{border-color:var(--emerald)}
+.tier-card .tier-icon{font-size:2.5rem;margin-bottom:12px}
+.tier-card h3{font-size:1.1rem;margin-bottom:4px}
+.tier-card .tier-level{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--emerald);margin-bottom:12px}
+.tier-card ul{list-style:none;text-align:left;font-size:.85rem;color:var(--gray)}
+.tier-card li{padding:3px 0}
+.tier-card li::before{content:'✓ ';color:var(--emerald);font-weight:700}
+.tier-card li.blocked::before{content:'✗ ';color:var(--red)}
+.tier-card li.blocked{color:var(--red);opacity:.7}
+
+/* Forbidden Zones */
+.zones-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px}
+.zone-card{background:var(--navy);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:20px;text-align:center;transition:border-color .2s}
+.zone-card:hover{border-color:var(--red)}
+.zone-card .zone-icon{font-size:2rem;margin-bottom:8px}
+.zone-card h4{font-size:.95rem;margin-bottom:4px}
+.zone-card code{font-size:.75rem;color:var(--red);background:rgba(239,68,68,.1);padding:2px 8px;border-radius:4px}
+
 /* Pricing */
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
 .price-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:32px;display:flex;flex-direction:column}
@@ -221,7 +244,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
   <div class="nav-links">
     <a href="#problem">Why</a>
-    <a href="#how">How</a>
+    <a href="#guardian">Guardian</a>
     <a href="#features">Features</a>
     <a href="#demo">Demo</a>
     <a href="#badge">Badge</a>
@@ -246,15 +269,16 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="hero-video-overlay"></div>
 </div>
 <div class="container">
-  <h1>Build a <span class="highlight">moat</span> around<br>your AI agents</h1>
-  <p>Runtime protection against prompt injection, tool misuse, and data exfiltration — for OpenClaw and every agentic AI system.</p>
+  <h1><span class="highlight">Your Machine.</span> Your Agent.<br>Your Rules.</h1>
+  <p>The trust layer between AI agents and your laptop. Run self-hosted agents fearlessly with runtime security, permission tiers, and full audit trails.</p>
   <div class="hero-btns">
     <a href="#waitlist" class="btn btn-primary">Get Early Access</a>
     <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">⭐ Star on GitHub</a>
   </div>
   <div class="hero-badges">
     <span><a href="https://www.npmjs.com/package/clawmoat"><img src="https://img.shields.io/npm/v/clawmoat?style=flat-square&color=3B82F6" alt="npm" style="height:18px;vertical-align:middle"></a></span>
-    <span>🛡️ OWASP Top 10 Coverage</span>
+    <span>🛡️ Host Guardian</span>
+    <span>🔒 4 Permission Tiers</span>
     <span>⚡ Zero Dependencies</span>
     <span>✅ 68 Tests Passing</span>
     <span>📦 MIT License</span>
@@ -288,6 +312,159 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
       <div class="icon">🎭</div>
       <h3>Identity Hijacking</h3>
       <p>Attackers use your agent's identity to send emails, push code, or message contacts on your behalf.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Host Guardian — THE LEAD STORY -->
+<section id="guardian">
+<div class="container">
+  <div class="section-label">Host Guardian</div>
+  <h2 class="section-title">The security layer between AI and your laptop</h2>
+  <p class="section-sub">Permission tiers let you dial up access as trust grows. Start locked down, open up gradually — like hiring a new employee.</p>
+
+  <div class="tiers-grid">
+    <div class="tier-card">
+      <div class="tier-icon">👁️</div>
+      <div class="tier-level">Observer</div>
+      <h3>Read Only</h3>
+      <ul>
+        <li>Read files</li>
+        <li>List directories</li>
+        <li>View system info</li>
+        <li class="blocked">Write files</li>
+        <li class="blocked">Run commands</li>
+        <li class="blocked">Network access</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-icon">🔨</div>
+      <div class="tier-level">Worker</div>
+      <h3>Safe Commands</h3>
+      <ul>
+        <li>Read &amp; write files</li>
+        <li>Safe shell commands</li>
+        <li>Git operations</li>
+        <li>Package managers</li>
+        <li class="blocked">Dangerous commands</li>
+        <li class="blocked">Credential access</li>
+      </ul>
+    </div>
+    <div class="tier-card" style="border-color:var(--blue)">
+      <div class="tier-icon">⚡</div>
+      <div class="tier-level">Standard</div>
+      <h3>Recommended</h3>
+      <ul>
+        <li>Most shell commands</li>
+        <li>Network requests</li>
+        <li>File system access</li>
+        <li>Forbidden zones enforced</li>
+        <li class="blocked">Credential directories</li>
+        <li class="blocked">System-level changes</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-icon">🔓</div>
+      <div class="tier-level">Full</div>
+      <h3>Unrestricted</h3>
+      <ul>
+        <li>All commands</li>
+        <li>All file access</li>
+        <li>Network unrestricted</li>
+        <li>Forbidden zones still active</li>
+        <li>Full audit trail</li>
+        <li>⚠️ Use with caution</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Code Example -->
+  <div style="margin-top:48px">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">host-guardian.js — usage example</span>
+      </div>
+      <div class="terminal-body">
+<span class="info">import</span> <span class="cmd">{ HostGuardian }</span> <span class="info">from</span> <span class="safe">'clawmoat'</span><span class="cmd">;</span>
+
+<span class="output">// Initialize with a permission tier</span>
+<span class="info">const</span> <span class="cmd">guardian</span> = <span class="info">new</span> <span class="cmd">HostGuardian({</span>
+  <span class="cmd">tier:</span> <span class="safe">'standard'</span><span class="cmd">,</span>
+  <span class="cmd">forbiddenZones:</span> <span class="safe">'default'</span><span class="cmd">,</span>  <span class="output">// SSH, AWS, crypto wallets, etc.</span>
+  <span class="cmd">auditLog:</span> <span class="safe">true</span>
+<span class="cmd">});</span>
+
+<span class="output">// Validate before every agent action</span>
+<span class="info">const</span> <span class="cmd">result</span> = <span class="cmd">guardian.validate({</span>
+  <span class="cmd">action:</span> <span class="safe">'file.read'</span><span class="cmd">,</span>
+  <span class="cmd">path:</span> <span class="safe">'~/.ssh/id_rsa'</span>
+<span class="cmd">});</span>
+
+<span class="output">// result → { allowed: false, reason: 'Forbidden zone: SSH keys' }</span>
+
+<span class="info">const</span> <span class="cmd">ok</span> = <span class="cmd">guardian.validate({</span>
+  <span class="cmd">action:</span> <span class="safe">'shell.exec'</span><span class="cmd">,</span>
+  <span class="cmd">command:</span> <span class="safe">'git status'</span>
+<span class="cmd">});</span>
+
+<span class="output">// ok → { allowed: true, tier: 'standard' }</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- What We Protect — Forbidden Zones -->
+<section class="problem" id="protect">
+<div class="container">
+  <div class="section-label">What We Protect</div>
+  <h2 class="section-title">Forbidden zones — auto-protected, always</h2>
+  <p class="section-sub">These sensitive areas are off-limits by default, regardless of permission tier. Your credentials stay yours.</p>
+
+  <div class="zones-grid">
+    <div class="zone-card">
+      <div class="zone-icon">🔑</div>
+      <h4>SSH Keys</h4>
+      <code>~/.ssh/*</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">☁️</div>
+      <h4>AWS Credentials</h4>
+      <code>~/.aws/*</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">🌐</div>
+      <h4>Browser Data</h4>
+      <code>cookies, passwords, sessions</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">💰</div>
+      <h4>Crypto Wallets</h4>
+      <code>seed phrases, wallet files</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">🔐</div>
+      <h4>GPG / PGP Keys</h4>
+      <code>~/.gnupg/*</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">📦</div>
+      <h4>Package Tokens</h4>
+      <code>.npmrc, .pypirc, .gem</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">🗄️</div>
+      <h4>Database Creds</h4>
+      <code>.pgpass, .my.cnf</code>
+    </div>
+    <div class="zone-card">
+      <div class="zone-icon">🏗️</div>
+      <h4>Cloud Configs</h4>
+      <code>~/.azure, ~/.gcloud, ~/.kube</code>
     </div>
   </div>
 </div>
@@ -334,12 +511,12 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </div>
 </section>
 
-<!-- Features -->
+<!-- Features (Scanners — now supporting features) -->
 <section class="problem" id="features">
 <div class="container">
-  <div class="section-label">Features</div>
-  <h2 class="section-title">Everything you need to secure your agents</h2>
-  <p class="section-sub">Comprehensive protection that deploys in minutes.</p>
+  <div class="section-label">Scanners &amp; Features</div>
+  <h2 class="section-title">Comprehensive scanning built in</h2>
+  <p class="section-sub">Host Guardian is the gatekeeper. Scanners are the intelligence — detecting threats before they reach your machine.</p>
   <div class="features-grid">
     <div class="feature-card">
       <div class="icon">🛡️</div>
@@ -387,10 +564,10 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <div class="owasp-grid">
       <div class="owasp-item"><span class="code">ASI01</span><div><strong>Agent Goal Hijack</strong><p>Prompt injection scanning on all inbound content</p></div></div>
       <div class="owasp-item"><span class="code">ASI02</span><div><strong>Tool Misuse</strong><p>Policy engine validates every tool call</p></div></div>
-      <div class="owasp-item"><span class="code">ASI03</span><div><strong>Privilege Abuse</strong><p>Credential access monitoring &amp; least privilege</p></div></div>
+      <div class="owasp-item"><span class="code">ASI03</span><div><strong>Privilege Abuse</strong><p>Permission tiers &amp; Host Guardian enforce least privilege</p></div></div>
       <div class="owasp-item"><span class="code">ASI04</span><div><strong>Supply Chain</strong><p>Skill/plugin static analysis (v0.3)</p></div></div>
       <div class="owasp-item"><span class="code">ASI05</span><div><strong>Code Execution</strong><p>Shell command validation &amp; allowlists</p></div></div>
-      <div class="owasp-item"><span class="code">ASI06</span><div><strong>Data Leakage</strong><p>Outbound PII &amp; secret scanning</p></div></div>
+      <div class="owasp-item"><span class="code">ASI06</span><div><strong>Data Leakage</strong><p>Forbidden zones + outbound PII &amp; secret scanning</p></div></div>
     </div>
   </div>
 </div>
@@ -497,12 +674,15 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <div class="price-card">
       <h3>Free</h3>
       <div class="price">$0</div>
-      <div class="desc">Open source CLI — forever free</div>
+      <div class="desc">Open source — forever free</div>
       <ul>
+        <li>Host Guardian (all 4 tiers)</li>
+        <li>20+ forbidden zone patterns</li>
         <li>Prompt injection scanning</li>
         <li>Jailbreak detection</li>
         <li>Secret scanning</li>
         <li>Policy engine (YAML)</li>
+        <li>Audit trail (in-memory)</li>
         <li>Community support</li>
       </ul>
       <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">Install Free</a>
@@ -523,20 +703,22 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
       <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">14-day money-back guarantee</p>
     </div>
     <div class="price-card popular">
-      <h3>Shield</h3>
-      <div class="price">$9.99<span>/mo</span></div>
+      <h3>Pro</h3>
+      <div class="price">$14.99<span>/mo</span></div>
       <div class="desc">First month free — continuous protection</div>
       <ul>
         <li>Everything in Security Kit</li>
-        <li>Continuous pattern updates</li>
-        <li>Slack/Telegram/Discord alerts</li>
-        <li>Cloud audit log sync</li>
-        <li>ML classifier (hosted)</li>
-        <li>Priority support</li>
+        <li>Threat intelligence feed</li>
+        <li>Persistent audit logs (queryable)</li>
+        <li>Real-time alerts (Telegram/Slack/Discord/email)</li>
+        <li>Security dashboard</li>
+        <li>Custom forbidden zones (YAML)</li>
+        <li>Priority pattern updates</li>
+        <li>Email support</li>
       </ul>
       <div style="display:flex;gap:8px;flex-direction:column">
         <a href="#" onclick="checkout('shield-monthly');return false" class="btn btn-primary">Start free trial</a>
-        <a href="#" onclick="checkout('shield-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$99/year — save 17%</a>
+        <a href="#" onclick="checkout('shield-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$149/year — save 17%</a>
       </div>
       <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">30 days free · 14-day refund guarantee</p>
     </div>
@@ -545,12 +727,14 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
       <div class="price">$49<span>/mo</span></div>
       <div class="desc">First month free — multi-agent security</div>
       <ul>
-        <li>Everything in Shield</li>
-        <li>5 team members</li>
-        <li>Shared policy packs</li>
-        <li>Multi-agent monitoring</li>
-        <li>Compliance reports</li>
-        <li>Dedicated support</li>
+        <li>Everything in Pro</li>
+        <li>Fleet dashboard (all machines)</li>
+        <li>Centralized policy management</li>
+        <li>Compliance reports (SOC2-style)</li>
+        <li>Shared threat intelligence</li>
+        <li>Role-based policies</li>
+        <li>Up to 10 machines</li>
+        <li>Priority support</li>
       </ul>
       <div style="display:flex;gap:8px;flex-direction:column">
         <a href="#" onclick="checkout('team-monthly');return false" class="btn btn-primary">Start free trial</a>
@@ -584,7 +768,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 <div class="container">
   <div class="section-label">Early Access</div>
   <h2 class="section-title">Get ClawMoat Pro before launch</h2>
-  <p class="section-sub" style="margin:16px auto 0">Join the waitlist for early access to the cloud dashboard, ML classifier, and team features.</p>
+  <p class="section-sub" style="margin:16px auto 0">Join the waitlist for early access to the dashboard, threat intelligence feed, and team features.</p>
   <form class="cta-form" id="waitlist-form" action="https://formsubmit.co/hello@clawmoat.com" method="POST">
     <input type="email" name="email" placeholder="you@company.com" required aria-label="Email">
     <input type="hidden" name="_subject" value="🏰 New ClawMoat Waitlist Signup">
@@ -611,10 +795,11 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="footer-grid">
     <div>
       <div class="logo" style="margin-bottom:12px"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
-      <p style="color:var(--gray);font-size:.85rem;max-width:280px">Security moat for AI agents. Protecting against prompt injection, tool misuse, and data exfiltration.</p>
+      <p style="color:var(--gray);font-size:.85rem;max-width:280px">The trust layer between AI agents and your laptop. Runtime security, permission tiers, and full audit trails.</p>
     </div>
     <div>
       <h4>Product</h4>
+      <a href="#guardian">Host Guardian</a>
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
       <a href="#demo">Demo</a>
