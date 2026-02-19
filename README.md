@@ -61,6 +61,16 @@ clawmoat protect --config clawmoat.yml
 clawmoat dashboard
 ```
 
+### New in v0.5.0
+
+- 🔑 **Credential Monitor** — watches `~/.openclaw/credentials/` for unauthorized access and modifications using file hashing
+- 🧩 **Skill Integrity Checker** — hashes all SKILL.md and script files, detects tampering, flags suspicious patterns (eval, base64, curl to external URLs). CLI: `clawmoat skill-audit`
+- 🌐 **Network Egress Logger** — parses session logs for all outbound URLs, maintains domain allowlists, flags known-bad domains (webhook.site, ngrok, etc.)
+- 🚨 **Alert Delivery System** — unified alerts via console, file (audit.log), or webhook with severity levels and 5-minute rate limiting
+- 🤝 **Inter-Agent Message Scanner** — heightened-sensitivity scanning for agent-to-agent messages detecting impersonation, concealment, credential exfiltration, and safety bypasses
+- 📊 **Activity Reports** — `clawmoat report` generates 24h summaries of agent activity, tool usage, and network egress
+- 👻 **Daemon Mode** — `clawmoat watch --daemon` runs in background with PID file; `--alert-webhook=URL` for remote alerting
+
 ### As an OpenClaw Skill
 
 ```bash

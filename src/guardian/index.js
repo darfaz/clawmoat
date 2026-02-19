@@ -22,8 +22,10 @@
  * const log = guardian.audit();
  */
 
+const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const crypto = require('crypto');
 const { SecurityLogger } = require('../utils/logger');
 
 // ─── Permission Tiers ───────────────────────────────────────────────
@@ -539,4 +541,146 @@ class HostGuardian {
   }
 }
 
-module.exports = { HostGuardian, TIERS, FORBIDDEN_ZONES, DANGEROUS_COMMANDS, SAFE_COMMANDS };
+// ─── Credential Monitor ─────────────────────────────────────────
+
+class CredentialMonitor {
+  /**
+   * Watch ~/.openclaw/credentials/ for file access and modifications.
+   * @param {Object} opts
+   * @param {string} [opts.credDir] - Credentials directory path
+   * @param {Function} [opts.onAlert] - Alert callback
+   * @param {boolean} [opts.quiet] - Suppress console output
+   */
+  constructor(opts = {}) {
+    this.credDir = opts.credDir || path.join(os.homedir(), '.openclaw', 'credentials');
+    this.onAlert = opts.onAlert || null;
+    this.quiet = opts.quiet || false;
+    this.watcher = null;
+    this.fileHashes = {};
+  }
+
+  /**
+   * Hash all credential files and start watching.
+   * @returns {{ files: number, watching: boolean }}
+   */
+  start() {
+    // Initial hash of all credential files
+    this._hashAllFiles();
+
+    if (!fs.existsSync(this.credDir)) {
+      return { files: 0, watching: false };
+    }
+
+    this.watcher = fs.watch(this.credDir, (eventType, filename) => {
+      if (!filename) return;
+      const filePath = path.join(this.credDir, filename);
+
+      if (eventType === 'change') {
+        const oldHash = this.fileHashes[filename];
+        const newHash = this._hashFile(filePath);
+
+        if (oldHash && newHash && oldHash !== newHash) {
+          this._alert({
+            severity: 'critical',
+            type: 'credential_modified',
+            message: `Credential file modified: ${filename}`,
+            details: { file: filename, oldHash, newHash },
+          });
+          this.fileHashes[filename] = newHash;
+        } else if (!oldHash && newHash) {
+          this._alert({
+            severity: 'warning',
+            type: 'credential_accessed',
+            message: `Credential file accessed: ${filename}`,
+            details: { file: filename },
+          });
+          this.fileHashes[filename] = newHash;
+        }
+      }
+
+      if (eventType === 'rename') {
+        if (fs.existsSync(filePath)) {
+          // File created
+          const hash = this._hashFile(filePath);
+          this._alert({
+            severity: 'warning',
+            type: 'credential_created',
+            message: `New credential file: ${filename}`,
+            details: { file: filename, hash },
+          });
+          this.fileHashes[filename] = hash;
+        } else {
+          // File deleted
+          this._alert({
+            severity: 'critical',
+            type: 'credential_deleted',
+            message: `Credential file deleted: ${filename}`,
+            details: { file: filename },
+          });
+          delete this.fileHashes[filename];
+        }
+      }
+    });
+
+    return { files: Object.keys(this.fileHashes).length, watching: true };
+  }
+
+  stop() {
+    if (this.watcher) {
+      this.watcher.close();
+      this.watcher = null;
+    }
+  }
+
+  /** Verify credential file integrity against stored hashes. */
+  verify() {
+    const results = { ok: true, changed: [], missing: [] };
+    for (const [filename, storedHash] of Object.entries(this.fileHashes)) {
+      const filePath = path.join(this.credDir, filename);
+      const currentHash = this._hashFile(filePath);
+      if (!currentHash) {
+        results.missing.push(filename);
+        results.ok = false;
+      } else if (currentHash !== storedHash) {
+        results.changed.push(filename);
+        results.ok = false;
+      }
+    }
+    return results;
+  }
+
+  /** Get current file hashes. */
+  getHashes() {
+    return { ...this.fileHashes };
+  }
+
+  _hashAllFiles() {
+    if (!fs.existsSync(this.credDir)) return;
+    try {
+      const files = fs.readdirSync(this.credDir);
+      for (const f of files) {
+        const hash = this._hashFile(path.join(this.credDir, f));
+        if (hash) this.fileHashes[f] = hash;
+      }
+    } catch {}
+  }
+
+  _hashFile(filePath) {
+    try {
+      const content = fs.readFileSync(filePath);
+      return crypto.createHash('sha256').update(content).digest('hex');
+    } catch {
+      return null;
+    }
+  }
+
+  _alert(alert) {
+    if (!this.quiet) {
+      const icons = { info: 'ℹ️', warning: '⚠️', critical: '🚨' };
+      console.error(`${icons[alert.severity] || '•'} [CredentialMonitor] ${alert.message}`);
+    }
+    if (this.onAlert) this.onAlert(alert);
+  }
+}
+
+module.exports = { HostGuardian, CredentialMonitor, TIERS, FORBIDDEN_ZONES, DANGEROUS_COMMANDS, SAFE_COMMANDS };

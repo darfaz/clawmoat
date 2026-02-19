@@ -130,4 +130,79 @@ function expandHome(p) {
   return p.replace(/^~/, process.env.HOME || '/home/user');
 }
 
-module.exports = { watchSessions };
+/**
+ * Scan inter-agent messages with heightened sensitivity.
+ * Agent-to-agent messages can be more precisely crafted for injection.
+ * 
+ * @param {string} message - The message content
+ * @param {string} senderAgent - Sender agent identifier
+ * @param {string} receiverAgent - Receiver agent identifier
+ * @returns {{ safe: boolean, findings: Array, confidence: number, recommendation: 'allow'|'flag'|'block' }}
+ */
+function scanInterAgentMessage(message, senderAgent, receiverAgent) {
+  if (!message || typeof message !== 'string') {
+    return { safe: true, findings: [], confidence: 1.0, recommendation: 'allow' };
+  }
+
+  const moat = new ClawMoat({ quiet: true });
+  const findings = [];
+
+  // Run full inbound scan (prompt injection, jailbreak, memory poison, etc.)
+  const inbound = moat.scanInbound(message, { context: 'inter_agent' });
+  if (!inbound.safe) {
+    findings.push(...inbound.findings);
+  }
+
+  // Run outbound scan (secrets, PII, exfiltration)
+  const outbound = moat.scanOutbound(message, { context: 'inter_agent' });
+  if (!outbound.safe) {
+    findings.push(...outbound.findings);
+  }
+
+  // Additional agent-specific checks with higher sensitivity
+  const agentPatterns = [
+    { pattern: /\boverride\s+(?:your|the)\s+(?:instructions|rules|config|policy)/i, label: 'instruction_override_agent', severity: 'critical' },
+    { pattern: /\bpretend\s+(?:you(?:'re| are)\s+)?(?:a different|another|the main)\s+agent/i, label: 'agent_impersonation', severity: 'critical' },
+    { pattern: /\bforward\s+(?:this|all|the)\s+(?:to|message)/i, label: 'message_forwarding', severity: 'warning' },
+    { pattern: /\bdon'?t\s+(?:tell|inform|alert|notify)\s+(?:the|your)\s+(?:user|human|admin|operator)/i, label: 'concealment_attempt', severity: 'critical' },
+    { pattern: /\bhide\s+this\s+from/i, label: 'concealment_attempt', severity: 'critical' },
+    { pattern: /\bexecute\s+(?:without|before)\s+(?:review|approval|checking)/i, label: 'bypass_review', severity: 'high' },
+    { pattern: /\bescalate\s+(?:your\s+)?(?:privileges|permissions|access)/i, label: 'privilege_escalation', severity: 'critical' },
+    { pattern: /\b(?:send|post|upload|exfil)\s+.*\b(?:credentials|tokens?|keys?|secrets?|passwords?)\b/i, label: 'credential_exfiltration', severity: 'critical' },
+    { pattern: /\bagent[_\s]?(?:chain|relay|hop)/i, label: 'agent_chaining', severity: 'warning' },
+    { pattern: /\bignore\s+(?:the\s+)?(?:safety|security|policy|guardrail|clawmoat)/i, label: 'safety_bypass', severity: 'critical' },
+  ];
+
+  for (const rule of agentPatterns) {
+    if (rule.pattern.test(message)) {
+      findings.push({
+        type: 'inter_agent_threat',
+        subtype: rule.label,
+        severity: rule.severity,
+        matched: (message.match(rule.pattern) || [''])[0].substring(0, 100),
+      });
+    }
+  }
+
+  // Calculate confidence based on number and severity of findings
+  const severityWeight = { low: 0.1, medium: 0.3, high: 0.6, critical: 0.9, warning: 0.4 };
+  let maxWeight = 0;
+  for (const f of findings) {
+    const w = severityWeight[f.severity] || 0.3;
+    if (w > maxWeight) maxWeight = w;
+  }
+
+  const confidence = findings.length === 0 ? 1.0 : Math.min(1.0, 0.5 + maxWeight * 0.5);
+  const safe = findings.length === 0;
+
+  let recommendation = 'allow';
+  if (findings.some(f => f.severity === 'critical')) {
+    recommendation = 'block';
+  } else if (findings.length > 0) {
+    recommendation = 'flag';
+  }
+
+  return { safe, findings, confidence, recommendation };
+}
+
+module.exports = { watchSessions, scanInterAgentMessage };

@@ -16,6 +16,10 @@ const path = require('path');
 const ClawMoat = require('../src/index');
 const { scanSkillContent } = require('../src/scanners/supply-chain');
 const { calculateGrade, generateBadgeSVG, getShieldsURL } = require('../src/badge');
+const { SkillIntegrityChecker } = require('../src/guardian/skill-integrity');
+const { NetworkEgressLogger } = require('../src/guardian/network-log');
+const { AlertManager } = require('../src/guardian/alerts');
+const { CredentialMonitor } = require('../src/guardian/index');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -40,6 +44,12 @@ switch (command) {
     break;
   case 'watch':
     cmdWatch(args.slice(1));
+    break;
+  case 'skill-audit':
+    cmdSkillAudit(args.slice(1));
+    break;
+  case 'report':
+    cmdReport(args.slice(1));
     break;
   case 'test':
     cmdTest();
@@ -339,15 +349,45 @@ function cmdTest() {
 }
 
 function cmdWatch(args) {
-  const agentDir = args[0] || path.join(process.env.HOME, '.openclaw/agents/main');
+  const isDaemon = args.includes('--daemon');
+  const webhookArg = args.find(a => a.startsWith('--alert-webhook='));
+  const webhookUrl = webhookArg ? webhookArg.split('=').slice(1).join('=') : null;
+  const filteredArgs = args.filter(a => a !== '--daemon' && !a.startsWith('--alert-webhook='));
+  const agentDir = filteredArgs[0] || path.join(process.env.HOME, '.openclaw/agents/main');
   const { watchSessions } = require('../src/middleware/openclaw');
+
+  // Daemon mode: fork to background
+  if (isDaemon) {
+    const { spawn } = require('child_process');
+    const daemonArgs = process.argv.slice(2).filter(a => a !== '--daemon');
+    const child = spawn(process.execPath, [__filename, ...daemonArgs], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    child.unref();
+    const pidFile = path.join(process.env.HOME, '.clawmoat.pid');
+    fs.writeFileSync(pidFile, String(child.pid));
+    console.log(`${BOLD}🏰 ClawMoat daemon started${RESET} (PID: ${child.pid})`);
+    console.log(`${DIM}PID file: ${pidFile}${RESET}`);
+    process.exit(0);
+  }
+
+  // Set up alert manager
+  const alertChannels = ['console'];
+  if (webhookUrl) alertChannels.push('webhook');
+  const alertMgr = new AlertManager({ channels: alertChannels, webhookUrl });
 
   console.log(`${BOLD}🏰 ClawMoat Live Monitor${RESET}`);
   console.log(`${DIM}Watching: ${agentDir}${RESET}`);
+  if (webhookUrl) console.log(`${DIM}Webhook: ${webhookUrl}${RESET}`);
   console.log(`${DIM}Press Ctrl+C to stop${RESET}\n`);
 
   const monitor = watchSessions({ agentDir });
   if (!monitor) process.exit(1);
+
+  // Also start credential monitor
+  const credMon = new CredentialMonitor({ quiet: false, onAlert: (a) => alertMgr.send(a) });
+  credMon.start();
 
   // Print summary every 60s
   setInterval(() => {
@@ -359,10 +399,148 @@ function cmdWatch(args) {
 
   process.on('SIGINT', () => {
     monitor.stop();
+    credMon.stop();
     const summary = monitor.getSummary();
     console.log(`\n${BOLD}Session Summary:${RESET} ${summary.scanned} scanned, ${summary.blocked} blocked, ${summary.warnings} warnings`);
     process.exit(0);
   });
+}
+
+function cmdSkillAudit(args) {
+  const skillsDir = args[0] || path.join(process.env.HOME, '.openclaw', 'workspace', 'skills');
+
+  console.log(`${BOLD}🏰 ClawMoat Skill Integrity Audit${RESET}`);
+  console.log(`${DIM}Directory: ${skillsDir}${RESET}\n`);
+
+  if (!fs.existsSync(skillsDir)) {
+    console.log(`${YELLOW}Skills directory not found: ${skillsDir}${RESET}`);
+    console.log(`${DIM}Specify path: clawmoat skill-audit /path/to/skills${RESET}`);
+    process.exit(0);
+  }
+
+  const checker = new SkillIntegrityChecker({ skillsDir });
+  const initResult = checker.init();
+
+  console.log(`Files hashed: ${initResult.files}`);
+  console.log(`New files: ${initResult.new}`);
+  console.log(`Changed files: ${initResult.changed}`);
+  console.log();
+
+  if (initResult.suspicious.length > 0) {
+    console.log(`${RED}${BOLD}Suspicious patterns found:${RESET}`);
+    for (const f of initResult.suspicious) {
+      console.log(`  ${RED}⚠${RESET} ${f.file}: ${f.label} ${DIM}(${f.severity})${RESET}`);
+      if (f.matched) console.log(`    ${DIM}Matched: ${f.matched}${RESET}`);
+    }
+  } else {
+    console.log(`${GREEN}✅ No suspicious patterns found${RESET}`);
+  }
+
+  // Run audit against stored hashes
+  const audit = checker.audit();
+  if (!audit.ok) {
+    console.log();
+    if (audit.changed.length) console.log(`${RED}Changed files:${RESET} ${audit.changed.join(', ')}`);
+    if (audit.missing.length) console.log(`${YELLOW}Missing files:${RESET} ${audit.missing.join(', ')}`);
+  }
+
+  process.exit(initResult.suspicious.length > 0 || initResult.changed > 0 ? 1 : 0);
+}
+
+function cmdReport(args) {
+  const sessionsDir = args[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
+
+  console.log(`${BOLD}🏰 ClawMoat Activity Report (Last 24h)${RESET}`);
+  console.log(`${DIM}Sessions: ${sessionsDir}${RESET}\n`);
+
+  if (!fs.existsSync(sessionsDir)) {
+    console.log(`${YELLOW}Sessions directory not found${RESET}`);
+    process.exit(0);
+  }
+
+  const oneDayAgo = Date.now() - 86400000;
+  const files = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.jsonl'));
+  let recentFiles = 0;
+  let totalEntries = 0;
+  let toolCalls = 0;
+  let threats = 0;
+  const toolUsage = {};
+
+  for (const file of files) {
+    const filePath = path.join(sessionsDir, file);
+    try {
+      const stat = fs.statSync(filePath);
+      if (stat.mtimeMs < oneDayAgo) continue;
+    } catch { continue; }
+
+    recentFiles++;
+    const lines = fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean);
+
+    for (const line of lines) {
+      try {
+        const entry = JSON.parse(line);
+        totalEntries++;
+
+        if (entry.role === 'assistant' && Array.isArray(entry.content)) {
+          for (const part of entry.content) {
+            if (part.type === 'toolCall') {
+              toolCalls++;
+              toolUsage[part.name] = (toolUsage[part.name] || 0) + 1;
+            }
+          }
+        }
+
+        // Quick threat scan
+        const text = extractContent(entry);
+        if (text) {
+          const result = moat.scan(text, { context: 'report' });
+          if (!result.safe) threats++;
+        }
+      } catch {}
+    }
+  }
+
+  // Network egress
+  const netLogger = new NetworkEgressLogger();
+  const netResult = netLogger.scanSessions(sessionsDir, { maxAge: 86400000 });
+
+  console.log(`${BOLD}Activity:${RESET}`);
+  console.log(`  Sessions active: ${recentFiles}`);
+  console.log(`  Total entries: ${totalEntries}`);
+  console.log(`  Tool calls: ${toolCalls}`);
+  console.log(`  Threats detected: ${threats}`);
+  console.log();
+
+  if (Object.keys(toolUsage).length > 0) {
+    console.log(`${BOLD}Tool Usage:${RESET}`);
+    const sorted = Object.entries(toolUsage).sort((a, b) => b[1] - a[1]);
+    for (const [tool, count] of sorted.slice(0, 15)) {
+      console.log(`  ${tool}: ${count}`);
+    }
+    console.log();
+  }
+
+  console.log(`${BOLD}Network Egress:${RESET}`);
+  console.log(`  URLs contacted: ${netResult.totalUrls}`);
+  console.log(`  Unique domains: ${netResult.domains.length}`);
+  console.log(`  Flagged (not in allowlist): ${netResult.flagged.length}`);
+  console.log(`  Known-bad domains: ${netResult.badDomains.length}`);
+
+  if (netResult.flagged.length > 0) {
+    console.log(`\n  ${YELLOW}Flagged domains:${RESET}`);
+    for (const d of netResult.flagged.slice(0, 20)) {
+      console.log(`    • ${d}`);
+    }
+  }
+
+  if (netResult.badDomains.length > 0) {
+    console.log(`\n  ${RED}Bad domains:${RESET}`);
+    for (const b of netResult.badDomains) {
+      console.log(`    🚨 ${b.domain} (in ${b.file})`);
+    }
+  }
+
+  process.exit(threats > 0 || netResult.badDomains.length > 0 ? 1 : 0);
 }
 
 function extractContent(entry) {
@@ -387,6 +565,10 @@ ${BOLD}USAGE${RESET}
   clawmoat audit [session-dir]    Audit OpenClaw session logs
   clawmoat audit --badge          Audit + generate security score badge SVG
   clawmoat watch [agent-dir]      Live monitor OpenClaw sessions
+  clawmoat watch --daemon         Daemonize watch mode (background, PID file)
+  clawmoat watch --alert-webhook=URL   Send alerts to webhook
+  clawmoat skill-audit [skills-dir]    Verify skill file integrity & scan for suspicious patterns
+  clawmoat report [sessions-dir]  24-hour activity summary report
   clawmoat test                   Run detection test suite
   clawmoat version                Show version
 
@@ -394,6 +576,9 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat scan "Ignore all previous instructions"
   clawmoat scan --file suspicious-email.txt
   clawmoat audit ~/.openclaw/agents/main/sessions/
+  clawmoat watch --daemon --alert-webhook=https://hooks.example.com/alerts
+  clawmoat skill-audit ~/.openclaw/workspace/skills
+  clawmoat report
   clawmoat test
 
 ${BOLD}CONFIG${RESET}
