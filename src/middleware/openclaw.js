@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const ClawMoat = require('../index');
+const { InsiderThreatDetector } = require('../guardian/insider-threat');
 
 /**
  * Watch OpenClaw session files for security events
@@ -30,6 +31,7 @@ function watchSessions(opts = {}) {
 
   // Track file sizes to only read new content
   const filePositions = {};
+  let monitor = null;
 
   const watcher = fs.watch(sessionsDir, (eventType, filename) => {
     if (!filename || !filename.endsWith('.jsonl')) return;
@@ -57,18 +59,43 @@ function watchSessions(opts = {}) {
         try {
           const entry = JSON.parse(line);
           processEntry(moat, entry, filename);
+          // Track for insider threat detection
+          if (monitor && monitor._trackEntry) monitor._trackEntry(entry, filename);
         } catch {}
       }
     } catch {}
   });
 
-  return {
+  // Run insider threat detection on accumulated transcript
+  const insiderDetector = new InsiderThreatDetector();
+  const sessionTranscripts = {};
+
+  monitor = {
     moat,
     watcher,
+    insiderDetector,
     stop: () => watcher.close(),
     getEvents: (filter) => moat.getEvents(filter),
     getSummary: () => moat.getSummary(),
+    getInsiderThreats: (sessionFile) => {
+      const transcript = sessionTranscripts[sessionFile] || [];
+      return insiderDetector.analyze(transcript);
+    },
+    _trackEntry: (entry, sessionFile) => {
+      if (!sessionTranscripts[sessionFile]) sessionTranscripts[sessionFile] = [];
+      sessionTranscripts[sessionFile].push(entry);
+      // Periodic insider threat scan (every 20 entries)
+      const t = sessionTranscripts[sessionFile];
+      if (t.length % 20 === 0) {
+        const result = insiderDetector.analyze(t);
+        if (result.recommendation === 'block' || result.recommendation === 'alert') {
+          console.error(`[ClawMoat] 🚨 INSIDER THREAT in ${sessionFile}: score=${result.riskScore}, recommendation=${result.recommendation}, threats=${result.threats.length}`);
+        }
+      }
+    },
   };
+
+  return monitor;
 }
 
 function processEntry(moat, entry, sessionFile) {

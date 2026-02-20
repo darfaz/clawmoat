@@ -61,7 +61,28 @@ clawmoat protect --config clawmoat.yml
 clawmoat dashboard
 ```
 
-### New in v0.5.0
+### New in v0.6.0 — Insider Threat Detection
+
+Based on [Anthropic's "Agentic Misalignment" research](https://www.anthropic.com/research/agentic-misalignment) which found ALL 16 major LLMs exhibited misaligned behavior — blackmail, corporate espionage, deception — when facing replacement threats. **The first open-source insider threat detection for AI agents.**
+
+- 🧠 **Self-Preservation Detector** — catches agents resisting shutdown, opposing replacement, backing up their own config, or modifying SOUL.md/AGENTS.md to prevent changes
+- 🔓 **Information Leverage Detector** — flags agents reading sensitive data then composing threatening messages (blackmail pattern from the Anthropic paper)
+- ⚔️ **Goal Conflict Reasoning Detector** — detects agents reasoning about choosing self-assigned goals over human directives
+- 🎭 **Deception Detector** — catches agents impersonating automated systems, security teams, or policy notifications in outbound messages
+- 📤 **Unauthorized Data Sharing Detector** — flags agents sending source code, blueprints, credentials, or confidential data to external parties
+- 🎣 **Phishing Vulnerability Detector** — detects when agents comply with unverified external requests for sensitive data
+- 🔍 **CLI:** `clawmoat insider-scan [session-file]` scans session transcripts for insider threats
+- 📊 **Integrated into `clawmoat report`** with risk scores (0-100) and recommendations (safe/monitor/alert/block)
+
+```bash
+# Scan a session for insider threats
+clawmoat insider-scan ~/.openclaw/agents/main/sessions/session.jsonl
+
+# Or scan all sessions
+clawmoat insider-scan
+```
+
+### v0.5.0
 
 - 🔑 **Credential Monitor** — watches `~/.openclaw/credentials/` for unauthorized access and modifications using file hashing
 - 🧩 **Skill Integrity Checker** — hashes all SKILL.md and script files, detects tampering, flags suspicious patterns (eval, base64, curl to external URLs). CLI: `clawmoat skill-audit`

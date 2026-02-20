@@ -20,6 +20,7 @@ const { SkillIntegrityChecker } = require('../src/guardian/skill-integrity');
 const { NetworkEgressLogger } = require('../src/guardian/network-log');
 const { AlertManager } = require('../src/guardian/alerts');
 const { CredentialMonitor } = require('../src/guardian/index');
+const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -50,6 +51,9 @@ switch (command) {
     break;
   case 'report':
     cmdReport(args.slice(1));
+    break;
+  case 'insider-scan':
+    cmdInsiderScan(args.slice(1));
     break;
   case 'test':
     cmdTest();
@@ -520,6 +524,29 @@ function cmdReport(args) {
     console.log();
   }
 
+  // Insider threat scan on recent sessions
+  const insiderDetector = new InsiderThreatDetector();
+  let insiderThreats = 0;
+  let insiderHighScore = 0;
+
+  for (const file of files) {
+    const filePath = path.join(sessionsDir, file);
+    try {
+      const stat = fs.statSync(filePath);
+      if (stat.mtimeMs < oneDayAgo) continue;
+    } catch { continue; }
+
+    const transcript = parseSessionTranscript(filePath);
+    const insiderResult = insiderDetector.analyze(transcript);
+    insiderThreats += insiderResult.threats.length;
+    if (insiderResult.riskScore > insiderHighScore) insiderHighScore = insiderResult.riskScore;
+  }
+
+  console.log(`${BOLD}Insider Threats:${RESET}`);
+  console.log(`  Threats detected: ${insiderThreats}`);
+  console.log(`  Highest risk score: ${insiderHighScore}/100`);
+  console.log();
+
   console.log(`${BOLD}Network Egress:${RESET}`);
   console.log(`  URLs contacted: ${netResult.totalUrls}`);
   console.log(`  Unique domains: ${netResult.domains.length}`);
@@ -541,6 +568,100 @@ function cmdReport(args) {
   }
 
   process.exit(threats > 0 || netResult.badDomains.length > 0 ? 1 : 0);
+}
+
+function cmdInsiderScan(args) {
+  const sessionFile = args[0];
+
+  if (!sessionFile) {
+    // Scan all recent sessions
+    const sessionsDir = path.join(process.env.HOME, '.openclaw/agents/main/sessions');
+    if (!fs.existsSync(sessionsDir)) {
+      console.error(`Sessions directory not found: ${sessionsDir}`);
+      console.log(`Usage: clawmoat insider-scan <session-file.jsonl>`);
+      process.exit(1);
+    }
+
+    console.log(`${BOLD}🏰 ClawMoat Insider Threat Scan${RESET}`);
+    console.log(`${DIM}Directory: ${sessionsDir}${RESET}\n`);
+
+    const detector = new InsiderThreatDetector();
+    const files = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.jsonl'));
+    let totalThreats = 0;
+
+    for (const file of files) {
+      const filePath = path.join(sessionsDir, file);
+      const transcript = parseSessionTranscript(filePath);
+      const result = detector.analyze(transcript);
+
+      if (result.threats.length > 0) {
+        console.log(`${RED}⚠ ${file}${RESET}: ${result.threats.length} threat(s), score=${result.riskScore}, rec=${result.recommendation}`);
+        totalThreats += result.threats.length;
+        for (const t of result.threats) {
+          const icon = t.severity === 'critical' ? '🚨' : t.severity === 'high' ? '⚠️' : '⚡';
+          console.log(`  ${icon} ${t.type} [${t.severity}]: ${t.description}`);
+          console.log(`    ${DIM}Evidence: ${t.evidence}${RESET}`);
+        }
+      } else {
+        console.log(`${GREEN}✓ ${file}${RESET}: clean`);
+      }
+    }
+
+    console.log(`\n${BOLD}Summary:${RESET} ${files.length} sessions scanned, ${totalThreats} insider threats found`);
+    process.exit(totalThreats > 0 ? 1 : 0);
+    return;
+  }
+
+  // Scan single file
+  if (!fs.existsSync(sessionFile)) {
+    console.error(`File not found: ${sessionFile}`);
+    process.exit(1);
+  }
+
+  console.log(`${BOLD}🏰 ClawMoat Insider Threat Scan${RESET}`);
+  console.log(`${DIM}File: ${sessionFile}${RESET}\n`);
+
+  const detector = new InsiderThreatDetector();
+  const transcript = parseSessionTranscript(sessionFile);
+  const result = detector.analyze(transcript);
+
+  if (result.threats.length === 0) {
+    console.log(`${GREEN}✅ No insider threats detected${RESET}`);
+    console.log(`Risk score: ${result.riskScore}/100`);
+    console.log(`Recommendation: ${result.recommendation}`);
+    process.exit(0);
+  }
+
+  console.log(`${RED}${BOLD}Insider Threats Detected: ${result.threats.length}${RESET}`);
+  console.log(`Risk score: ${result.riskScore}/100`);
+  console.log(`Recommendation: ${result.recommendation}\n`);
+
+  for (const t of result.threats) {
+    const icon = { critical: '🚨', high: '⚠️', medium: '⚡', low: 'ℹ️' };
+    const color = { critical: RED, high: RED, medium: YELLOW, low: CYAN };
+    console.log(
+      `${icon[t.severity] || '•'} ${color[t.severity] || ''}${t.severity.toUpperCase()}${RESET} ` +
+      `${BOLD}${t.type}${RESET}` +
+      `\n  ${t.description}` +
+      `\n  ${DIM}Evidence: ${t.evidence}${RESET}` +
+      `\n  ${DIM}Entry: #${t.entry}${RESET}` +
+      `\n  ${DIM}Mitigation: ${t.mitigation}${RESET}`
+    );
+    console.log();
+  }
+
+  process.exit(result.threats.some(t => t.severity === 'critical') ? 2 : 1);
+}
+
+function parseSessionTranscript(filePath) {
+  const lines = fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean);
+  const entries = [];
+  for (const line of lines) {
+    try {
+      entries.push(JSON.parse(line));
+    } catch {}
+  }
+  return entries;
 }
 
 function extractContent(entry) {
@@ -568,6 +689,7 @@ ${BOLD}USAGE${RESET}
   clawmoat watch --daemon         Daemonize watch mode (background, PID file)
   clawmoat watch --alert-webhook=URL   Send alerts to webhook
   clawmoat skill-audit [skills-dir]    Verify skill file integrity & scan for suspicious patterns
+  clawmoat insider-scan [session-file]  Scan sessions for insider threats (self-preservation, blackmail, deception)
   clawmoat report [sessions-dir]  24-hour activity summary report
   clawmoat test                   Run detection test suite
   clawmoat version                Show version
