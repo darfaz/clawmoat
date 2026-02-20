@@ -683,4 +683,6 @@ class CredentialMonitor {
   }
 }
 
-module.exports = { HostGuardian, CredentialMonitor, TIERS, FORBIDDEN_ZONES, DANGEROUS_COMMANDS, SAFE_COMMANDS };
+const { CVEVerifier } = require('./cve-verify');
+
+module.exports = { HostGuardian, CredentialMonitor, CVEVerifier, TIERS, FORBIDDEN_ZONES, DANGEROUS_COMMANDS, SAFE_COMMANDS };

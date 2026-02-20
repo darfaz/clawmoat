@@ -19,7 +19,7 @@ const { calculateGrade, generateBadgeSVG, getShieldsURL } = require('../src/badg
 const { SkillIntegrityChecker } = require('../src/guardian/skill-integrity');
 const { NetworkEgressLogger } = require('../src/guardian/network-log');
 const { AlertManager } = require('../src/guardian/alerts');
-const { CredentialMonitor } = require('../src/guardian/index');
+const { CredentialMonitor, CVEVerifier } = require('../src/guardian/index');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -51,6 +51,9 @@ switch (command) {
   case 'report':
     cmdReport(args.slice(1));
     break;
+  case 'verify-cve':
+    cmdVerifyCve(args.slice(1));
+    break;
   case 'test':
     cmdTest();
     break;
@@ -65,6 +68,85 @@ switch (command) {
   default:
     printHelp();
     break;
+}
+
+async function cmdVerifyCve(args) {
+  const cveId = args[0];
+  const suspiciousUrl = args[1] || null;
+
+  if (!cveId) {
+    console.error('Usage: clawmoat verify-cve CVE-XXXX-XXXXX [url]');
+    process.exit(1);
+  }
+
+  if (!CVEVerifier.isValidCVEFormat(cveId)) {
+    console.error(`${RED}Invalid CVE format: ${cveId}${RESET}`);
+    console.error('Expected format: CVE-YYYY-NNNNN');
+    process.exit(1);
+  }
+
+  console.log(`${BOLD}🏰 ClawMoat CVE Verifier${RESET}\n`);
+  console.log(`${DIM}Looking up ${cveId} in GitHub Advisory Database...${RESET}\n`);
+
+  const verifier = new CVEVerifier();
+  const result = await verifier.verify(cveId, suspiciousUrl);
+
+  if (result.error) {
+    console.error(`${RED}Error: ${result.error}${RESET}`);
+    process.exit(1);
+  }
+
+  if (result.valid) {
+    console.log(`${GREEN}✅ VERIFIED — Real CVE${RESET}\n`);
+    console.log(`  ${BOLD}CVE:${RESET}        ${result.cveId}`);
+    console.log(`  ${BOLD}GHSA:${RESET}       ${result.ghsaId || 'N/A'}`);
+    console.log(`  ${BOLD}Severity:${RESET}   ${colorSeverity(result.severity)}`);
+    console.log(`  ${BOLD}Summary:${RESET}    ${result.summary || 'N/A'}`);
+    console.log(`  ${BOLD}Published:${RESET}  ${result.publishedAt || 'N/A'}`);
+    console.log(`  ${BOLD}URL:${RESET}        ${result.htmlUrl || 'N/A'}`);
+
+    if (result.affectedPackages.length > 0) {
+      console.log(`\n  ${BOLD}Affected Packages:${RESET}`);
+      for (const pkg of result.affectedPackages) {
+        console.log(`    • ${pkg.ecosystem}/${pkg.name} ${DIM}(${pkg.vulnerableRange || 'unknown range'})${RESET}`);
+      }
+    }
+
+    if (result.references.length > 0) {
+      console.log(`\n  ${BOLD}References:${RESET}`);
+      for (const ref of result.references.slice(0, 5)) {
+        console.log(`    ${DIM}${ref}${RESET}`);
+      }
+    }
+  } else {
+    console.log(`${YELLOW}⚠️  NOT FOUND — Possible phishing${RESET}\n`);
+    console.log(`  ${cveId} was not found in the GitHub Advisory Database.`);
+    console.log(`  This could mean:`);
+    console.log(`    • The CVE is fabricated (common in phishing/social engineering)`);
+    console.log(`    • The CVE exists but isn't indexed by GitHub yet`);
+    console.log(`    • The CVE ID is mistyped`);
+  }
+
+  if (result.urlCheck) {
+    console.log();
+    if (result.urlCheck.legitimate) {
+      console.log(`  ${GREEN}🔗 URL Check: ${result.urlCheck.reason}${RESET}`);
+    } else {
+      console.log(`  ${RED}🔗 URL Check: ${result.urlCheck.reason}${RESET}`);
+    }
+  }
+
+  process.exit(result.valid ? 0 : 1);
+}
+
+function colorSeverity(severity) {
+  if (!severity) return 'N/A';
+  const s = severity.toLowerCase();
+  if (s === 'critical') return `${RED}${BOLD}CRITICAL${RESET}`;
+  if (s === 'high') return `${RED}HIGH${RESET}`;
+  if (s === 'medium') return `${YELLOW}MEDIUM${RESET}`;
+  if (s === 'low') return `${CYAN}LOW${RESET}`;
+  return severity;
 }
 
 function cmdScan(args) {
@@ -569,6 +651,7 @@ ${BOLD}USAGE${RESET}
   clawmoat watch --alert-webhook=URL   Send alerts to webhook
   clawmoat skill-audit [skills-dir]    Verify skill file integrity & scan for suspicious patterns
   clawmoat report [sessions-dir]  24-hour activity summary report
+  clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat version                Show version
 
