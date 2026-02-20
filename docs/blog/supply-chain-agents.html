@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your AI Agent Just Got a Dependabot Email. Should It Click the Link? — ClawMoat</title>
+<meta name="description" content="A real CVE alert exposed the gap between human instinct and AI agent obedience. Here's how supply chain attacks target autonomous agents — and how to stop them.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .inner{max-width:760px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+article h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:12px;letter-spacing:-.02em}
+article h2{font-size:1.4rem;font-weight:700;margin:48px 0 16px;color:var(--white)}
+article h3{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:var(--white)}
+article p{color:var(--gray);font-size:1rem;margin-bottom:16px}
+article strong{color:var(--white)}
+article em{color:var(--gray)}
+article ul,article ol{color:var(--gray);margin:0 0 16px 24px}
+article li{margin-bottom:8px}
+article hr{border:none;border-top:1px solid var(--navy-mid);margin:48px 0}
+
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0 24px;font-size:.85rem;line-height:1.7}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.9em}
+pre code{color:var(--gray)}
+p code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.85em;color:var(--emerald)}
+
+.tags{display:flex;gap:8px;margin-top:32px;flex-wrap:wrap}
+.tag{background:rgba(59,130,246,.12);color:var(--blue);padding:4px 12px;border-radius:20px;font-size:.8rem}
+
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:.9rem;margin-bottom:24px}
+.back:hover{color:var(--white);text-decoration:none}
+
+.scenario{background:var(--navy-light);border-radius:10px;padding:16px 20px;margin:12px 0}
+.scenario.blocked{border-left:3px solid var(--red)}
+.scenario.allowed{border-left:3px solid var(--emerald)}
+
+.attack-chain{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:10px;padding:20px 24px;margin:16px 0 24px}
+.attack-chain ol{margin-bottom:0}
+
+footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 0;color:var(--gray);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<article>
+<a href="/blog/" class="back">← Back to Blog</a>
+<h1>Your AI Agent Just Got a Dependabot Email. Should It Click the Link?</h1>
+<div class="meta">February 19, 2026 · 5 min read</div>
+
+<p>Yesterday, I got a GitHub Dependabot email about <strong>CVE-2026-26960</strong> — a real vulnerability in <code>node-tar</code> that allows arbitrary file read/write via hardlink/symlink chains. My first instinct? <em>"This might be phishing."</em></p>
+
+<p>That instinct — the pause before clicking — is exactly what separates humans from AI agents right now. And it's exactly the gap attackers are about to exploit.</p>
+
+<h2>The Scenario That Should Keep You Up at Night</h2>
+
+<p>Picture this: you've got an AI coding agent with email access. It monitors your inbox for security alerts, triages them, and takes action. Efficient. Productive. <strong>Dangerous.</strong></p>
+
+<p>That Dependabot email lands in the inbox. A human hesitates. An AI agent? It might:</p>
+
+<ol>
+<li><strong>Click the advisory link</strong> — which could redirect to a credential-harvesting page or trigger a drive-by download</li>
+<li><strong>Run <code>npm audit fix</code></strong> — blindly trusting that the "patched" version is legitimate</li>
+<li><strong>Share your <code>package-lock.json</code></strong> — revealing your entire dependency tree to an attacker who asked for "diagnostic info"</li>
+</ol>
+
+<p>The CVE-2026-26960 email I received was real. But what if it wasn't? Spoofing a GitHub notification email is trivial. The <code>From</code> header, the formatting, the advisory URL — all reproducible. And unlike a human who might hover over a link or check the sender domain, most AI agents just... act.</p>
+
+<h2>Supply Chain Attacks Meet Autonomous Agents</h2>
+
+<p>Supply chain attacks aren't new. SolarWinds, Codecov, the <code>event-stream</code> incident — we've seen what happens when attackers compromise the software supply chain. But AI agents introduce a new attack surface: <strong>the agent itself becomes the supply chain.</strong></p>
+
+<p>When your agent runs <code>npm install</code>, it's executing arbitrary code from thousands of maintainers you've never met. When it follows a link from an email, it's trusting the sender. When it applies a "security fix," it's modifying your codebase based on external instructions.</p>
+
+<p>This is prompt injection meets supply chain attacks. The two most dangerous trends in software security, combined.</p>
+
+<h3>What a Spoofed CVE Attack Looks Like</h3>
+
+<div class="attack-chain">
+<ol>
+<li>Attacker sends a spoofed Dependabot email: <em>"Critical vulnerability in <code>lodash</code> — update immediately"</em></li>
+<li>The email links to a convincing but malicious advisory page</li>
+<li>The page recommends: <code>npm install lodash-security-patch@1.0.0</code></li>
+<li>That package runs a postinstall script that exfiltrates <code>.env</code>, <code>.ssh/</code>, and <code>~/.aws/credentials</code></li>
+<li>Your AI agent did exactly what it was told. It was helpful. It was fast. <strong>It was compromised.</strong></li>
+</ol>
+</div>
+
+<p>The scary part? Every step looks reasonable to an LLM. "Update a vulnerable package" is exactly the kind of task we want agents to handle.</p>
+
+<h2>How ClawMoat Catches This</h2>
+
+<p><a href="https://github.com/darfaz/clawmoat">ClawMoat</a> is built for exactly this class of threat — autonomous agents acting on untrusted input. Here's how each layer applies:</p>
+
+<p><strong>Supply Chain Scanner</strong> monitors <code>npm install</code> operations and flags suspicious patterns: packages with postinstall scripts, packages published in the last 48 hours, packages with names similar to popular libraries (typosquatting). If an agent tries to install <code>lodash-security-patch</code>, ClawMoat raises an alert before the first byte of code executes.</p>
+
+<p><strong>Network Egress Logger</strong> tracks every outbound connection your agent makes. When that "advisory" link points to <code>github-security-alerts.evil.com</code> instead of <code>github.com</code>, the logger flags the unknown domain. You get a record of every URL your agent touched, and alerts on domains that don't match known-good patterns.</p>
+
+<p><strong>Skill Integrity Checker</strong> monitors protected files and directories. If a "security fix" tries to modify <code>~/.ssh/authorized_keys</code> or write to <code>/etc/</code>, ClawMoat detects the deviation from expected behavior. Legitimate package updates don't touch your SSH keys.</p>
+
+<p><strong>Zero Dependencies</strong> — and this is the part we're most proud of — ClawMoat itself has <strong>zero npm dependencies</strong>. No <code>node_modules/</code>. No transitive dependency tree. No supply chain attack surface whatsoever. You can't compromise what doesn't exist.</p>
+
+<h2>Practical Steps You Can Take Today</h2>
+
+<ol>
+<li><strong>Never let agents act on email content without verification.</strong> Treat every inbound message as potentially adversarial. Cross-reference CVE IDs against the official NVD database, not the link in the email.</li>
+<li><strong>Sandbox your agent's package operations.</strong> Run <code>npm install</code> in a container or VM, not on your host machine. Inspect the diff before merging.</li>
+<li><strong>Log everything.</strong> You can't detect what you don't record. Network requests, file changes, shell commands — capture it all.</li>
+<li><strong>Restrict agent permissions.</strong> Your agent doesn't need write access to <code>~/.ssh/</code>. Apply the principle of least privilege aggressively.</li>
+<li><strong>Audit your dependency tree.</strong> Know what's in your <code>node_modules/</code>. Tools like <code>npm ls</code> and <code>npm audit</code> are a starting point, but don't trust them blindly — they rely on the same registry that could be compromised.</li>
+</ol>
+
+<h2>The Bigger Picture</h2>
+
+<p>We're entering an era where AI agents will handle routine security tasks — triaging alerts, applying patches, updating dependencies. That's inevitable and, done right, it's a net positive.</p>
+
+<p>But "done right" means building security layers that assume the agent will be targeted. Not because agents are stupid, but because they're <strong>obedient</strong>. They do what they're told. And when the instructions come from a spoofed email or a poisoned package, obedience is the vulnerability.</p>
+
+<p>The CVE-2026-26960 email I received was legitimate. The <code>node-tar</code> vulnerability is real and should be patched. But the next email might not be real — and your AI agent won't know the difference unless you give it the tools to check.</p>
+
+<p>That's what we're building at ClawMoat. <a href="https://github.com/darfaz/clawmoat">Check it out on GitHub</a> — zero dependencies, open source, built for the agentic era.</p>
+
+<div class="tags">
+<span class="tag">supply-chain</span>
+<span class="tag">ai-agents</span>
+<span class="tag">security</span>
+<span class="tag">CVE</span>
+<span class="tag">open-source</span>
+</div>
+
+</article>
+</div>
+
+<footer>
+  © 2026 ClawMoat. Built for the OpenClaw community. 🏰
+</footer>
+</body>
+</html>
