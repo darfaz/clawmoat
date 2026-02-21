@@ -6,14 +6,27 @@ const PORT = process.env.PORT || 3000;
 const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 
 const PRICES = {
-  // One-time purchase
-  'pro-skill':     process.env.PRICE_PRO_SKILL     || 'price_1T1avaAUiOw2ZIordarLcoff',
-  // Subscriptions (30-day free trial)
-  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T1avaAUiOw2ZIorQXuxNyM3',
-  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T1avaAUiOw2ZIorAtBLXBOg',
-  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1T1avaAUiOw2ZIorAqeOaahQ',
-  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1T1avbAUiOw2ZIorDLUicwin',
+  // Pro subscriptions
+  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T0an4AUiOw2ZIorxQRyAxvQ',  // $14.99/mo
+  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T0an4AUiOw2ZIorfHx7RowT',  // $149/yr
+  // Team subscriptions
+  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1T0aqrAUiOw2ZIorh4gjBPGt',  // $49/mo
+  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1T0asRAUiOw2ZIorxAi69uwl',  // $499/yr
 };
+
+// In-memory license store (replace with DB in production)
+const licenses = new Map();
+
+function generateLicenseKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const segments = [];
+  for (let s = 0; s < 4; s++) {
+    let seg = '';
+    for (let i = 0; i < 5; i++) seg += chars[Math.floor(Math.random() * chars.length)];
+    segments.push(seg);
+  }
+  return 'CM-' + segments.join('-');
+}
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,28 +70,101 @@ const server = http.createServer(async (req, res) => {
     const priceId = PRICES[body.plan];
 
     if (!priceId) {
-      return json(res, 400, { error: 'Invalid plan. Use: pro-monthly, pro-yearly, team-monthly, team-yearly' });
+      return json(res, 400, { error: 'Invalid plan. Use: shield-monthly, shield-yearly, team-monthly, team-yearly' });
     }
 
     try {
-      const mode = body.plan === 'pro-skill' ? 'payment' : 'subscription';
-      const session = await stripe.checkout.sessions.create({
-        mode,
+      const sessionParams = {
+        mode: 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${SITE_URL}/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${SITE_URL}/#pricing`,
         allow_promotion_codes: true,
-      });
+        customer_email: body.email || undefined,
+        subscription_data: {
+          trial_period_days: 30,
+          metadata: { plan: body.plan },
+        },
+      };
+      const session = await stripe.checkout.sessions.create(sessionParams);
       return json(res, 200, { url: session.url });
     } catch (err) {
       return json(res, 500, { error: err.message });
     }
   }
 
-  // Stripe webhook (for future use)
+  // Stripe webhook
   if (req.method === 'POST' && req.url === '/api/webhook') {
-    // TODO: handle subscription events
+    const rawBody = await new Promise((resolve) => {
+      let body = '';
+      req.on('data', c => body += c);
+      req.on('end', () => resolve(body));
+    });
+
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+    if (endpointSecret && sig) {
+      try {
+        event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+      } catch (err) {
+        console.error('Webhook signature verification failed:', err.message);
+        return json(res, 400, { error: 'Invalid signature' });
+      }
+    } else {
+      try { event = JSON.parse(rawBody); }
+      catch { return json(res, 400, { error: 'Invalid JSON' }); }
+    }
+
+    console.log(`Webhook: ${event.type}`);
+
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const email = session.customer_email || session.customer_details?.email;
+        const licenseKey = generateLicenseKey();
+        console.log(`New customer: ${email}, license: ${licenseKey}`);
+        // TODO: Store in database, send welcome email with license key
+        // For now, log it — license fulfillment is manual via email
+        licenses.set(licenseKey, {
+          email,
+          customerId: session.customer,
+          subscriptionId: session.subscription,
+          plan: session.metadata?.plan || 'unknown',
+          createdAt: new Date().toISOString(),
+          active: true,
+        });
+        break;
+      }
+      case 'customer.subscription.deleted':
+      case 'customer.subscription.updated': {
+        const sub = event.data.object;
+        // Deactivate license if subscription cancelled
+        for (const [key, lic] of licenses.entries()) {
+          if (lic.subscriptionId === sub.id) {
+            lic.active = sub.status === 'active' || sub.status === 'trialing';
+            console.log(`License ${key}: active=${lic.active} (status=${sub.status})`);
+          }
+        }
+        break;
+      }
+    }
+
     return json(res, 200, { received: true });
+  }
+
+  // License validation endpoint (called by CLI)
+  if (req.method === 'POST' && req.url === '/api/validate') {
+    const body = await readBody(req);
+    const key = body.key;
+    if (!key) return json(res, 400, { error: 'Missing key' });
+
+    const lic = licenses.get(key);
+    if (!lic || !lic.active) {
+      return json(res, 200, { valid: false });
+    }
+    return json(res, 200, { valid: true, plan: lic.plan, email: lic.email });
   }
 
   json(res, 404, { error: 'Not found' });

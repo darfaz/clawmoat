@@ -61,6 +61,13 @@ switch (command) {
   case 'test':
     cmdTest();
     break;
+  case 'activate':
+    cmdActivate(args.slice(1));
+    break;
+  case 'upgrade':
+  case 'pro':
+    printUpgrade();
+    break;
   case 'version':
   case '--version':
   case '-v':
@@ -201,6 +208,11 @@ function cmdScan(args) {
   }
 
   console.log(`${DIM}Total findings: ${result.findings.length}${RESET}`);
+
+  if (!getLicense()) {
+    console.log(`\n${DIM}💡 Upgrade to Pro for real-time alerts, dashboard & threat intel → clawmoat upgrade${RESET}`);
+  }
+
   process.exit(result.findings.some(f => f.severity === 'critical') ? 2 : 1);
 }
 
@@ -757,9 +769,87 @@ function extractContent(entry) {
   return null;
 }
 
+function printUpgrade() {
+  console.log(`
+${BOLD}🏰 Upgrade to ClawMoat Pro${RESET}
+
+  ${GREEN}✦${RESET} Threat intelligence feed & real-time alerts
+  ${GREEN}✦${RESET} Security dashboard with audit logs
+  ${GREEN}✦${RESET} Custom forbidden zones (YAML)
+  ${GREEN}✦${RESET} Priority pattern updates & email support
+
+  ${BOLD}$14.99/mo${RESET} (first 30 days free) or ${BOLD}$149/year${RESET} (save 17%)
+
+  ${CYAN}→ https://clawmoat.com/#pricing${RESET}
+
+  Already have a license key? Run:
+    ${DIM}clawmoat activate <LICENSE-KEY>${RESET}
+`);
+}
+
+function cmdActivate(args) {
+  const key = args[0];
+  if (!key) {
+    console.error('Usage: clawmoat activate <LICENSE-KEY>');
+    console.error('Get your key at https://clawmoat.com/#pricing');
+    process.exit(1);
+  }
+
+  const configDir = path.join(process.env.HOME, '.clawmoat');
+  if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+
+  // Validate key against server
+  const https = require('https');
+  const postData = JSON.stringify({ key });
+  const req = https.request('https://clawmoat-production.up.railway.app/api/validate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length },
+  }, (res) => {
+    let body = '';
+    res.on('data', c => body += c);
+    res.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        if (data.valid) {
+          fs.writeFileSync(path.join(configDir, 'license.json'), JSON.stringify({
+            key, plan: data.plan, email: data.email, activatedAt: new Date().toISOString(),
+          }, null, 2));
+          console.log(`${GREEN}✅ License activated!${RESET}`);
+          console.log(`   Plan: ${BOLD}${data.plan}${RESET}`);
+          console.log(`   Email: ${data.email}`);
+          console.log(`\n   Pro features are now enabled. 🏰`);
+        } else {
+          console.error(`${RED}Invalid or expired license key.${RESET}`);
+          console.error(`Get a key at https://clawmoat.com/#pricing`);
+          process.exit(1);
+        }
+      } catch {
+        console.error(`${RED}Error validating key. Try again later.${RESET}`);
+        process.exit(1);
+      }
+    });
+  });
+  req.on('error', () => {
+    console.error(`${RED}Could not reach license server. Check your connection.${RESET}`);
+    process.exit(1);
+  });
+  req.write(postData);
+  req.end();
+}
+
+function getLicense() {
+  try {
+    const licPath = path.join(process.env.HOME, '.clawmoat', 'license.json');
+    return JSON.parse(fs.readFileSync(licPath, 'utf8'));
+  } catch { return null; }
+}
+
 function printHelp() {
+  const lic = getLicense();
+  const planLabel = lic ? `${GREEN}${lic.plan}${RESET}` : `Free ${DIM}(upgrade: clawmoat upgrade)${RESET}`;
   console.log(`
 ${BOLD}🏰 ClawMoat v${VERSION}${RESET} — Security moat for AI agents
+  Plan: ${planLabel}
 
 ${BOLD}USAGE${RESET}
   clawmoat scan <text>            Scan text for threats
@@ -775,6 +865,8 @@ ${BOLD}USAGE${RESET}
   clawmoat report [sessions-dir]  24-hour activity summary report
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
+  clawmoat activate <KEY>         Activate a Pro/Team license key
+  clawmoat upgrade                Show upgrade options & pricing
   clawmoat version                Show version
 
 ${BOLD}EXAMPLES${RESET}
