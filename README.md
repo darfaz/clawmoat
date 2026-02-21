@@ -344,6 +344,24 @@ clawmoat/
 └── docs/                     # Website (clawmoat.com)
 ```
 
+## 🏰 Hack Challenge — Can You Bypass ClawMoat?
+
+We're inviting security researchers to try breaking ClawMoat's defenses. Bypass a scanner, escape the policy engine, or tamper with audit logs.
+
+👉 **[hack-clawmoat](https://github.com/darfaz/hack-clawmoat)** — guided challenge scenarios
+
+Valid findings earn you a spot in our **[Hall of Fame](https://clawmoat.com/hall-of-fame.html)** and critical discoveries pre-v1.0 earn the permanent title of **Founding Security Advisor**. See [SECURITY.md](SECURITY.md) for details.
+
+## 🛡️ Founding Security Advisors
+
+*No Founding Security Advisors yet — be the first! Find a critical vulnerability and claim this title forever.*
+
+<!-- When adding advisors, use this format:
+| Name | Finding | Date |
+|------|---------|------|
+| [Name](link) | Brief description | YYYY-MM |
+-->
+
 ## Contributing
 
 PRs welcome! Open an [issue](https://github.com/darfaz/clawmoat/issues) or submit a pull request.

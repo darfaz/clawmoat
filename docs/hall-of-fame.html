@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hall of Fame — ClawMoat Security Researchers</title>
+<meta name="description" content="Recognizing the security researchers who help make ClawMoat stronger. Report vulnerabilities and earn your place in the Hall of Fame.">
+<link rel="canonical" href="https://clawmoat.com/hall-of-fame.html">
+<meta property="og:title" content="Hall of Fame — ClawMoat Security Researchers">
+<meta property="og:description" content="Recognizing the security researchers who help make ClawMoat stronger.">
+<meta property="og:url" content="https://clawmoat.com/hall-of-fame.html">
+<meta property="og:type" content="website">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--gold:#F59E0B;--red:#EF4444}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+.hero{padding:160px 0 80px;text-align:center}
+.hero h1{font-size:3rem;margin-bottom:16px;background:linear-gradient(135deg,var(--gold),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.2rem;color:var(--gray);max-width:700px;margin:0 auto 40px}
+
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:32px;margin-bottom:80px}
+.tier{background:var(--navy-light);border-radius:16px;padding:40px;border:1px solid var(--navy-mid);text-align:center}
+.tier h2{font-size:1.5rem;margin-bottom:12px}
+.tier .icon{font-size:3rem;margin-bottom:16px}
+.tier p{color:var(--gray);font-size:.95rem;line-height:1.7}
+.tier.gold{border-color:var(--gold)}
+.tier.gold h2{color:var(--gold)}
+
+.researchers{margin-bottom:80px}
+.researchers h2{font-size:2rem;text-align:center;margin-bottom:40px}
+.empty-state{text-align:center;padding:60px 40px;background:var(--navy-light);border-radius:16px;border:1px dashed var(--navy-mid)}
+.empty-state .icon{font-size:4rem;margin-bottom:16px}
+.empty-state p{color:var(--gray);font-size:1.1rem;margin-bottom:24px}
+.cta-btn{display:inline-block;background:var(--emerald);color:var(--navy);padding:12px 32px;border-radius:12px;font-weight:700;font-size:1rem;transition:opacity .2s}
+.cta-btn:hover{opacity:.9;text-decoration:none}
+.cta-btn.gold-btn{background:var(--gold)}
+
+.how-it-works{margin-bottom:80px}
+.how-it-works h2{font-size:2rem;text-align:center;margin-bottom:40px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.step{background:var(--navy-light);border-radius:12px;padding:32px;text-align:center;border:1px solid var(--navy-mid)}
+.step .num{display:inline-block;width:40px;height:40px;line-height:40px;border-radius:50%;background:var(--blue);color:var(--white);font-weight:700;margin-bottom:12px}
+.step h3{margin-bottom:8px}
+.step p{color:var(--gray);font-size:.9rem}
+
+footer{border-top:1px solid var(--navy-mid);padding:40px 0;text-align:center;color:var(--gray);font-size:.85rem}
+
+@media(max-width:768px){
+  .hero h1{font-size:2rem}
+  .menu-toggle{display:block}
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+  <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="https://github.com/darfaz/clawmoat/blob/main/SECURITY.md">Report a Bug</a>
+    <a href="/" class="btn-sm">Get Started</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+<div class="container">
+  <h1>🏆 Hall of Fame</h1>
+  <p>Recognizing the security researchers who help make ClawMoat stronger. Find a vulnerability, earn your place here forever.</p>
+</div>
+</section>
+
+<section class="container">
+
+<div class="tiers">
+  <div class="tier gold">
+    <div class="icon">🛡️</div>
+    <h2>Founding Security Advisor</h2>
+    <p>The highest honor. Reserved for researchers who discover critical vulnerabilities during ClawMoat's early days (pre-v1.0). Founding Advisors get permanent recognition, a profile link on this page, and acknowledgment in every major release. This title can never be earned again after v1.0.</p>
+  </div>
+  <div class="tier">
+    <div class="icon">🏆</div>
+    <h2>Hall of Fame</h2>
+    <p>For any verified security vulnerability report — scanner bypasses, policy engine escapes, audit log tampering, or any other valid security finding. Your name (or handle) and contribution are listed permanently.</p>
+  </div>
+  <div class="tier">
+    <div class="icon">🙏</div>
+    <h2>Honorable Mention</h2>
+    <p>For reports that don't qualify as security vulnerabilities but still improve ClawMoat's security posture — edge cases, hardening suggestions, documentation improvements, or defense-in-depth recommendations.</p>
+  </div>
+</div>
+
+<div class="researchers">
+  <h2>Founding Security Advisors</h2>
+  <div class="empty-state">
+    <div class="icon">🔍</div>
+    <p>No Founding Security Advisors yet. Be the first to find a critical vulnerability and claim this title forever.</p>
+    <a href="https://github.com/darfaz/clawmoat/blob/main/SECURITY.md" class="cta-btn gold-btn">Read the Security Policy →</a>
+  </div>
+</div>
+
+<div class="researchers">
+  <h2>Hall of Fame Researchers</h2>
+  <div class="empty-state">
+    <div class="icon">🏰</div>
+    <p>The Hall of Fame awaits its first member. Can you bypass ClawMoat's defenses?</p>
+    <a href="https://github.com/darfaz/hack-clawmoat" class="cta-btn">Take the Hack Challenge →</a>
+  </div>
+</div>
+
+<div class="how-it-works">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <h3>Find a Bug</h3>
+      <p>Test ClawMoat's scanners, policy engine, or any component. Try the <a href="https://github.com/darfaz/hack-clawmoat">Hack Challenge</a> for guided scenarios.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h3>Report It</h3>
+      <p>Email <strong>security@clawmoat.com</strong> with details, reproduction steps, and impact assessment. See <a href="https://github.com/darfaz/clawmoat/blob/main/SECURITY.md">SECURITY.md</a>.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h3>Get Verified</h3>
+      <p>We'll acknowledge within 48 hours and assess within 7 days. Valid findings get a CVE if applicable.</p>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <h3>Get Recognized</h3>
+      <p>Your name goes on the Hall of Fame permanently. Critical findings pre-v1.0 earn the Founding Security Advisor title.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<footer>
+<div class="container">
+  <p>🏰 ClawMoat — The Trust Layer for AI Agents &nbsp;|&nbsp; <a href="https://github.com/darfaz/clawmoat">GitHub</a> &nbsp;|&nbsp; <a href="https://github.com/darfaz/clawmoat/blob/main/SECURITY.md">Security Policy</a></p>
+</div>
+</footer>
+
+</body>
+</html>

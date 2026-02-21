@@ -4,7 +4,9 @@
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.1.x   | ✅ Current release |
+| 0.6.x   | ✅ Current release |
+| 0.5.x   | ✅ Security fixes  |
+| < 0.5   | ❌ End of life     |
 
 ## Reporting a Vulnerability
 
@@ -20,12 +22,15 @@ If you discover a security vulnerability in ClawMoat, **please report it respons
    - Potential impact
    - Suggested fix (if any)
 
-### What to Expect
+### Response Time Commitments
 
-- **Acknowledgment** within 48 hours
-- **Assessment** within 7 days
-- **Fix timeline** communicated within 14 days
-- **Credit** in the release notes (unless you prefer anonymity)
+| Stage | Timeframe |
+|-------|-----------|
+| **Acknowledgment** | Within 48 hours |
+| **Initial assessment** | Within 7 days |
+| **Fix timeline communicated** | Within 14 days |
+| **Patch released** | Within 30 days (critical), 90 days (other) |
+| **Public disclosure** | Coordinated with reporter |
 
 ### What NOT to Do
 
@@ -33,20 +38,63 @@ If you discover a security vulnerability in ClawMoat, **please report it respons
 - Do not exploit the vulnerability beyond what's needed to demonstrate it
 - Do not access or modify other users' data
 
+## 🏰 Hack Challenge
+
+Think you can bypass ClawMoat? We want you to try.
+
+**[hack-clawmoat](https://github.com/darfaz/hack-clawmoat)** — our official challenge repo with guided scenarios for testing ClawMoat's defenses. Bypass a scanner, escape the policy engine, or tamper with audit logs.
+
+Valid bypasses qualify for recognition in our security program.
+
 ## Scope
 
-The following are in scope:
+**In scope:**
 
-- **Scanner bypasses** — Attacks that evade ClawMoat's detection
+- **Scanner bypasses** — Attacks that evade ClawMoat's detection (prompt injection, jailbreak, secret scanning)
 - **Policy engine bypasses** — Tool calls that circumvent policy rules
+- **Host Guardian escapes** — Breaking out of permission tiers
 - **Audit log tampering** — Ways to modify or forge audit entries
-- **Dependency issues** — Vulnerabilities in ClawMoat's dependencies (currently: none)
+- **Insider threat detection evasion** — Bypassing behavioral analysis
+- **Dependency issues** — Vulnerabilities in ClawMoat's dependencies
 
-The following are out of scope:
+**Out of scope:**
 
 - Denial of service via large inputs (expected behavior — use input size limits)
 - False positives/negatives in detection (please open a regular issue)
 - Vulnerabilities in upstream LLM providers
+
+## 🏆 Recognition Program
+
+We believe in recognizing the people who make ClawMoat more secure.
+
+### Founding Security Advisor
+
+The highest recognition tier. **Only available pre-v1.0** — once ClawMoat hits v1.0, this title is closed forever.
+
+**Requirements:** Discover and responsibly disclose a critical or high-severity vulnerability.
+
+**You get:**
+- 🛡️ Permanent "Founding Security Advisor" title on our [Hall of Fame](https://clawmoat.com/hall-of-fame.html)
+- 📝 Named acknowledgment in every major release's changelog
+- 🔗 Profile link (GitHub, website, or social) on the Hall of Fame page
+- 🤝 Direct line to the maintainers for future security discussions
+
+### Hall of Fame
+
+For any verified security vulnerability report.
+
+**You get:**
+- 🏆 Permanent listing on the [Hall of Fame](https://clawmoat.com/hall-of-fame.html)
+- 📝 Credit in the release notes for the fixing version
+- 🔗 Profile link on the Hall of Fame page
+
+### Honorable Mention
+
+For reports that improve security posture without being exploitable vulnerabilities — hardening suggestions, edge cases, documentation improvements.
+
+**You get:**
+- 🙏 Listed in the Honorable Mentions section of the Hall of Fame
+- 📝 Credit in the relevant release notes
 
 ## Security Best Practices
 
