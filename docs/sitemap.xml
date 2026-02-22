@@ -2,12 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://clawmoat.com/</loc>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-02-21</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://clawmoat.com/blog/</loc>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-02-21</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
@@ -18,6 +18,41 @@
   <url>
     <loc>https://clawmoat.com/blog/owasp-agentic-ai-top10</loc>
     <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/host-guardian-launch</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/supply-chain-agents</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/blog/langchain-security-tutorial</loc>
+    <lastmod>2026-02-13</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/playground</loc>
+    <lastmod>2026-02-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/compare</loc>
+    <lastmod>2026-02-21</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/hall-of-fame</loc>
+    <lastmod>2026-02-21</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/ai-agent-security-scanner</loc>
+    <lastmod>2026-02-21</lastmod>
     <priority>0.7</priority>
   </url>
   <url>

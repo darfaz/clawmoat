@@ -21,7 +21,7 @@ All 37 tests must pass before submitting a PR.
 Scanner template:
 
 ```javascript
-export function scan(input, options = {}) {
+function scan(input, options = {}) {
   const threats = [];
   // Detection logic here
   return {
@@ -30,6 +30,8 @@ export function scan(input, options = {}) {
     score: threats.length > 0 ? 1.0 : 0.0,
   };
 }
+
+module.exports = { scan };
 ```
 
 ## PR Guidelines
@@ -41,7 +43,7 @@ export function scan(input, options = {}) {
 
 ## Code Style
 
-- ES modules (`import`/`export`)
+- CommonJS (`require`/`module.exports`)
 - No semicolons (match existing style — check the codebase)
 - Descriptive variable names
 - Keep functions small and focused

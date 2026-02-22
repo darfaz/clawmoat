@@ -11,7 +11,10 @@
   <a href="https://www.npmjs.com/package/clawmoat"><img src="https://img.shields.io/npm/v/clawmoat?style=flat-square&color=3B82F6" alt="npm"></a>
   <a href="https://github.com/darfaz/clawmoat/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License"></a>
   <a href="https://github.com/darfaz/clawmoat/stargazers"><img src="https://img.shields.io/github/stars/darfaz/clawmoat?style=flat-square&color=F59E0B" alt="Stars"></a>
+  <a href="https://www.npmjs.com/package/clawmoat"><img src="https://img.shields.io/npm/dm/clawmoat?style=flat-square&color=6366F1" alt="Downloads"></a>
+  <img src="https://img.shields.io/badge/node-%3E%3D18-10B981?style=flat-square" alt="Node >= 18">
   <img src="https://img.shields.io/badge/dependencies-0-10B981?style=flat-square" alt="Zero Dependencies">
+  <a href="https://github.com/darfaz/clawmoat/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome"></a>
 </p>
 
 <p align="center">
@@ -139,7 +142,7 @@ Results appear as PR comments and job summaries. See [`examples/github-action-wo
 | 📋 **Policy Engine** | YAML rules for shell, files, browser, network | ✅ v0.1 |
 | 🕵️ **Jailbreak Detection** | Heuristic + classifier pipeline | ✅ v0.1 |
 | 📊 **Session Audit Trail** | Full tamper-evident action log | ✅ v0.1 |
-| 🧠 **Behavioral Analysis** | Anomaly detection on agent behavior | 🔜 v0.5 |
+| 🧠 **Behavioral Analysis** | Anomaly detection on agent behavior | ✅ v0.5 |
 | 🏠 **Host Guardian** | Runtime security for laptop-hosted agents | ✅ v0.4 |
 
 ## 🏠 Host Guardian — Security for Laptop-Hosted Agents
