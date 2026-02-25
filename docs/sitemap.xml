@@ -36,6 +36,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://clawmoat.com/blog/clawmoat-vs-llamafirewall-nemo-guardrails</loc>
+    <lastmod>2026-02-25</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://clawmoat.com/playground</loc>
     <lastmod>2026-02-21</lastmod>
     <priority>0.8</priority>
