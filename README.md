@@ -367,7 +367,29 @@ Valid findings earn you a spot in our **[Hall of Fame](https://clawmoat.com/hall
 
 ## Contributing
 
-PRs welcome! Open an [issue](https://github.com/darfaz/clawmoat/issues) or submit a pull request.
+**Contributors welcome!** 🎉 ClawMoat is open source and we'd love your help.
+
+### Good First Issues
+
+New to the project? Check out our [good first issues](https://github.com/darfaz/clawmoat/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — they're well-scoped, clearly described, and include implementation hints.
+
+### How to Contribute
+
+1. **Fork** the repo and create a branch from `main`
+2. **Install** deps: `npm install`
+3. **Make** your changes (keep zero-dependency philosophy!)
+4. **Test**: `npm test`
+5. **Submit** a PR — we review quickly
+
+### What We're Looking For
+
+- New output formats (SARIF, JSON)
+- Cross-platform improvements (Windows support)
+- CLI UX enhancements
+- Documentation improvements
+- Bug fixes
+
+No contribution is too small. Even fixing a typo helps!
 
 ## License
 
