@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Security Checklist (2026) — ClawMoat</title>
+<meta name="description" content="Free security checklist for AI agent operators. 20 actionable steps to protect your machine, credentials, and data from autonomous AI agents.">
+<meta property="og:title" content="AI Agent Security Checklist (2026)">
+<meta property="og:description" content="20 actionable security steps for AI agent operators. Free, open-source.">
+<link rel="canonical" href="https://clawmoat.com/checklist">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0F172A;color:#F8FAFC;line-height:1.8}
+a{color:#3B82F6}
+.container{max-width:760px;margin:0 auto;padding:40px 24px}
+nav{background:rgba(15,23,42,.95);padding:16px 24px;position:fixed;top:0;left:0;right:0;z-index:100;border-bottom:1px solid rgba(59,130,246,.15)}
+nav a{color:#94A3B8;text-decoration:none;margin-right:24px;font-size:.9rem}
+nav a:first-child{color:#F8FAFC;font-weight:700;font-size:1.1rem}
+h1{font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:8px;padding-top:80px}
+h2{font-size:1.4rem;font-weight:700;margin:40px 0 16px;color:#10B981}
+p{margin-bottom:16px;color:#CBD5E1}
+.subtitle{color:#94A3B8;font-size:1.1rem;margin-bottom:40px}
+.check-group{background:#1E293B;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;margin:16px 0}
+.check-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:24px;height:24px;border:2px solid #334155;border-radius:6px;flex-shrink:0;margin-top:2px;cursor:pointer}
+.check-item strong{color:#F8FAFC}
+.check-item p{color:#94A3B8;font-size:.9rem;margin:4px 0 0}
+.priority-high{border-left:3px solid #EF4444;padding-left:12px}
+.priority-med{border-left:3px solid #F59E0B;padding-left:12px}
+.priority-low{border-left:3px solid #10B981;padding-left:12px}
+code{background:#0a0e17;padding:2px 8px;border-radius:4px;font-size:.85rem}
+.cta{background:#1E293B;border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:32px;text-align:center;margin:48px 0}
+.btn{display:inline-block;padding:12px 28px;background:#3B82F6;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;margin:8px}
+.legend{display:flex;gap:24px;margin:24px 0;font-size:.85rem;color:#94A3B8}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.dot-high{background:#EF4444}
+.dot-med{background:#F59E0B}
+.dot-low{background:#10B981}
+</style>
+</head>
+<body>
+<nav>
+<a href="/">🏰 ClawMoat</a>
+<a href="/blog/">Blog</a>
+<a href="https://github.com/darfaz/clawmoat">GitHub</a>
+<a href="/#pricing">Pricing</a>
+</nav>
+<div class="container">
+<h1>AI Agent Security Checklist</h1>
+<p class="subtitle">20 actionable steps to protect your machine from autonomous AI agents. Updated February 2026.</p>
+
+<div class="legend">
+<span><span class="dot dot-high"></span> Critical</span>
+<span><span class="dot dot-med"></span> Important</span>
+<span><span class="dot dot-low"></span> Recommended</span>
+</div>
+
+<h2>🔐 Credential Protection</h2>
+<div class="check-group">
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Move SSH keys out of agent's reach</strong><p>Use a separate user account or forbidden zone to protect <code>~/.ssh/</code></p></div>
+</div>
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Protect cloud credentials</strong><p>Lock down <code>~/.aws/</code>, <code>~/.gcloud/</code>, <code>~/.azure/</code>, <code>~/.kube/</code></p></div>
+</div>
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Secure browser data</strong><p>Prevent access to browser profile directories (cookies, saved passwords, sessions)</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Protect GPG/PGP keys</strong><p>Lock down <code>~/.gnupg/</code></p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Protect crypto wallets</strong><p>Lock down wallet files, seed phrases, and key stores</p></div>
+</div>
+</div>
+
+<h2>🛡️ Permission Controls</h2>
+<div class="check-group">
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Set a permission tier</strong><p>Start with <code>observer</code> or <code>worker</code> and escalate only as needed</p></div>
+</div>
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Block dangerous shell commands</strong><p>Prevent <code>rm -rf</code>, <code>chmod 777</code>, <code>curl | bash</code>, <code>dd</code></p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Restrict network access</strong><p>Use domain allow/blocklists to control where the agent can connect</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Limit file system scope</strong><p>Restrict the agent to a workspace directory; block access to system files</p></div>
+</div>
+</div>
+
+<h2>🔍 Monitoring & Auditing</h2>
+<div class="check-group">
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Enable audit logging</strong><p>Log every tool call, file access, and shell command</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Monitor credential directories</strong><p>Set up alerts for any access attempts to sensitive directories</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Log network egress</strong><p>Track all outbound URLs and connections</p></div>
+</div>
+<div class="check-item priority-low">
+<div class="check-box"></div>
+<div><strong>Set up webhook alerts</strong><p>Send security events to Slack, Discord, Telegram, or email</p></div>
+</div>
+</div>
+
+<h2>📦 Supply Chain</h2>
+<div class="check-group">
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Audit installed skills/plugins</strong><p>Run integrity checks on all installed agent skills. 13.4% of ClawHub skills have critical issues (Snyk).</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Verify skill hashes after updates</strong><p>Re-check integrity after any skill update or installation</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Scan for suspicious patterns</strong><p>Look for base64-encoded URLs, credential access patterns, obfuscated code</p></div>
+</div>
+</div>
+
+<h2>💬 Input/Output Security</h2>
+<div class="check-group">
+<div class="check-item priority-high">
+<div class="check-box"></div>
+<div><strong>Scan inbound content for prompt injection</strong><p>Emails, web pages, and documents can contain hidden instructions</p></div>
+</div>
+<div class="check-item priority-med">
+<div class="check-box"></div>
+<div><strong>Scan outbound content for secrets</strong><p>Catch API keys, tokens, and credentials before they leave the machine</p></div>
+</div>
+<div class="check-item priority-low">
+<div class="check-box"></div>
+<div><strong>Scan inter-agent messages</strong><p>If running multi-agent systems, scan messages between agents for attack patterns</p></div>
+</div>
+</div>
+
+<div class="cta">
+<h3 style="color:#F8FAFC;margin-bottom:8px">Automate this checklist</h3>
+<p style="color:#94A3B8;margin-bottom:16px">ClawMoat implements all 20 checks. Zero dependencies. MIT licensed.</p>
+<code style="font-size:1rem;background:#0a0e17;padding:8px 16px">npm install -g clawmoat</code>
+<br><br>
+<a href="https://github.com/darfaz/clawmoat" class="btn">⭐ Star on GitHub</a>
+<a href="/#pricing" class="btn" style="background:#10B981">See Plans</a>
+</div>
+
+<p style="font-size:.85rem;color:#64748B;margin-top:40px">Based on OWASP Top 10 for Agentic AI (2026), Cisco AI Defense research, SecurityScorecard STRIKE findings, and Snyk ClawHub analysis.</p>
+</div>
+</body>
+</html>
