@@ -365,6 +365,23 @@ Valid findings earn you a spot in our **[Hall of Fame](https://clawmoat.com/hall
 | [Name](link) | Brief description | YYYY-MM |
 -->
 
+## How ClawMoat Compares
+
+| Capability | ClawMoat | LlamaFirewall (Meta) | NeMo Guardrails (NVIDIA) | Lakera Guard |
+|------------|:--------:|:--------------------:|:------------------------:|:------------:|
+| Prompt injection detection | ✅ | ✅ | ✅ | ✅ |
+| **Host-level protection** | ✅ | ❌ | ❌ | ❌ |
+| **Credential monitoring** | ✅ | ❌ | ❌ | ❌ |
+| **Skill/plugin auditing** | ✅ | ❌ | ❌ | ❌ |
+| **Permission tiers** | ✅ | ❌ | ❌ | ❌ |
+| Zero dependencies | ✅ | ❌ | ❌ | N/A (SaaS) |
+| Open source | ✅ MIT | ✅ | ✅ | ❌ |
+| Language | Node.js | Python | Python | API |
+
+> **They're complementary, not competitive.** LlamaFirewall protects the model. NeMo Guardrails protects conversations. ClawMoat protects the host. Use them together for defense-in-depth.
+
+📖 [Detailed comparison →](https://clawmoat.com/blog/clawmoat-vs-llamafirewall-nemo-guardrails.html)
+
 ## Contributing
 
 **Contributors welcome!** 🎉 ClawMoat is open source and we'd love your help.
