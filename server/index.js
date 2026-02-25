@@ -6,6 +6,8 @@ const PORT = process.env.PORT || 3000;
 const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 
 const PRICES = {
+  // Security Kit (one-time purchase)
+  'security-kit':   process.env.PRICE_SECURITY_KIT   || null,  // $29 one-time — create in Stripe dashboard
   // Pro subscriptions
   'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T0an4AUiOw2ZIorxQRyAxvQ',  // $14.99/mo
   'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T0an4AUiOw2ZIorfHx7RowT',  // $149/yr
@@ -13,6 +15,8 @@ const PRICES = {
   'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1T0aqrAUiOw2ZIorh4gjBPGt',  // $49/mo
   'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1T0asRAUiOw2ZIorxAi69uwl',  // $499/yr
 };
+
+const ONE_TIME_PLANS = new Set(['security-kit']);
 
 // In-memory license store (replace with DB in production)
 const licenses = new Map();
@@ -74,18 +78,23 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
+      const isOneTime = ONE_TIME_PLANS.has(body.plan);
       const sessionParams = {
-        mode: 'subscription',
+        mode: isOneTime ? 'payment' : 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${SITE_URL}/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${SITE_URL}/#pricing`,
         allow_promotion_codes: true,
         customer_email: body.email || undefined,
-        subscription_data: {
+      };
+      if (!isOneTime) {
+        sessionParams.subscription_data = {
           trial_period_days: 30,
           metadata: { plan: body.plan },
-        },
-      };
+        };
+      } else {
+        sessionParams.metadata = { plan: body.plan };
+      }
       const session = await stripe.checkout.sessions.create(sessionParams);
       return json(res, 200, { url: session.url });
     } catch (err) {

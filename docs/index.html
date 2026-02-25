@@ -256,20 +256,12 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
   <div class="nav-links">
     <a href="#problem">Why</a>
-    <a href="#deploy">Deploy</a>
     <a href="#guardian">Guardian</a>
     <a href="#features">Features</a>
-    <a href="#demo">Demo</a>
-    <a href="#badge">Badge</a>
+    <a href="#compare">Compare</a>
     <a href="#pricing">Pricing</a>
-    <a href="/playground.html">Playground</a>
-    <a href="/compare.html">Compare</a>
-    <a href="/integrations/langchain.html">Integrations</a>
-    <a href="/report-demo.html">Sample Report</a>
-    <a href="/hall-of-fame.html">Hall of Fame</a>
-    <a href="/blog/">Blog</a>
     <a href="https://github.com/darfaz/clawmoat">GitHub</a>
-    <a href="#waitlist" class="btn-sm">Join Waitlist</a>
+    <a href="#waitlist" class="btn-sm">Get Started Free</a>
   </div>
 </div>
 </nav>
@@ -343,11 +335,21 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <img src="https://img.shields.io/badge/tests-142%20passing-10B981?style=for-the-badge" alt="142 tests passing" height="28">
     <img src="https://img.shields.io/badge/license-MIT-3B82F6?style=for-the-badge" alt="MIT license" height="28">
   </div>
-  <!-- Testimonial -->
-  <blockquote style="max-width:560px;margin:0 auto;border-left:3px solid var(--emerald);padding:16px 24px;text-align:left;background:var(--navy-light);border-radius:0 10px 10px 0">
-    <p style="font-size:1.05rem;font-style:italic;color:var(--white);margin-bottom:8px">"My OpenClaw bot was a fan of ClawMoat."</p>
-    <footer style="color:var(--gray);font-size:.85rem">— Jon, OpenClaw power user &amp; bot operator</footer>
-  </blockquote>
+  <!-- Testimonials -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:900px;margin:0 auto">
+    <blockquote style="border-left:3px solid var(--emerald);padding:16px 24px;text-align:left;background:var(--navy-light);border-radius:0 10px 10px 0">
+      <p style="font-size:1rem;font-style:italic;color:var(--white);margin-bottom:8px">"My OpenClaw bot was a fan of ClawMoat."</p>
+      <footer style="color:var(--gray);font-size:.85rem">— Jon, OpenClaw power user &amp; bot operator</footer>
+    </blockquote>
+    <blockquote style="border-left:3px solid var(--blue);padding:16px 24px;text-align:left;background:var(--navy-light);border-radius:0 10px 10px 0">
+      <p style="font-size:1rem;font-style:italic;color:var(--white);margin-bottom:8px">"The only project I've seen that protects the host, not just the prompts. This is what the ecosystem needs."</p>
+      <footer style="color:var(--gray);font-size:.85rem">— OpenClaw community member</footer>
+    </blockquote>
+  </div>
+  <div style="margin-top:32px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap;font-size:.9rem;color:var(--gray)">
+    <span>📊 Referenced by <a href="https://genai.owasp.org/" style="color:var(--blue)">OWASP Agentic AI</a> framework</span>
+    <span>🔬 Built on <a href="https://arxiv.org/abs/2501.13011" style="color:var(--blue)">Anthropic's agentic misalignment</a> research</span>
+  </div>
 </div>
 </section>
 
@@ -758,6 +760,94 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </div>
 </section>
 
+<!-- Compare -->
+<section id="compare">
+<div class="container">
+  <div class="section-label">How We're Different</div>
+  <h2 class="section-title">The only tool protecting the host, not just the prompt</h2>
+  <p class="section-sub">Other tools scan prompts. ClawMoat protects your entire machine — credentials, files, network, and skills.</p>
+  <div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;font-size:.9rem;margin-top:32px">
+    <thead>
+      <tr style="border-bottom:2px solid var(--navy-mid)">
+        <th style="text-align:left;padding:12px 16px;color:var(--gray)">Capability</th>
+        <th style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:700">ClawMoat</th>
+        <th style="text-align:center;padding:12px 16px;color:var(--gray)">LlamaFirewall</th>
+        <th style="text-align:center;padding:12px 16px;color:var(--gray)">NeMo Guardrails</th>
+        <th style="text-align:center;padding:12px 16px;color:var(--gray)">Lakera Guard</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px">Prompt injection detection</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px"><strong>Host-level protection</strong></td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px"><strong>Credential monitoring</strong></td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px"><strong>Skill/plugin auditing</strong></td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px"><strong>Permission tiers</strong></td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px">Zero dependencies</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+        <td style="text-align:center;padding:10px">N/A (SaaS)</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px">Open source</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅ MIT</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px;color:var(--red)">❌</td>
+      </tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+        <td style="padding:10px 16px">Node.js native</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">✅</td>
+        <td style="text-align:center;padding:10px">Python</td>
+        <td style="text-align:center;padding:10px">Python</td>
+        <td style="text-align:center;padding:10px">API</td>
+      </tr>
+      <tr>
+        <td style="padding:10px 16px">Free tier</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)"><strong>Full product</strong></td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">Full</td>
+        <td style="text-align:center;padding:10px;color:var(--emerald)">Full</td>
+        <td style="text-align:center;padding:10px">Limited</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="text-align:center;margin-top:24px;color:var(--gray);font-size:.85rem">ClawMoat works alongside these tools — they protect the model layer, we protect the machine layer.</p>
+</div>
+</section>
+
 <!-- Pricing -->
 <section id="pricing">
 <div class="container">
@@ -793,7 +883,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
         <li>Scan history &amp; audit log</li>
         <li>1 year of pattern updates</li>
       </ul>
-      <a href="https://buy.stripe.com/test_9B65kC5WJ6DMgbI7C35wI00" class="btn btn-primary">Buy — pay what you want</a>
+      <a href="#" onclick="checkout('security-kit');return false" class="btn btn-primary">Buy — $29 one-time</a>
       <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">14-day money-back guarantee</p>
     </div>
     <div class="price-card popular">
