@@ -163,6 +163,55 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { received: true });
   }
 
+  // Live stats endpoint (cached 15 min)
+  if (req.method === 'GET' && req.url === '/api/stats') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+    const now = Date.now();
+    
+    if (global._statsCache && (now - global._statsCacheTime) < CACHE_TTL) {
+      return json(res, 200, global._statsCache);
+    }
+    
+    try {
+      const https = require('https');
+      const fetchJSON = (url) => new Promise((resolve, reject) => {
+        https.get(url, { headers: { 'User-Agent': 'ClawMoat-Stats/1.0' } }, (r) => {
+          let data = '';
+          r.on('data', c => data += c);
+          r.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve(null); } });
+        }).on('error', reject);
+      });
+      
+      const [npmWeek, npmTotal] = await Promise.all([
+        fetchJSON('https://api.npmjs.org/downloads/point/last-week/clawmoat'),
+        fetchJSON('https://api.npmjs.org/downloads/point/2026-01-01:2099-12-31/clawmoat'),
+      ]);
+      
+      // GitHub stats (public API, no auth needed)
+      const ghRepo = await fetchJSON('https://api.github.com/repos/darfaz/clawmoat');
+      
+      const stats = {
+        npm_downloads_week: npmWeek?.downloads || 0,
+        npm_downloads_total: npmTotal?.downloads || 0,
+        github_stars: ghRepo?.stargazers_count || 0,
+        github_forks: ghRepo?.forks_count || 0,
+        github_issues: ghRepo?.open_issues_count || 0,
+        // Combined "engagement" number
+        total_engagement: (npmTotal?.downloads || 0) + (ghRepo?.stargazers_count || 0) * 10 + (ghRepo?.forks_count || 0) * 20,
+        updated_at: new Date().toISOString(),
+      };
+      
+      global._statsCache = stats;
+      global._statsCacheTime = now;
+      
+      return json(res, 200, stats);
+    } catch (err) {
+      return json(res, 200, global._statsCache || { error: 'Stats temporarily unavailable' });
+    }
+  }
+
   // Contact form (Business inquiries)
   if (req.method === 'POST' && req.url === '/api/contact') {
     const body = await readBody(req);

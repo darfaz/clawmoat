@@ -290,6 +290,41 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <span>📦 MIT License</span>
     <span>✅ 142 Tests Passing</span>
   </div>
+  <!-- Live Stats Ticker -->
+  <div id="stats-ticker" style="margin-top:32px;display:flex;gap:32px;justify-content:center;flex-wrap:wrap;opacity:0;transition:opacity .5s">
+    <div style="text-align:center">
+      <div id="stat-downloads" style="font-size:1.8rem;font-weight:800;color:var(--emerald)">—</div>
+      <div style="font-size:.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">npm downloads</div>
+    </div>
+    <div style="text-align:center">
+      <div id="stat-stars" style="font-size:1.8rem;font-weight:800;color:var(--orange)">—</div>
+      <div style="font-size:.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">GitHub stars</div>
+    </div>
+    <div style="text-align:center">
+      <div id="stat-forks" style="font-size:1.8rem;font-weight:800;color:var(--blue)">—</div>
+      <div style="font-size:.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">Forks</div>
+    </div>
+    <div style="text-align:center">
+      <div id="stat-issues" style="font-size:1.8rem;font-weight:800;color:var(--white)">—</div>
+      <div style="font-size:.75rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">Open issues</div>
+    </div>
+  </div>
+  <script>
+  (async function(){
+    try {
+      const r = await fetch('https://clawmoat-production.up.railway.app/api/stats');
+      const s = await r.json();
+      if(s.npm_downloads_total){
+        const anim=(el,target)=>{let c=0;const step=Math.ceil(target/30);const t=setInterval(()=>{c=Math.min(c+step,target);el.textContent=c.toLocaleString();if(c>=target)clearInterval(t)},30)};
+        anim(document.getElementById('stat-downloads'),s.npm_downloads_total);
+        anim(document.getElementById('stat-stars'),s.github_stars);
+        anim(document.getElementById('stat-forks'),s.github_forks);
+        anim(document.getElementById('stat-issues'),s.github_issues);
+        document.getElementById('stats-ticker').style.opacity='1';
+      }
+    }catch(e){}
+  })();
+  </script>
 </div>
 </section>
 
