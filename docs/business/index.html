@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat Business — Secure AI Agents for Your Team</title>
+<meta name="description" content="Deploy AI agents safely in your business. Pre-hardened OpenClaw with ClawMoat security. Remote setup, compliance-ready, SOC2 mapped. From $99/mo.">
+<meta property="og:title" content="ClawMoat Business — Secure AI Agents for Your Team">
+<meta property="og:description" content="Your team wants AI agents. Your CISO wants security. We deliver both.">
+<meta property="og:url" content="https://clawmoat.com/business/">
+<link rel="canonical" href="https://clawmoat.com/business/">
+<style>
+:root{--navy:#0F172A;--navy-mid:#1E293B;--navy-light:#334155;--white:#F8FAFC;--gray:#94A3B8;--emerald:#10B981;--blue:#3B82F6;--red:#EF4444;--orange:#F59E0B}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+nav{background:rgba(15,23,42,.95);padding:16px 0;position:fixed;top:0;left:0;right:0;z-index:100;border-bottom:1px solid rgba(59,130,246,.15)}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+nav a{color:var(--gray);margin-left:24px;font-size:.9rem}
+nav a:first-child{color:var(--white);font-weight:700;font-size:1.1rem;margin-left:0}
+.btn{display:inline-block;padding:14px 32px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s}
+.btn-primary{background:var(--emerald);color:var(--white)}
+.btn-primary:hover{background:#059669;transform:translateY(-1px)}
+.btn-outline{border:2px solid var(--blue);color:var(--blue)}
+.btn-outline:hover{background:var(--blue);color:var(--white)}
+.btn-sm{padding:10px 20px;font-size:.9rem}
+
+/* Hero */
+.hero{padding:140px 0 80px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(16,185,129,.15);color:var(--emerald);padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:600;margin-bottom:20px}
+.hero h1{font-size:3rem;font-weight:800;line-height:1.15;letter-spacing:-.03em;max-width:800px;margin:0 auto 20px}
+.hero p{font-size:1.2rem;color:var(--gray);max-width:600px;margin:0 auto 32px}
+.hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+/* Problem */
+.problem{padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:40px}
+.problem-card{background:var(--navy-mid);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px}
+.problem-card .source{font-size:.75rem;color:var(--gray);margin-top:12px}
+.problem-card h3{color:var(--red);font-size:1.1rem;margin-bottom:8px}
+.problem-card p{color:var(--gray);font-size:.95rem}
+
+/* Solution */
+.solution{padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.section-label{color:var(--emerald);font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:center}
+.section-title{font-size:2rem;font-weight:700;text-align:center;margin-bottom:16px}
+.section-sub{color:var(--gray);text-align:center;max-width:600px;margin:0 auto 48px;font-size:1.05rem}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-top:40px}
+.step{text-align:center;padding:24px}
+.step-num{width:48px;height:48px;border-radius:50%;background:rgba(59,130,246,.15);color:var(--blue);font-weight:700;font-size:1.2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.step h3{margin-bottom:8px;font-size:1rem}
+.step p{color:var(--gray);font-size:.9rem}
+
+/* Features */
+.features{padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:40px}
+.feature{background:var(--navy-mid);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:24px}
+.feature h3{font-size:1rem;margin-bottom:8px}
+.feature p{color:var(--gray);font-size:.9rem}
+
+/* Comparison */
+.compare{padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.compare table{width:100%;border-collapse:collapse;margin-top:32px}
+.compare th{text-align:left;padding:14px 16px;border-bottom:2px solid var(--navy-light);color:var(--gray);font-size:.85rem;font-weight:600}
+.compare td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+.compare .yes{color:var(--emerald)}
+.compare .no{color:var(--red)}
+.compare .warn{color:var(--orange)}
+
+/* Pricing */
+.pricing{padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+.price-card{background:var(--navy-mid);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:32px;text-align:center}
+.price-card.featured{border-color:var(--emerald);position:relative}
+.price-card.featured::before{content:"MOST POPULAR";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--emerald);color:var(--white);font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:10px}
+.price{font-size:2.5rem;font-weight:800;margin:16px 0 4px}
+.price span{font-size:1rem;font-weight:400;color:var(--gray)}
+.price-desc{color:var(--gray);font-size:.85rem;margin-bottom:20px}
+.price-features{text-align:left;margin:20px 0;font-size:.9rem}
+.price-features li{padding:6px 0;color:var(--gray);list-style:none}
+.price-features li::before{content:"✅ ";margin-right:4px}
+
+/* CTA */
+.final-cta{padding:80px 0;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+.final-cta h2{font-size:2rem;margin-bottom:16px}
+.final-cta p{color:var(--gray);max-width:500px;margin:0 auto 32px}
+
+/* Form */
+.intake-form{max-width:500px;margin:0 auto;background:var(--navy-mid);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:32px}
+.intake-form h3{margin-bottom:20px;text-align:center}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.85rem;color:var(--gray);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;background:var(--navy);border:1px solid var(--navy-light);border-radius:8px;color:var(--white);font-size:.95rem;font-family:inherit}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue)}
+
+footer{padding:40px 0;text-align:center;color:var(--gray);font-size:.85rem;border-top:1px solid rgba(255,255,255,.06)}
+
+@media(max-width:640px){
+.hero h1{font-size:2rem}
+.hero-ctas{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+<div>
+<a href="/">🏰 ClawMoat</a>
+<a href="/#features">Open Source</a>
+<a href="/business/">Business</a>
+<a href="/blog/">Blog</a>
+</div>
+<a href="#contact" class="btn btn-primary btn-sm">Get Started</a>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+<div class="container">
+<div class="hero-badge">🏢 For Teams & Businesses</div>
+<h1>Stop banning AI agents.<br>Start securing them.</h1>
+<p>Your team wants AI agents. Your CISO wants security. ClawMoat Business delivers both — deployed remotely in under an hour.</p>
+<div class="hero-ctas">
+<a href="#contact" class="btn btn-primary">Schedule Setup Call</a>
+<a href="#how" class="btn btn-outline">See How It Works</a>
+</div>
+</div>
+</section>
+
+<!-- Problem -->
+<section class="problem">
+<div class="container">
+<div class="section-label">The Problem</div>
+<div class="section-title">The enterprise AI security crisis is here</div>
+<div class="problem-grid">
+<div class="problem-card">
+<h3>⚠️ "Not appropriate for workstations"</h3>
+<p>Microsoft's security team recommends against running AI agents on standard personal or enterprise workstations.</p>
+<div class="source">— Microsoft Security Blog, Feb 19, 2026</div>
+</div>
+<div class="problem-card">
+<h3>⚠️ "A powerful AI backdoor agent"</h3>
+<p>CrowdStrike warns that misconfigured AI agents could be commandeered by adversaries as backdoor agents on corporate endpoints.</p>
+<div class="source">— CrowdStrike Blog, Feb 18, 2026</div>
+</div>
+<div class="problem-card">
+<h3>⚠️ 341+ malicious plugins discovered</h3>
+<p>20% of the agent skills marketplace contained malware, primarily credential stealers targeting macOS and Linux.</p>
+<div class="source">— Conscia Security Advisory, Feb 23, 2026</div>
+</div>
+<div class="problem-card">
+<h3>⚠️ Shadow AI on corporate endpoints</h3>
+<p>Bitdefender confirms employees are installing AI agents on enterprise-managed devices without security team awareness.</p>
+<div class="source">— Bitdefender GravityZone Telemetry, 2026</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Solution -->
+<section class="solution" id="how">
+<div class="container">
+<div class="section-label">The Solution</div>
+<div class="section-title">Secure AI agents, deployed remotely</div>
+<p class="section-sub">We set up a hardened AI agent on your dedicated machine — with security baked in from day one. Remote setup, no on-site visit needed.</p>
+
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<h3>Schedule a call</h3>
+<p>15-minute call to understand your needs and security requirements</p>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<h3>Designate a machine</h3>
+<p>Any laptop or server — macOS, Linux, or Windows. We connect via secure remote access.</p>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<h3>We deploy & harden</h3>
+<p>Our setup script installs the AI agent + ClawMoat security layer with enterprise-grade defaults.</p>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<h3>You're live</h3>
+<p>Your team gets a secure AI assistant. You get full audit trails and compliance reports.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section class="features">
+<div class="container">
+<div class="section-label">What You Get</div>
+<div class="section-title">Enterprise security, open-source flexibility</div>
+<div class="feature-grid">
+<div class="feature">
+<h3>🔐 4-Tier Permission Model</h3>
+<p>Start locked down (observer), open up as trust grows. Your agent only accesses what you allow.</p>
+</div>
+<div class="feature">
+<h3>🚫 Forbidden Zones</h3>
+<p>SSH keys, AWS credentials, browser data, crypto wallets — automatically protected, always enforced.</p>
+</div>
+<div class="feature">
+<h3>📊 Compliance Dashboard</h3>
+<p>Full audit trail of every action. Mapped to SOC2, ISO 27001, and OWASP Agentic AI 2026.</p>
+</div>
+<div class="feature">
+<h3>🔍 Skill Vetting</h3>
+<p>We audit every plugin before installation. Hash-based integrity checking + 14 suspicious pattern detectors.</p>
+</div>
+<div class="feature">
+<h3>🌐 Network Control</h3>
+<p>See where your agent sends data. Domain allowlists/blocklists. 26 blocked exfiltration endpoints.</p>
+</div>
+<div class="feature">
+<h3>🚨 Real-Time Alerts</h3>
+<p>Instant notifications via Slack, Teams, Discord, or email when security events occur.</p>
+</div>
+<div class="feature">
+<h3>👤 Dedicated Agent User</h3>
+<p>Runs under its own OS user account — isolated from your data, your browser sessions, your credentials.</p>
+</div>
+<div class="feature">
+<h3>🔄 Remote Management</h3>
+<p>We monitor, update, and maintain your deployment. No IT burden on your team.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Comparison -->
+<section class="compare">
+<div class="container">
+<div class="section-label">Risk Comparison</div>
+<div class="section-title">Unmanaged vs. ClawMoat Business</div>
+<div style="overflow-x:auto">
+<table>
+<thead>
+<tr><th>Risk</th><th>Unmanaged AI Agent</th><th>ClawMoat Business</th></tr>
+</thead>
+<tbody>
+<tr><td>Credential theft (SSH, AWS, GPG)</td><td class="no">❌ Full access</td><td class="yes">✅ Forbidden zones enforced</td></tr>
+<tr><td>Malicious plugins</td><td class="no">❌ No vetting</td><td class="yes">✅ Audited before install</td></tr>
+<tr><td>Data exfiltration</td><td class="no">❌ Unrestricted network</td><td class="yes">✅ Egress logging + blocklist</td></tr>
+<tr><td>Destructive commands</td><td class="no">❌ Full shell access</td><td class="yes">✅ Dangerous commands blocked</td></tr>
+<tr><td>Audit trail</td><td class="no">❌ None</td><td class="yes">✅ Full JSONL logging, 90-day retention</td></tr>
+<tr><td>Compliance (SOC2/ISO)</td><td class="no">❌ Not possible</td><td class="yes">✅ Pre-mapped controls</td></tr>
+<tr><td>Dedicated user account</td><td class="no">❌ Runs as you</td><td class="yes">✅ Isolated agent user</td></tr>
+<tr><td>Incident response</td><td class="warn">⚠️ You're on your own</td><td class="yes">✅ Alerts + support</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+<div class="container">
+<div class="section-label">Pricing</div>
+<div class="section-title">Simple, transparent pricing</div>
+<p class="section-sub">Setup fee + monthly subscription. No hidden costs. Cancel anytime.</p>
+
+<div class="pricing-grid">
+<div class="price-card">
+<h3>Starter</h3>
+<div class="price">$99<span>/mo</span></div>
+<div class="price-desc">+ $500 one-time setup</div>
+<ul class="price-features">
+<li>1 secured AI agent</li>
+<li>Worker-tier permissions</li>
+<li>Forbidden zones enforced</li>
+<li>Audit logging</li>
+<li>Email alerts</li>
+<li>Email support</li>
+</ul>
+<a href="#contact" class="btn btn-outline" style="width:100%">Get Started</a>
+</div>
+
+<div class="price-card featured">
+<h3>Growth</h3>
+<div class="price">$249<span>/mo</span></div>
+<div class="price-desc">+ $1,000 one-time setup</div>
+<ul class="price-features">
+<li>Up to 5 AI agents</li>
+<li>Custom permission tiers</li>
+<li>Skill vetting service</li>
+<li>Fleet dashboard</li>
+<li>Slack/Teams alerts</li>
+<li>Priority support</li>
+<li>Monthly security report</li>
+</ul>
+<a href="#contact" class="btn btn-primary" style="width:100%">Get Started</a>
+</div>
+
+<div class="price-card">
+<h3>Enterprise</h3>
+<div class="price">Custom</div>
+<div class="price-desc">Let's talk</div>
+<ul class="price-features">
+<li>Unlimited agents</li>
+<li>On-prem deployment option</li>
+<li>SOC2 compliance package</li>
+<li>Custom policy engine</li>
+<li>Dedicated security analyst</li>
+<li>SLA + 24/7 support</li>
+<li>SSO/SAML integration</li>
+</ul>
+<a href="#contact" class="btn btn-outline" style="width:100%">Contact Sales</a>
+</div>
+</div>
+
+<p style="text-align:center;color:var(--gray);font-size:.85rem;margin-top:24px">All plans include the open-source ClawMoat core (MIT licensed). Setup fee covers remote deployment + hardening. AI provider costs (Claude/GPT) are separate — we recommend Claude Max ($100-200/mo flat rate) for best value.</p>
+</div>
+</section>
+
+<!-- Contact Form -->
+<section class="final-cta" id="contact">
+<div class="container">
+<h2>Ready to secure your AI agents?</h2>
+<p>Tell us about your team and we'll set up a quick call to get you started.</p>
+
+<div class="intake-form">
+<h3>Get Started</h3>
+<form action="https://clawmoat-production.up.railway.app/api/contact" method="POST" id="contactForm">
+<div class="form-group">
+<label>Your name</label>
+<input type="text" name="name" required placeholder="Jane Smith">
+</div>
+<div class="form-group">
+<label>Work email</label>
+<input type="email" name="email" required placeholder="jane@company.com">
+</div>
+<div class="form-group">
+<label>Company</label>
+<input type="text" name="company" placeholder="Acme Corp">
+</div>
+<div class="form-group">
+<label>Team size</label>
+<select name="teamSize">
+<option value="1-10">1-10 employees</option>
+<option value="11-50">11-50 employees</option>
+<option value="51-200" selected>51-200 employees</option>
+<option value="201-500">201-500 employees</option>
+<option value="500+">500+ employees</option>
+</select>
+</div>
+<div class="form-group">
+<label>How many AI agents do you want to deploy?</label>
+<select name="agents">
+<option value="1">1 (trying it out)</option>
+<option value="2-5" selected>2-5</option>
+<option value="6-25">6-25</option>
+<option value="25+">25+</option>
+</select>
+</div>
+<div class="form-group">
+<label>What's your biggest concern about AI agents?</label>
+<textarea name="concerns" placeholder="e.g., credential security, compliance requirements, shadow AI..."></textarea>
+</div>
+<button type="submit" class="btn btn-primary" style="width:100%">Schedule Setup Call</button>
+</form>
+<p style="font-size:.8rem;color:var(--gray);margin-top:12px;text-align:center">We'll respond within 24 hours. No spam, no sales pressure.</p>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<p>🏰 ClawMoat — Open-source AI agent security</p>
+<p style="margin-top:8px"><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="https://github.com/darfaz/clawmoat">GitHub</a> · <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></p>
+<p style="margin-top:8px">© 2026 Leopold Care, LLC · DBA ClawMoat</p>
+</div>
+</footer>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(this));
+  const btn = this.querySelector('button');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  
+  try {
+    const res = await fetch('https://clawmoat-production.up.railway.app/api/contact', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (res.ok) {
+      this.innerHTML = '<div style="text-align:center;padding:40px"><h3 style="color:var(--emerald)">✅ Request received!</h3><p style="color:var(--gray);margin-top:12px">We\'ll be in touch within 24 hours to schedule your setup call.</p></div>';
+    } else {
+      // Fallback: mailto
+      window.location.href = 'mailto:hello@clawmoat.com?subject=ClawMoat Business Inquiry&body=' + encodeURIComponent(JSON.stringify(data, null, 2));
+    }
+  } catch {
+    window.location.href = 'mailto:hello@clawmoat.com?subject=ClawMoat Business Inquiry&body=' + encodeURIComponent(JSON.stringify(data, null, 2));
+  }
+});
+</script>
+
+</body>
+</html>

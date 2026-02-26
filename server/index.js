@@ -163,6 +163,20 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { received: true });
   }
 
+  // Contact form (Business inquiries)
+  if (req.method === 'POST' && req.url === '/api/contact') {
+    const body = await readBody(req);
+    const { name, email, company, teamSize, agents, concerns } = body;
+    if (!email) return json(res, 400, { error: 'Email required' });
+    
+    console.log(`🏢 Business inquiry: ${name} <${email}> @ ${company} (${teamSize}, ${agents} agents)`);
+    console.log(`   Concerns: ${concerns}`);
+    
+    // TODO: Send notification email, store in CRM
+    // For now, log it — we'll check server logs
+    return json(res, 200, { success: true, message: 'Thank you! We\'ll be in touch within 24 hours.' });
+  }
+
   // License validation endpoint (called by CLI)
   if (req.method === 'POST' && req.url === '/api/validate') {
     const body = await readBody(req);
