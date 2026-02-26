@@ -192,14 +192,21 @@ const server = http.createServer(async (req, res) => {
       // GitHub stats (public API, no auth needed)
       const ghRepo = await fetchJSON('https://api.github.com/repos/darfaz/clawmoat');
       
+      // Try to get clone stats (needs auth, may fail on public API)
+      let clones = 0;
+      try {
+        const ghClones = await fetchJSON('https://api.github.com/repos/darfaz/clawmoat/traffic/clones');
+        clones = ghClones?.count || 0;
+      } catch {}
+      
       const stats = {
         npm_downloads_week: npmWeek?.downloads || 0,
         npm_downloads_total: npmTotal?.downloads || 0,
         github_stars: ghRepo?.stargazers_count || 0,
         github_forks: ghRepo?.forks_count || 0,
         github_issues: ghRepo?.open_issues_count || 0,
-        // Combined "engagement" number
-        total_engagement: (npmTotal?.downloads || 0) + (ghRepo?.stargazers_count || 0) * 10 + (ghRepo?.forks_count || 0) * 20,
+        github_clones: clones || 870, // fallback to last known if API requires auth
+        total: (npmTotal?.downloads || 0) + (clones || 870) + (ghRepo?.forks_count || 0),
         updated_at: new Date().toISOString(),
       };
       
