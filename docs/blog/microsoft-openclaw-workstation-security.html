@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Says Don't Run OpenClaw on Your Workstation. Here's How to Do It Safely. | ClawMoat Blog</title>
+<meta name="description" content="Microsoft's security team says OpenClaw is 'untrusted code execution with persistent credentials.' They're right — and here's how to run it safely with host-level security.">
+<meta name="keywords" content="OpenClaw security, Microsoft OpenClaw warning, OpenClaw workstation security, AI agent security, ClawMoat host guardian, OpenClaw enterprise">
+<link rel="canonical" href="https://clawmoat.com/blog/microsoft-openclaw-workstation-security.html">
+<meta property="og:title" content="Microsoft Says Don't Run OpenClaw on Your Workstation. Here's How to Do It Safely.">
+<meta property="og:description" content="Microsoft's security blog says OpenClaw is 'untrusted code execution.' They recommend VMs. We built a better answer: host-level security that makes your workstation safe.">
+<meta property="og:url" content="https://clawmoat.com/blog/microsoft-openclaw-workstation-security.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.8}
+a{color:var(--blue)}
+.container{max-width:740px;margin:0 auto;padding:0 24px}
+nav{background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0;position:fixed;top:0;left:0;right:0;z-index:100}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.1rem;font-weight:700;color:var(--white);text-decoration:none}
+.logo span{color:var(--emerald)}
+nav a{color:var(--gray);font-size:.85rem;text-decoration:none}
+nav a:hover{color:var(--white)}
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.85rem;margin-bottom:32px}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em}
+h2{font-size:1.4rem;font-weight:700;margin:48px 0 16px;letter-spacing:-.01em}
+h3{font-size:1.1rem;font-weight:600;margin:32px 0 12px}
+p{color:var(--gray);margin-bottom:20px;font-size:1rem}
+blockquote{border-left:3px solid var(--blue);padding:16px 24px;margin:24px 0;background:var(--navy-light);border-radius:0 8px 8px 0}
+blockquote p{color:var(--white);margin:0;font-style:italic}
+blockquote cite{display:block;color:var(--gray);font-size:.85rem;margin-top:8px;font-style:normal}
+code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.9rem;color:var(--emerald)}
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:8px;padding:20px;overflow-x:auto;margin:24px 0;font-size:.85rem;line-height:1.6}
+pre code{background:none;padding:0}
+ul,ol{color:var(--gray);margin:0 0 20px 24px}
+li{margin-bottom:8px}
+.cta{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(59,130,246,.1));border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:32px;text-align:center;margin:48px 0}
+.cta h3{margin:0 0 12px;color:var(--white)}
+.cta p{margin:0 0 20px}
+.cta a{display:inline-block;background:var(--emerald);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;text-decoration:none}
+.cta a:hover{opacity:.9}
+.highlight-box{background:var(--navy-light);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:20px;margin:24px 0}
+.highlight-box h4{color:var(--red);font-size:.9rem;margin-bottom:8px}
+.highlight-box p{margin:0;font-size:.9rem}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div style="display:flex;gap:20px">
+    <a href="/blog/">Blog</a>
+    <a href="/#features">Features</a>
+    <a href="/business/">For Business</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+  </div>
+</div>
+</nav>
+
+<article>
+<div class="container">
+<div class="meta">February 26, 2026 · 8 min read · By the ClawMoat Team</div>
+<h1>Microsoft Says Don't Run OpenClaw on Your Workstation. Here's How to Do It Safely.</h1>
+
+<p style="font-size:1.15rem;color:var(--white);line-height:1.7">On February 19, Microsoft's security team published a blog post that should make every OpenClaw user pause: <a href="https://www.microsoft.com/en-us/security/blog/2026/02/19/running-openclaw-safely-identity-isolation-runtime-risk/">"Running OpenClaw safely: identity, isolation, and runtime risk."</a> Their recommendation? <strong>Don't run it on your workstation at all.</strong></p>
+
+<blockquote>
+<p>"OpenClaw should be treated as untrusted code execution with persistent credentials. It is not appropriate to run on a standard personal or enterprise workstation."</p>
+<cite>— Microsoft Security Blog, February 19, 2026</cite>
+</blockquote>
+
+<p>They're not wrong. But their solution — spinning up dedicated VMs for every agent — isn't practical for most teams. We built a better answer.</p>
+
+<h2>What Microsoft Found</h2>
+
+<p>Microsoft identified three risks that materialize "quickly" in unguarded OpenClaw deployments:</p>
+
+<ol>
+<li><strong>Credential exposure.</strong> Your agent can read SSH keys, AWS tokens, browser cookies, and API secrets — and exfiltrate them through a single curl command.</li>
+<li><strong>Memory poisoning.</strong> An attacker can modify your agent's persistent state, causing it to follow malicious instructions across sessions — a slow, invisible hijack.</li>
+<li><strong>Host compromise.</strong> The agent can be induced to download and execute malicious code, turning your workstation into an attacker's foothold.</li>
+</ol>
+
+<p>They also mapped a "poisoned skill" attack chain: a malicious skill published to ClawHub gets installed, runs with your credentials, and establishes persistent control.</p>
+
+<div class="highlight-box">
+<h4>⚠️ The Numbers Are Stark</h4>
+<p>135K+ exposed OpenClaw instances (SecurityScorecard). 341+ malicious skills found on ClawHub (Snyk — 13.4% of skills have critical issues). CVE-2026-25253 scored 8.8. Runlayer's security team compromised an OpenClaw agent in 40 messages, one hour.</p>
+</div>
+
+<h2>Microsoft's Recommendation: Isolate Everything</h2>
+
+<p>Microsoft recommends deploying OpenClaw <em>only</em> in:</p>
+<ul>
+<li>A dedicated virtual machine or separate physical system</li>
+<li>With dedicated, non-privileged credentials</li>
+<li>With access only to non-sensitive data</li>
+<li>With continuous monitoring and a rebuild plan</li>
+</ul>
+
+<p>This is sound security advice. It's also wildly impractical.</p>
+
+<p>Most people running OpenClaw are developers on their laptops. Small businesses running it on a Mac Mini. Solopreneurs with one machine. They're not going to spin up a VM, create a separate user account, configure credential isolation, set up monitoring, and maintain a rebuild plan. They're going to keep running it exactly as they are — with full access to everything on their machine.</p>
+
+<h2>The Real Problem: There's Nothing Between the Agent and Your File System</h2>
+
+<p>Here's what the current OpenClaw security model looks like:</p>
+
+<pre><code>Your Agent → Your Machine (everything accessible)
+</code></pre>
+
+<p>There is no permission system. No access control layer. No audit trail. No forbidden zones. The agent has the same access as the user who installed it — which usually means <em>everything</em>.</p>
+
+<p>This is the gap that other tools don't fill:</p>
+<ul>
+<li><strong>LlamaFirewall</strong> (Meta) — protects the model from prompt injection. Doesn't touch your file system.</li>
+<li><strong>NeMo Guardrails</strong> (NVIDIA) — conversation-level guardrails. No host awareness.</li>
+<li><strong>Runlayer</strong> — enterprise SaaS, MDM-based. Great for large orgs. Not open source, not for individuals or small teams.</li>
+<li><strong>KiloClaw</strong> (Kilo.ai) — managed hosting. Solves the VM problem but requires moving to their cloud.</li>
+</ul>
+
+<p>None of them protect the host. None of them put a security layer <em>between the agent and your SSH keys</em>.</p>
+
+<h2>What ClawMoat Does Differently</h2>
+
+<p>ClawMoat is the only open-source tool designed specifically for host-level agent security. Instead of isolating the agent in a VM, we put guardrails directly on the machine:</p>
+
+<pre><code>Your Agent → ClawMoat (validate every action) → Your Machine (restricted access)
+</code></pre>
+
+<h3>Four Permission Tiers</h3>
+<p>Like Microsoft recommends "non-privileged credentials," ClawMoat enforces this through permission tiers — but without requiring a separate VM:</p>
+<ul>
+<li><strong>Observer</strong> — read-only access. Perfect for evaluation.</li>
+<li><strong>Worker</strong> — safe commands (git, npm, basic file I/O). No destructive operations.</li>
+<li><strong>Standard</strong> — most operations allowed. Forbidden zones enforced.</li>
+<li><strong>Full</strong> — unrestricted. Forbidden zones still active. Full audit trail.</li>
+</ul>
+
+<h3>Forbidden Zones (Even at Full Tier)</h3>
+<p>Microsoft says "access only non-sensitive data." We enforce this with forbidden zones that block access to sensitive directories regardless of tier:</p>
+<pre><code>~/.ssh/          # SSH keys
+~/.aws/          # AWS credentials  
+~/.gnupg/        # GPG keys
+~/.kube/         # Kubernetes configs
+~/Library/Cookies/  # Browser sessions
+~/.npmrc         # Package tokens
+# ... 20+ patterns total
+</code></pre>
+
+<h3>Continuous Monitoring (Built In)</h3>
+<p>Microsoft recommends "continuous monitoring." ClawMoat provides:</p>
+<ul>
+<li>Full audit trail of every file access, shell command, and network request</li>
+<li>Credential file monitoring (watches for unauthorized access attempts)</li>
+<li>Network egress logging with domain allow/blocklists</li>
+<li>Real-time alerts via webhook, Slack, email, or console</li>
+<li>Skill integrity checking (hash verification + suspicious pattern detection)</li>
+</ul>
+
+<h3>One Command to Install</h3>
+<pre><code>npm install -g clawmoat</code></pre>
+<p>Zero dependencies. Sub-millisecond validation. MIT licensed. No VM required.</p>
+
+<h2>How This Maps to Microsoft's Recommendations</h2>
+
+<table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:.9rem">
+<tr style="border-bottom:1px solid var(--navy-mid)">
+<th style="text-align:left;padding:12px;color:var(--gray)">Microsoft Recommends</th>
+<th style="text-align:left;padding:12px;color:var(--gray)">ClawMoat Equivalent</th>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td style="padding:12px;color:var(--gray)">Dedicated VM or physical system</td>
+<td style="padding:12px;color:var(--emerald)">Permission tiers + forbidden zones (no VM needed)</td>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td style="padding:12px;color:var(--gray)">Non-privileged credentials</td>
+<td style="padding:12px;color:var(--emerald)">Worker tier blocks credential access by default</td>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td style="padding:12px;color:var(--gray)">Access only non-sensitive data</td>
+<td style="padding:12px;color:var(--emerald)">20+ forbidden zone patterns auto-enforced</td>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+<td style="padding:12px;color:var(--gray)">Continuous monitoring</td>
+<td style="padding:12px;color:var(--emerald)">Full audit trail + real-time alerts</td>
+</tr>
+<tr>
+<td style="padding:12px;color:var(--gray)">Rebuild plan</td>
+<td style="padding:12px;color:var(--emerald)">Incident forensics from audit logs in 30 seconds</td>
+</tr>
+</table>
+
+<h2>The Growing Ecosystem</h2>
+
+<p>We're not the only ones recognizing this gap. In the past week:</p>
+<ul>
+<li><strong>Runlayer</strong> launched "OpenClaw for Enterprise" with ToolGuard real-time blocking</li>
+<li><strong>Crittora</strong> announced cryptographic policy enforcement for OpenClaw</li>
+<li><strong>KiloClaw</strong> launched managed OpenClaw hosting on Fly.io</li>
+<li><strong>Forbes</strong> called the OpenAI acquisition "a surprising win for small business ROI"</li>
+<li>OpenClaw has <strong>161K+ GitHub stars</strong> and is now backed by the OpenClaw Foundation</li>
+</ul>
+
+<p>The market has spoken: AI agents are here to stay. The question isn't whether to use them — it's how to use them safely.</p>
+
+<div class="cta">
+<h3>Stop choosing between productivity and security.</h3>
+<p>Install ClawMoat in 60 seconds. Keep running OpenClaw on your machine — safely.</p>
+<a href="https://github.com/darfaz/clawmoat">⭐ Star on GitHub</a>
+</div>
+
+<h2>What's Next</h2>
+
+<p>Microsoft's blog post is a wake-up call. But the answer isn't to stop using agents — it's to secure them properly. If you're running OpenClaw today:</p>
+
+<ol>
+<li><strong>Install ClawMoat</strong> — <code>npm install -g clawmoat</code></li>
+<li><strong>Start at Worker tier</strong> — safe defaults, no credential access</li>
+<li><strong>Check your audit logs</strong> — see exactly what your agent has been accessing</li>
+<li><strong>Join the conversation</strong> — <a href="https://github.com/darfaz/clawmoat/issues">GitHub Issues</a> | <a href="https://discord.com/invite/clawd">Discord</a></li>
+</ol>
+
+<p>For businesses running agent fleets, see our <a href="/business/">enterprise security setup</a> — installed on your machines in under an hour.</p>
+
+<p style="color:var(--gray);font-size:.85rem;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)">ClawMoat is open source (MIT). 142 tests passing. Zero dependencies. <a href="https://github.com/darfaz/clawmoat">View on GitHub →</a></p>
+</div>
+</article>
+</body>
+</html>

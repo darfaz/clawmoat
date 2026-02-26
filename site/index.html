@@ -397,7 +397,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     </div>
     <div class="price-card popular">
       <h3>Pro</h3>
-      <div class="price">$29<span>/mo</span></div>
+      <div class="price">$14.99<span>/mo</span></div>
       <div class="desc">For individual developers &amp; power users</div>
       <ul>
         <li>Everything in Free</li>
@@ -407,11 +407,11 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
         <li>Email &amp; webhook alerts</li>
         <li>30-day audit retention</li>
       </ul>
-      <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+      <a href="#" onclick="checkout('shield-monthly')" class="btn btn-primary">Get Pro</a>
     </div>
     <div class="price-card">
       <h3>Team</h3>
-      <div class="price">$99<span>/mo</span></div>
+      <div class="price">$49<span>/mo</span></div>
       <div class="desc">For teams running multiple agents</div>
       <ul>
         <li>Everything in Pro</li>
@@ -421,7 +421,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
         <li>90-day audit retention</li>
         <li>Priority support</li>
       </ul>
-      <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+      <a href="#" onclick="checkout('team-monthly')" class="btn btn-primary">Get Team</a>
     </div>
     <div class="price-card">
       <h3>Enterprise</h3>
@@ -507,5 +507,22 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </div>
 </footer>
 
+<script>
+const API = 'https://clawmoat-production.up.railway.app';
+async function checkout(plan) {
+  try {
+    const res = await fetch(API + '/api/checkout', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({plan: plan})
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else alert('Checkout unavailable. Please try again or email hello@clawmoat.com');
+  } catch(e) {
+    alert('Checkout unavailable. Please try again or email hello@clawmoat.com');
+  }
+}
+</script>
 </body>
 </html>
