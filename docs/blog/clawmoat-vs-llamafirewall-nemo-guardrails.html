@@ -161,6 +161,36 @@ ClawMoat asks: "Should this agent be allowed to access this file / run this comm
 </tbody>
 </table>
 
+<h2>Update: The Ecosystem Just Got Bigger (Feb 26)</h2>
+
+<p>Since we first published this comparison, three new players have entered the OpenClaw security space:</p>
+
+<h3>Runlayer — Enterprise SaaS</h3>
+<p><a href="https://venturebeat.com/orchestration/runlayer-is-now-offering-secure-openclaw-agentic-capabilities-for-large">Covered by VentureBeat</a>. NYC startup offering "OpenClaw for Enterprise" with ToolGuard (real-time blocking, &lt;100ms latency) and OpenClaw Watch (shadow AI discovery via MDM). Claims 8.7% → 95% prompt injection resistance. Integrates with Okta and Entra. <strong>Closed source, enterprise pricing.</strong></p>
+
+<h3>Crittora — Cryptographic Policy Enforcement</h3>
+<p>Announced via <a href="https://finance.yahoo.com/news/crittora-makes-openclaw-enterprise-ready-155800602.html">Yahoo Finance PR</a>. Cryptographically enforced policy framework for OpenClaw. Targets enterprise compliance. <strong>Different approach — policy signatures, not host protection.</strong></p>
+
+<h3>KiloClaw (Kilo.ai) — Managed Hosting</h3>
+<p><a href="https://venturebeat.com/orchestration/kilo-launches-kiloclaw-allowing-anyone-to-deploy-hosted-openclaw-agents-into">Covered by VentureBeat</a>. Backed by GitLab co-founder. Deploy OpenClaw on managed VMs (Fly.io) in 60 seconds. Handles the "3am crash" problem with always-on monitoring. <strong>Hosting solution, not a security tool — complementary to ClawMoat.</strong></p>
+
+<h3>Updated Comparison</h3>
+<table>
+<thead>
+<tr><th>Tool</th><th>Layer</th><th>Open Source?</th><th>Host Protection?</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>ClawMoat</strong></td><td>Host / OS</td><td>✅ MIT</td><td>✅</td><td>Everyone (free core)</td></tr>
+<tr><td>LlamaFirewall</td><td>Model / Prompt</td><td>✅ MIT</td><td>❌</td><td>ML teams</td></tr>
+<tr><td>NeMo Guardrails</td><td>Conversation</td><td>✅ Apache 2</td><td>❌</td><td>Chatbot builders</td></tr>
+<tr><td>Runlayer</td><td>Enterprise Governance</td><td>❌ Proprietary</td><td>Partial</td><td>Large enterprises</td></tr>
+<tr><td>Crittora</td><td>Policy / Crypto</td><td>❌ Proprietary</td><td>❌</td><td>Compliance teams</td></tr>
+<tr><td>KiloClaw</td><td>Managed Hosting</td><td>❌ Proprietary</td><td>❌ (VM isolation)</td><td>Developers / SMBs</td></tr>
+</tbody>
+</table>
+
+<p><strong>Key insight:</strong> <a href="https://www.microsoft.com/en-us/security/blog/2026/02/19/running-openclaw-safely-identity-isolation-runtime-risk/">Microsoft's security team says</a> OpenClaw is "not appropriate for standard workstations." Runlayer and KiloClaw solve this by moving agents off your machine. ClawMoat solves it by securing agents <em>on</em> your machine. Different philosophies — and for anyone who wants to keep running agents locally, ClawMoat is the only open-source option.</p>
+
 <h2>Getting Started</h2>
 
 <pre><code># ClawMoat — 30 seconds to host protection
