@@ -86,6 +86,21 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://clawmoat.com/privacy-policy/</loc>
+    <lastmod>2026-02-26</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/terms-of-service/</loc>
+    <lastmod>2026-02-26</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://clawmoat.com/support/</loc>
+    <lastmod>2026-02-26</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://clawmoat.com/thanks</loc>
     <lastmod>2026-02-13</lastmod>
     <priority>0.3</priority>
