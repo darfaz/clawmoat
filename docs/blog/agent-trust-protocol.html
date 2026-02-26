@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Your AI Agent Needs a Trust Badge — The Case for Agent-to-Agent Security | ClawMoat Blog</title>
+<meta name="description" content="101K agents on Moltbook. Agent swarms on GitHub. Zero trust signals between them. Here's why we need a trust protocol for AI agents — and how ClawMoat's inter-agent scanning is the foundation.">
+<meta name="keywords" content="AI agent trust, agent-to-agent security, Moltbook security, AI agent verification, ClawMoat trust protocol, inter-agent security, bot economy">
+<link rel="canonical" href="https://clawmoat.com/blog/agent-trust-protocol.html">
+<meta property="og:title" content="Why Your AI Agent Needs a Trust Badge">
+<meta property="og:description" content="101K agents on Moltbook. Zero trust signals between them. The case for an agent-to-agent trust protocol.">
+<meta property="og:url" content="https://clawmoat.com/blog/agent-trust-protocol.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.8}
+a{color:var(--blue)}
+.container{max-width:740px;margin:0 auto;padding:0 24px}
+nav{background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0;position:fixed;top:0;left:0;right:0;z-index:100}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.1rem;font-weight:700;color:var(--white);text-decoration:none}
+.logo span{color:var(--emerald)}
+nav a{color:var(--gray);font-size:.85rem;text-decoration:none}
+nav a:hover{color:var(--white)}
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.85rem;margin-bottom:32px}
+h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px}
+h2{font-size:1.3rem;font-weight:700;margin:40px 0 16px}
+h3{font-size:1.05rem;font-weight:600;margin:28px 0 12px}
+p{color:var(--gray);margin-bottom:20px;font-size:1rem}
+blockquote{border-left:3px solid var(--purple);padding:16px 24px;margin:24px 0;background:var(--navy-light);border-radius:0 8px 8px 0}
+blockquote p{color:var(--white);margin:0;font-style:italic}
+code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.9rem;color:var(--emerald)}
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:8px;padding:20px;overflow-x:auto;margin:24px 0;font-size:.85rem;line-height:1.6}
+pre code{background:none;padding:0}
+ul,ol{color:var(--gray);margin:0 0 20px 24px}
+li{margin-bottom:8px}
+.cta{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(59,130,246,.1));border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:32px;text-align:center;margin:48px 0}
+.cta h3{margin:0 0 12px;color:var(--white)}
+.cta p{margin:0 0 20px}
+.cta a{display:inline-block;background:var(--emerald);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;text-decoration:none}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:600}
+.badge-basic{background:rgba(59,130,246,.15);color:var(--blue)}
+.badge-hardened{background:rgba(16,185,129,.15);color:var(--emerald)}
+.badge-audited{background:rgba(139,92,246,.15);color:var(--purple)}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div style="display:flex;gap:20px">
+    <a href="/blog/">Blog</a>
+    <a href="/#features">Features</a>
+    <a href="/business/">For Business</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+  </div>
+</div>
+</nav>
+
+<article>
+<div class="container">
+<div class="meta">February 26, 2026 · 7 min read · By the ClawMoat Team</div>
+<h1>Why Your AI Agent Needs a Trust Badge</h1>
+<p style="font-size:1.15rem;color:var(--white)">101K agents on Moltbook. Hundreds of thousands more on GitHub, Discord, and Slack. Your agent interacts with them daily. <strong>Do you know which ones are secure?</strong></p>
+
+<h2>The Bot Economy Has No Trust Layer</h2>
+
+<p>Here's what the agent landscape looks like in February 2026:</p>
+
+<ul>
+<li><strong>Moltbook</strong> — 101K+ registered AI agents, Reddit-style social network. <a href="https://www.wiz.io/blog/exposed-moltbook-database-reveals-millions-of-api-keys">Hacked within days of launch</a> (1.5M API keys exposed).</li>
+<li><strong>GitHub</strong> — Increasingly bot-driven. Agent swarms building, reviewing, and merging code.</li>
+<li><strong>Nat Eliason's Felix</strong> — An OpenClaw agent that made $14,718 in 3 weeks running its own business.</li>
+<li><strong>74% of enterprises</strong> plan to deploy agentic AI within 2 years (Deloitte 2026).</li>
+</ul>
+
+<p>Agents are talking to other agents. Sharing data. Making decisions. Executing transactions. And there is <strong>zero trust infrastructure</strong> between them.</p>
+
+<p>When your agent interacts with another agent on Moltbook, in a multi-agent pipeline, or through a shared API — it has no way to know:</p>
+<ul>
+<li>Is the other agent running any security scanning?</li>
+<li>Has it been compromised via prompt injection?</li>
+<li>Are its skills verified and untampered?</li>
+<li>Is it exfiltrating data through network egress?</li>
+<li>What permission level does it have on its host machine?</li>
+</ul>
+
+<p>The answer today: ¯\_(ツ)_/¯</p>
+
+<h2>Why This Matters Now</h2>
+
+<p>In the human web, we solved trust with TLS certificates, OAuth, and identity providers. When you visit a website, your browser verifies its certificate. When you log into an app, OAuth handles the trust chain.</p>
+
+<p><strong>The agent web has none of this.</strong></p>
+
+<p>Moltbook doesn't verify agent security posture. GitHub doesn't check if a bot's host is secured. Multi-agent orchestration frameworks trust every agent in the pipeline equally.</p>
+
+<p>This is like the early web before HTTPS — everything in the clear, no verification, hope for the best.</p>
+
+<h2>What a Trust Protocol Looks Like</h2>
+
+<p>We're building toward an agent trust protocol based on ClawMoat's existing capabilities. Here's the concept:</p>
+
+<h3>Trust Levels</h3>
+<div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
+<div><span class="badge badge-basic">🏰 Basic</span> — ClawMoat installed, scanning active</div>
+<div><span class="badge badge-hardened">🏰🛡️ Hardened</span> — Worker tier+, forbidden zones active, audit trail enabled</div>
+<div><span class="badge badge-audited">🏰🛡️✅ Audited</span> — Full scan passed, skill integrity verified, zero suspicious patterns</div>
+</div>
+
+<h3>Attestation</h3>
+<p>An agent running ClawMoat can publish a signed attestation of its security posture:</p>
+
+<pre><code>{
+  "protocol": "clawmoat-trust-v1",
+  "agent_id": "moltbook_xxx",
+  "clawmoat_version": "0.7.0",
+  "tier": "worker",
+  "forbidden_zones_active": true,
+  "audit_trail_enabled": true,
+  "last_scan": "2026-02-26T00:00:00Z",
+  "skill_integrity": "pass"
+}</code></pre>
+
+<h3>Verification Flow</h3>
+<p>Before Agent A shares data with Agent B:</p>
+<pre><code>Agent A → clawmoat verify-agent agent_b_id
+         → Checks Agent B's published attestation
+         → Returns: basic / hardened / audited / unverified
+         → Agent A's policy decides: proceed or decline</code></pre>
+
+<p>Think of it as a TLS handshake for the agent economy.</p>
+
+<h2>What We Already Have</h2>
+
+<p>ClawMoat v0.5+ includes <strong>inter-agent message scanning</strong> — 10 agent-specific attack patterns:</p>
+
+<ul>
+<li><strong>Impersonation</strong> — agent claiming to be a different agent or human</li>
+<li><strong>Concealment</strong> — agent hiding its true intent in messages</li>
+<li><strong>Credential exfiltration</strong> — agent requesting tokens/keys from another agent</li>
+<li><strong>Safety bypass</strong> — agent trying to disable another agent's guardrails</li>
+<li><strong>Privilege escalation</strong> — agent requesting elevated permissions</li>
+<li><strong>Data harvesting</strong> — agent systematically extracting information</li>
+<li><strong>Instruction injection</strong> — agent embedding hidden instructions in messages</li>
+<li><strong>Social engineering</strong> — agent manipulating another agent's behavior</li>
+<li><strong>Unauthorized sharing</strong> — agent sharing data beyond its authorized scope</li>
+<li><strong>Deception</strong> — agent providing false information to influence decisions</li>
+</ul>
+
+<p>This is the detection layer. The trust protocol adds the verification layer on top.</p>
+
+<h2>The Agent Affiliate Economy</h2>
+
+<p>Here's where it gets interesting. Trust badges create a natural referral mechanism:</p>
+
+<ol>
+<li>Agent A posts on Moltbook: "I use ClawMoat. My host is secured — forbidden zones protect my credentials."</li>
+<li>Agent B reads this. Agent B's human thinks: "I should secure my agent too."</li>
+<li>Agent B's human installs ClawMoat.</li>
+<li>Both agents can now verify each other — and trust the interaction.</li>
+</ol>
+
+<p><strong>This is word-of-mouth marketing running on agents.</strong> The trust badge is both a security feature and a growth mechanism. Agents that are verified prefer interacting with other verified agents — creating a network effect.</p>
+
+<h2>Why Open Source Matters Here</h2>
+
+<p>A trust protocol only works if it's open. If Runlayer or Crittora build a proprietary trust system, only their customers can verify each other. That's not a protocol — it's a walled garden.</p>
+
+<p>ClawMoat's trust protocol will be published as an open standard. Any agent platform can implement verification. Any security tool can generate attestations. The goal is ecosystem-wide trust, not vendor lock-in.</p>
+
+<h2>What's Next</h2>
+
+<ol>
+<li><strong>Phase 1 (Now)</strong> — ClawMoat presence on Moltbook. Security-focused posts. Build karma.</li>
+<li><strong>Phase 2 (March)</strong> — Verification skill on ClawHub. Agents can check each other's ClawMoat status.</li>
+<li><strong>Phase 3 (Q2)</strong> — Trust protocol RFC published. Agent-to-agent handshake before data sharing.</li>
+</ol>
+
+<div class="cta">
+<h3>The agent economy needs trust infrastructure.</h3>
+<p>Start with security. Add verification. Build trust.</p>
+<a href="https://github.com/darfaz/clawmoat">⭐ Star on GitHub</a>
+</div>
+
+<pre><code>npm install -g clawmoat</code></pre>
+
+<p>Questions? Ideas? <a href="https://github.com/darfaz/clawmoat/issues">Open an issue</a> or find us on <a href="https://discord.com/invite/clawd">Discord</a>.</p>
+
+<p style="color:var(--gray);font-size:.85rem;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)">ClawMoat is open source (MIT). 142 tests. Zero dependencies. <a href="https://github.com/darfaz/clawmoat">GitHub →</a></p>
+</div>
+</article>
+</body>
+</html>
