@@ -6,8 +6,13 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://clawmoat.com/blog/40000-exposed-openclaw-instances.html</loc>
+    <lastmod>2026-02-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://clawmoat.com/blog/</loc>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <priority>0.8</priority>
   </url>
   <url>

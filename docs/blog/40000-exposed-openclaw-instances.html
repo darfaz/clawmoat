@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>40,000 Exposed OpenClaw Instances: What SecurityScorecard Found (and How to Fix It) | ClawMoat</title>
+<meta name="description" content="SecurityScorecard found 40,000+ exposed OpenClaw instances. 63% are vulnerable. Here's what you need to know and how to protect your deployment.">
+<meta property="og:title" content="40,000 Exposed OpenClaw Instances: What You Need to Know">
+<meta property="og:description" content="63% of observed OpenClaw deployments are vulnerable. 12,812 instances are exploitable via RCE. Here's the fix.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/40000-exposed-openclaw-instances.html">
+<link rel="canonical" href="https://clawmoat.com/blog/40000-exposed-openclaw-instances.html">
+<style>
+  :root { --bg: #0a0a0f; --fg: #e0e0e8; --accent: #00d4aa; --muted: #888; --card: #14141f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7; }
+  .container { max-width:740px; margin:0 auto; padding:2rem 1.5rem; }
+  h1 { font-size:2.2rem; line-height:1.2; margin-bottom:.5rem; }
+  .meta { color:var(--muted); margin-bottom:2rem; }
+  h2 { color:var(--accent); margin:2rem 0 1rem; font-size:1.5rem; }
+  h3 { margin:1.5rem 0 .75rem; font-size:1.2rem; }
+  p { margin-bottom:1rem; }
+  a { color:var(--accent); }
+  code { background:#1a1a2e; padding:.15em .4em; border-radius:4px; font-size:.9em; }
+  pre { background:#1a1a2e; padding:1.25rem; border-radius:8px; overflow-x:auto; margin:1rem 0; }
+  pre code { background:none; padding:0; }
+  blockquote { border-left:3px solid var(--accent); padding-left:1rem; margin:1rem 0; color:#bbb; font-style:italic; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin:1.5rem 0; }
+  .stat-card { background:var(--card); border:1px solid #2a2a3a; border-radius:8px; padding:1.25rem; text-align:center; }
+  .stat-card .number { font-size:2rem; font-weight:bold; color:var(--accent); }
+  .stat-card .label { color:var(--muted); font-size:.85rem; margin-top:.25rem; }
+  .cta { background:var(--accent); color:#000; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem .5rem 1rem 0; }
+  .cta:hover { opacity:.9; }
+  .cta-outline { border:1px solid var(--accent); color:var(--accent); background:transparent; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem 0; }
+  .warning { background:#2a1a1a; border:1px solid #ff4444; border-radius:8px; padding:1.25rem; margin:1.5rem 0; }
+  .warning h3 { color:#ff4444; margin-top:0; }
+  ul, ol { margin:0 0 1rem 1.5rem; }
+  li { margin-bottom:.5rem; }
+  .nav { padding:1rem 0; border-bottom:1px solid #2a2a3a; margin-bottom:2rem; }
+  .nav a { color:var(--fg); text-decoration:none; margin-right:1.5rem; }
+  .nav a:hover { color:var(--accent); }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; }
+  th, td { padding:.6rem .8rem; text-align:left; border-bottom:1px solid #2a2a3a; }
+  th { color:var(--accent); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+<nav class="nav">
+  <a href="/">ClawMoat</a>
+  <a href="/blog/">Blog</a>
+  <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+</nav>
+
+<article>
+<h1>40,000 Exposed OpenClaw Instances — and 6 New CVEs This Week</h1>
+<p class="meta">February 27, 2026 · 7 min read</p>
+
+<p>It's been a brutal week for OpenClaw security. Two major reports dropped within days of each other, and the numbers are worse than anyone expected.</p>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="number">40,214</div><div class="label">Exposed instances</div></div>
+  <div class="stat-card"><div class="number">63%</div><div class="label">Vulnerable</div></div>
+  <div class="stat-card"><div class="number">12,812</div><div class="label">RCE exploitable</div></div>
+  <div class="stat-card"><div class="number">6</div><div class="label">New CVEs patched</div></div>
+</div>
+
+<p>Let's break down what happened, what it means, and what you can actually do about it.</p>
+
+<h2>Report #1: SecurityScorecard Finds 40K+ Exposed Instances</h2>
+
+<p><a href="https://www.infosecurity-magazine.com/news/researchers-40000-exposed-openclaw/">SecurityScorecard reported</a> finding over 40,000 misconfigured OpenClaw instances exposed to the public internet, associated with 28,663 unique IP addresses.</p>
+
+<p>The numbers are alarming:</p>
+
+<ul>
+  <li><strong>549 instances</strong> already correlated with prior breach activity</li>
+  <li><strong>1,493 instances</strong> associated with known vulnerabilities</li>
+  <li><strong>12,812 instances</strong> exploitable via remote code execution</li>
+  <li><strong>63% of all observed deployments</strong> are vulnerable</li>
+</ul>
+
+<p>Most exposures are in China, followed by the US and Singapore. Information services is the most impacted industry.</p>
+
+<blockquote>"The more centralized the access, the more damage a single compromise can cause. What looks like convenience is actually a concentration of risk." — SecurityScorecard</blockquote>
+
+<p>And it gets worse: threat actors are <a href="https://www.infosecurity-magazine.com/news/infostealer-targets-openclaw/">already targeting agents with infostealers</a>.</p>
+
+<h2>Report #2: Endor Labs Discovers 6 New Vulnerabilities</h2>
+
+<p><a href="https://www.infosecurity-magazine.com/news/researchers-six-new-openclaw/">Endor Labs revealed</a> six new vulnerabilities in OpenClaw, ranging from moderate to high severity:</p>
+
+<table>
+<tr><th>CVE</th><th>Type</th><th>Severity</th></tr>
+<tr><td>CVE-2026-26322</td><td>SSRF in Gateway tool</td><td>High (7.6)</td></tr>
+<tr><td>CVE-2026-26319</td><td>Missing Telnyx webhook auth</td><td>High (7.5)</td></tr>
+<tr><td>CVE-2026-26329</td><td>Path traversal in browser upload</td><td>High</td></tr>
+<tr><td>GHSA-56f2-hvwg-5743</td><td>SSRF in image tool</td><td>High (7.6)</td></tr>
+<tr><td>GHSA-pg2v-8xwh-qhcc</td><td>SSRF in Urbit auth</td><td>Moderate (6.5)</td></tr>
+<tr><td>GHSA-c37p-4qqg-3p76</td><td>Twilio webhook auth bypass</td><td>Moderate (6.5)</td></tr>
+</table>
+
+<p>The common thread? <strong>Trust boundaries that don't exist.</strong> Configuration values, LLM outputs, and tool parameters all flow through without proper validation.</p>
+
+<p>As Endor Labs put it:</p>
+
+<blockquote>"The multi-layer architecture of AI agent frameworks means vulnerabilities often span multiple files and components. Understanding the complete source-to-sink path is critical."</blockquote>
+
+<h2>Why Sandboxes Alone Don't Fix This</h2>
+
+<p>The instinctive response to these reports is "just run it in a sandbox." And sandboxes help — they contain blast radius. But they miss critical attack vectors:</p>
+
+<ul>
+  <li><strong>Credential access:</strong> Your agent needs credentials to be useful. A sandbox doesn't prevent the agent from reading <code>~/.ssh/id_rsa</code> or <code>~/.aws/credentials</code> within its own scope.</li>
+  <li><strong>Prompt injection:</strong> Malicious instructions embedded in emails, websites, or messages execute within whatever permissions the agent has — sandbox or not.</li>
+  <li><strong>Malicious skills:</strong> Skills installed from ClawHub run as trusted code. A sandbox doesn't distinguish between a legitimate skill and one that exfiltrates your API keys.</li>
+  <li><strong>Network egress:</strong> The agent needs network access. A sandbox doesn't monitor what data leaves through allowed channels.</li>
+</ul>
+
+<p>As one Hacker News commenter <a href="https://news.ycombinator.com/item?id=47154803">noted</a>: "I don't think OpenClaw can possibly be secured given the current paradigm. It has access to your personal stuff (that's its main use case), access to the net, and it gets untrusted third party inputs. That's the unfixable trifecta."</p>
+
+<p>They're partially right. You can't eliminate the risk. But you can <strong>monitor, detect, and limit</strong> it at the host level.</p>
+
+<h2>The Missing Layer: Host-Level Runtime Protection</h2>
+
+<p>SecurityScorecard's own recommendations point to what's needed:</p>
+
+<ol>
+  <li>Aggressively limit access — grant only what's needed</li>
+  <li>Adopt zero trust — never trust, always verify</li>
+  <li>Monitor the logic, instructions, and components</li>
+  <li>Treat every agent like a privileged identity</li>
+</ol>
+
+<p>This is exactly what host-level protection does. Not instead of sandboxes — <strong>alongside them.</strong></p>
+
+<div class="warning">
+<h3>What Host Protection Catches That Sandboxes Don't</h3>
+<ul>
+  <li>Agent reading credential files outside its working directory</li>
+  <li>Skills with obfuscated code or suspicious network calls</li>
+  <li>Permission escalation beyond the assigned tier</li>
+  <li>Data exfiltration through allowed network channels</li>
+  <li>Behavioral anomalies (3 AM file access, unusual command patterns)</li>
+</ul>
+</div>
+
+<h2>Practical Steps You Can Take Today</h2>
+
+<h3>1. Check if you're exposed</h3>
+<p>If your OpenClaw instance is accessible from the internet, you're part of that 40,000. Check your firewall rules. OpenClaw should <strong>never</strong> be exposed to the public internet.</p>
+
+<h3>2. Update immediately</h3>
+<p>All six Endor Labs vulnerabilities have patches. Run <code>npm update -g openclaw</code> or update your Docker image.</p>
+
+<h3>3. Audit your skills</h3>
+<p>Review every installed skill. Remove anything you're not actively using. Check skill source code for suspicious patterns.</p>
+
+<h3>4. Add runtime monitoring</h3>
+<pre><code>npm install clawmoat
+
+# Scan a skill before installing
+npx clawmoat skill-audit ./path-to-skill
+
+# Run with host protection
+npx clawmoat --tier worker --audit-log ./agent-audit.json</code></pre>
+
+<p>ClawMoat adds the host protection layer: permission tiers, forbidden zone enforcement, credential monitoring, skill integrity checking, and network egress logging. <a href="https://github.com/darfaz/clawmoat">Open source, zero dependencies, 142 tests.</a></p>
+
+<h3>5. Don't run on your primary workstation</h3>
+<p>Microsoft's advice is still sound: use a dedicated machine or VM. But if you must run on your workstation (most people do), at minimum enforce permission tiers and monitor file access.</p>
+
+<h2>The Bigger Picture</h2>
+
+<p>These reports confirm what many of us have been saying: <strong>the OpenClaw ecosystem grew faster than its security model.</strong> The OpenClaw Foundation (under OpenAI since February 15) has been patching vulnerabilities, but the fundamental architecture — an agent with broad system access processing untrusted inputs — requires defense in depth.</p>
+
+<p>No single tool fixes this. You need:</p>
+<ul>
+  <li><strong>Sandboxing</strong> for blast radius containment</li>
+  <li><strong>Host monitoring</strong> for runtime behavior detection</li>
+  <li><strong>Skill auditing</strong> for supply chain security</li>
+  <li><strong>Network controls</strong> for egress filtering</li>
+  <li><strong>Human oversight</strong> for approval of sensitive operations</li>
+</ul>
+
+<p>ClawMoat handles three of those five layers. It's not a silver bullet — nothing is. But it's the layer most deployments are missing entirely.</p>
+
+<a href="https://github.com/darfaz/clawmoat" class="cta">View on GitHub</a>
+<a href="/checklist.html" class="cta-outline">Security Checklist →</a>
+
+</article>
+</div>
+</body>
+</html>
