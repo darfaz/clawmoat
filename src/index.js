@@ -352,3 +352,4 @@ module.exports.evaluateToolCall = evaluateToolCall;
 module.exports.HostGuardian = HostGuardian;
 module.exports.TIERS = TIERS;
 module.exports.GatewayMonitor = require('./guardian/gateway-monitor').GatewayMonitor;
+module.exports.FinanceGuard = require('./finance').FinanceGuard;
