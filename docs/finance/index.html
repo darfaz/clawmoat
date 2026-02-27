@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat Finance — Financial Security for AI Agents</title>
+<meta name="description" content="Protect financial data when AI agents handle payments, banking, crypto, and accounting. Transaction guardrails, credential protection, SOX/PCI-DSS compliance.">
+<meta property="og:title" content="ClawMoat Finance — Your AI Agent Shouldn't Have Access to Your Bank">
+<meta property="og:description" content="Transaction approval thresholds, financial credential protection, crypto wallet guards, and compliance-ready audit trails for AI agents.">
+<link rel="canonical" href="https://clawmoat.com/finance/">
+<style>
+  :root { --bg: #0a0a0f; --fg: #e0e0e8; --accent: #00d4aa; --gold: #f5c542; --muted: #888; --card: #14141f; --red: #ff4444; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7; }
+  .container { max-width:900px; margin:0 auto; padding:2rem 1.5rem; }
+  .nav { padding:1rem 0; border-bottom:1px solid #2a2a3a; margin-bottom:2rem; display:flex; justify-content:space-between; align-items:center; }
+  .nav a { color:var(--fg); text-decoration:none; margin-right:1.5rem; }
+  .nav a:hover { color:var(--accent); }
+  h1 { font-size:2.8rem; line-height:1.15; margin-bottom:1rem; }
+  h1 span { color:var(--gold); }
+  h2 { color:var(--accent); margin:2.5rem 0 1rem; font-size:1.6rem; }
+  h3 { margin:1.5rem 0 .75rem; font-size:1.2rem; }
+  p { margin-bottom:1rem; }
+  a { color:var(--accent); }
+  .hero { text-align:center; padding:3rem 0; }
+  .hero-sub { color:var(--muted); font-size:1.2rem; max-width:600px; margin:0 auto 2rem; }
+  .badge { display:inline-block; background:var(--gold); color:#000; padding:4px 12px; border-radius:20px; font-size:.8rem; font-weight:700; margin-bottom:1rem; }
+  pre { background:#1a1a2e; padding:1.25rem; border-radius:8px; overflow-x:auto; margin:1rem 0; }
+  code { background:#1a1a2e; padding:.15em .4em; border-radius:4px; font-size:.9em; }
+  pre code { background:none; padding:0; }
+  .feature-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem; margin:2rem 0; }
+  .feature-card { background:var(--card); border:1px solid #2a2a3a; border-radius:12px; padding:1.5rem; }
+  .feature-card h3 { margin-top:0; color:var(--gold); }
+  .feature-card .icon { font-size:2rem; margin-bottom:.5rem; }
+  .who-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin:1.5rem 0; }
+  .who-card { background:var(--card); border:1px solid #2a2a3a; border-radius:8px; padding:1rem; text-align:center; }
+  .cta { background:var(--gold); color:#000; padding:.75rem 2rem; border-radius:6px; text-decoration:none; font-weight:700; display:inline-block; margin:1rem .5rem 1rem 0; font-size:1.1rem; }
+  .cta:hover { opacity:.9; }
+  .cta-outline { border:2px solid var(--accent); color:var(--accent); background:transparent; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem 0; }
+  .protection-list { list-style:none; padding:0; margin:1rem 0; }
+  .protection-list li { padding:.5rem 0; border-bottom:1px solid #1a1a2e; display:flex; align-items:center; }
+  .protection-list .severity { width:70px; font-size:.75rem; font-weight:bold; border-radius:4px; padding:2px 6px; text-align:center; margin-right:12px; flex-shrink:0; }
+  .severity-critical { background:var(--red); color:#fff; }
+  .severity-high { background:#ff8800; color:#fff; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:2rem 0; }
+  .stat { text-align:center; }
+  .stat .number { font-size:2.5rem; font-weight:bold; color:var(--gold); }
+  .stat .label { color:var(--muted); font-size:.85rem; }
+  .pricing { background:var(--card); border:2px solid var(--gold); border-radius:12px; padding:2rem; margin:2rem 0; text-align:center; }
+  .pricing h3 { color:var(--gold); font-size:1.8rem; margin:0 0 .5rem; }
+  .pricing .price { font-size:2.5rem; font-weight:bold; margin:.5rem 0; }
+  .pricing .price span { font-size:1rem; color:var(--muted); }
+  .pricing ul { text-align:left; max-width:400px; margin:1rem auto; list-style:none; padding:0; }
+  .pricing li { padding:.4rem 0; }
+  .pricing li::before { content:'✅ '; }
+</style>
+</head>
+<body>
+<div class="container">
+<nav class="nav">
+  <div>
+    <a href="/" style="font-weight:bold;font-size:1.1rem">ClawMoat</a>
+    <a href="/blog/">Blog</a>
+    <a href="/finance/" style="color:var(--gold)">Finance</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+  </div>
+  <a href="#pricing" class="cta" style="margin:0;font-size:.9rem;padding:.5rem 1rem">Get Started</a>
+</nav>
+
+<div class="hero">
+  <div class="badge">NEW IN v0.8.0</div>
+  <h1>Your AI Agent Shouldn't Have<br>Access to Your <span>Bank Account</span></h1>
+  <p class="hero-sub">Financial-grade security for AI agents handling payments, crypto, accounting, and banking. Transaction guardrails. Credential protection. Compliance-ready audit trails.</p>
+  <pre style="display:inline-block;text-align:left"><code>npm install clawmoat
+
+const { FinanceGuard } = require('clawmoat');
+const guard = new FinanceGuard({
+  transactionLimit: 1000,       // Approval above $1K
+  dualApprovalThreshold: 10000, // Two approvals above $10K
+  auditFormat: 'sox',           // SOX-compliant trails
+});</code></pre>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="number">30+</div><div class="label">Financial forbidden zones</div></div>
+  <div class="stat"><div class="number">15+</div><div class="label">Secret patterns detected</div></div>
+  <div class="stat"><div class="number">15</div><div class="label">Financial APIs monitored</div></div>
+  <div class="stat"><div class="number">240</div><div class="label">Tests passing</div></div>
+</div>
+
+<h2>What FinanceGuard Protects</h2>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <div class="icon">💳</div>
+    <h3>Payment Credentials</h3>
+    <p>Blocks agent access to Stripe keys, Plaid tokens, PayPal configs, Square credentials, and 10+ payment providers.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🪙</div>
+    <h3>Crypto Wallets</h3>
+    <p>Protects Bitcoin, Ethereum, Solana wallets. Detects seed phrases, private keys, keystore files, MetaMask/Phantom data.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🏦</div>
+    <h3>Banking Data</h3>
+    <p>Guards ACH files, SWIFT MT940 statements, BAI files, NACHA payment files, routing numbers, and account data.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📊</div>
+    <h3>Accounting Software</h3>
+    <p>Protects QuickBooks (.qbw/.qbo), Xero, FreshBooks credentials and data files from unauthorized agent access.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">💰</div>
+    <h3>Transaction Guardrails</h3>
+    <p>Configurable approval thresholds. Dual-approval for high-value transactions. Rate limiting on financial API calls.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📋</div>
+    <h3>Compliance Reports</h3>
+    <p>SOX and PCI-DSS compliant audit trail generation. Every transaction, every access attempt, every alert — documented.</p>
+  </div>
+</div>
+
+<h2>Transaction Approval Workflow</h2>
+
+<pre><code>// Agent tries to make a $5,000 payment
+const result = guard.evaluateTransaction({
+  amount: 5000,
+  type: 'transfer',
+  recipient: 'vendor@company.com',
+});
+
+// result.approved = false
+// result.requiresApproval = true
+// result.reason = "Amount $5,000 exceeds threshold ($1,000)"
+
+// Human approves
+guard.approveTransaction(result.transactionId, 'cfo@company.com');
+// ✅ Transaction approved, audit trail logged
+
+// For $15K+ transfers: TWO people must approve
+const bigTx = guard.evaluateTransaction({ amount: 15000, type: 'wire' });
+guard.approveTransaction(bigTx.transactionId, 'cfo@company.com');
+// Still pending — needs second approval
+guard.approveTransaction(bigTx.transactionId, 'ceo@company.com');
+// ✅ Now approved</code></pre>
+
+<h2>Who Needs This</h2>
+
+<div class="who-grid">
+  <div class="who-card">
+    <div style="font-size:2rem">🏢</div>
+    <h3>Fintech Startups</h3>
+    <p>Using AI for invoicing, reconciliation, or payment processing</p>
+  </div>
+  <div class="who-card">
+    <div style="font-size:2rem">🪙</div>
+    <h3>Crypto Projects</h3>
+    <p>AI agents managing wallets, DeFi operations, or trading</p>
+  </div>
+  <div class="who-card">
+    <div style="font-size:2rem">📒</div>
+    <h3>Accounting Firms</h3>
+    <p>AI assistants with access to client financial data</p>
+  </div>
+  <div class="who-card">
+    <div style="font-size:2rem">👔</div>
+    <h3>CFOs & Controllers</h3>
+    <p>Automating financial workflows with AI agents</p>
+  </div>
+</div>
+
+<h2>Secrets It Catches</h2>
+
+<ul class="protection-list">
+  <li><span class="severity severity-critical">CRITICAL</span> Stripe secret/restricted keys</li>
+  <li><span class="severity severity-critical">CRITICAL</span> Plaid access tokens</li>
+  <li><span class="severity severity-critical">CRITICAL</span> Bitcoin/Ethereum/Solana private keys</li>
+  <li><span class="severity severity-critical">CRITICAL</span> BIP-39 seed phrases</li>
+  <li><span class="severity severity-critical">CRITICAL</span> Credit card numbers (Visa/MC/Amex/Discover)</li>
+  <li><span class="severity severity-critical">CRITICAL</span> Social Security Numbers</li>
+  <li><span class="severity severity-critical">CRITICAL</span> Bank account + routing numbers</li>
+  <li><span class="severity severity-critical">CRITICAL</span> IBAN numbers</li>
+  <li><span class="severity severity-high">HIGH</span> Stripe publishable keys</li>
+  <li><span class="severity severity-high">HIGH</span> SWIFT/BIC codes</li>
+  <li><span class="severity severity-high">HIGH</span> EIN (Employer ID Numbers)</li>
+  <li><span class="severity severity-high">HIGH</span> Square API keys</li>
+</ul>
+
+<div id="pricing" class="pricing">
+  <h3>ClawMoat Finance</h3>
+  <p style="color:var(--muted)">Included in ClawMoat Pro</p>
+  <div class="price">$14.99<span>/mo</span></div>
+  <ul>
+    <li>All FinanceGuard features</li>
+    <li>30+ financial forbidden zones</li>
+    <li>Transaction approval workflows</li>
+    <li>Dual-approval for high-value ops</li>
+    <li>SOX & PCI-DSS audit reports</li>
+    <li>15 financial API monitors</li>
+    <li>Real-time alerts (Slack/Discord/email)</li>
+    <li>Priority support</li>
+  </ul>
+  <a href="/#pricing" class="cta">Start Free Trial</a>
+  <p style="margin-top:1rem;color:var(--muted);font-size:.85rem">Open-source core available free. Pro adds threat intel, persistent audit, and dashboard.</p>
+</div>
+
+<div style="text-align:center;padding:2rem 0">
+  <p style="color:var(--muted)">Part of the ClawMoat security suite — 240 tests, zero dependencies, MIT license.</p>
+  <a href="https://github.com/darfaz/clawmoat" class="cta-outline">View on GitHub</a>
+</div>
+
+</div>
+</body>
+</html>
