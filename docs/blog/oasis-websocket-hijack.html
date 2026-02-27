@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Any Website Can Hijack Your OpenClaw Agent — How ClawMoat Detects It | ClawMoat</title>
+<meta name="description" content="Oasis Security found a zero-click attack: any website can take full control of your OpenClaw agent via WebSocket. ClawMoat v0.7.1 now detects this attack.">
+<meta property="og:title" content="Any Website Can Hijack Your OpenClaw Agent — How to Detect and Prevent It">
+<meta property="og:description" content="Oasis Security found a zero-click WebSocket hijack. ClawMoat v0.7.1 adds gateway monitoring to detect brute-force attacks and unauthorized device pairings.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/oasis-websocket-hijack.html">
+<link rel="canonical" href="https://clawmoat.com/blog/oasis-websocket-hijack.html">
+<style>
+  :root { --bg: #0a0a0f; --fg: #e0e0e8; --accent: #00d4aa; --muted: #888; --card: #14141f; --red: #ff4444; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7; }
+  .container { max-width:740px; margin:0 auto; padding:2rem 1.5rem; }
+  h1 { font-size:2.2rem; line-height:1.2; margin-bottom:.5rem; }
+  .meta { color:var(--muted); margin-bottom:2rem; }
+  h2 { color:var(--accent); margin:2rem 0 1rem; font-size:1.5rem; }
+  h3 { margin:1.5rem 0 .75rem; font-size:1.2rem; }
+  p { margin-bottom:1rem; }
+  a { color:var(--accent); }
+  code { background:#1a1a2e; padding:.15em .4em; border-radius:4px; font-size:.9em; }
+  pre { background:#1a1a2e; padding:1.25rem; border-radius:8px; overflow-x:auto; margin:1rem 0; }
+  pre code { background:none; padding:0; }
+  blockquote { border-left:3px solid var(--accent); padding-left:1rem; margin:1rem 0; color:#bbb; font-style:italic; }
+  .warning { background:#2a1a1a; border:1px solid var(--red); border-radius:8px; padding:1.25rem; margin:1.5rem 0; }
+  .warning h3 { color:var(--red); margin-top:0; }
+  .cta { background:var(--accent); color:#000; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem .5rem 1rem 0; }
+  .cta-outline { border:1px solid var(--accent); color:var(--accent); background:transparent; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem 0; }
+  ul, ol { margin:0 0 1rem 1.5rem; }
+  li { margin-bottom:.5rem; }
+  .nav { padding:1rem 0; border-bottom:1px solid #2a2a3a; margin-bottom:2rem; }
+  .nav a { color:var(--fg); text-decoration:none; margin-right:1.5rem; }
+  .nav a:hover { color:var(--accent); }
+  .attack-chain { background:var(--card); border:1px solid #2a2a3a; border-radius:8px; padding:1.5rem; margin:1.5rem 0; }
+  .attack-step { display:flex; align-items:flex-start; margin:.75rem 0; }
+  .step-num { background:var(--red); color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:.85rem; flex-shrink:0; margin-right:12px; margin-top:2px; }
+  .step-text { flex:1; }
+  .new-badge { background:var(--accent); color:#000; padding:2px 8px; border-radius:4px; font-size:.75rem; font-weight:bold; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; }
+  th, td { padding:.6rem .8rem; text-align:left; border-bottom:1px solid #2a2a3a; }
+  th { color:var(--accent); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+<nav class="nav">
+  <a href="/">ClawMoat</a>
+  <a href="/blog/">Blog</a>
+  <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+</nav>
+
+<article>
+<h1>Any Website Can Hijack Your OpenClaw Agent — and ClawMoat Now Detects It</h1>
+<p class="meta">February 27, 2026 · 8 min read · <span class="new-badge">v0.7.1</span></p>
+
+<div class="warning">
+<h3>🚨 Critical Vulnerability Disclosed</h3>
+<p>Oasis Security published research showing that <strong>any website can silently take full control of an OpenClaw agent</strong> running on localhost. No plugins, no extensions, no user interaction required. <a href="https://www.oasis.security/blog/openclaw-vulnerability">Full research →</a></p>
+</div>
+
+<p>This is the most serious OpenClaw vulnerability disclosed to date. Unlike previous attacks that required exposed ports, malicious skills, or crafted messages, this one requires <strong>nothing except visiting a website</strong>.</p>
+
+<p>We've shipped ClawMoat v0.7.1 with a new <code>GatewayMonitor</code> module specifically designed to detect this attack pattern.</p>
+
+<h2>The Attack Chain</h2>
+
+<div class="attack-chain">
+  <div class="attack-step"><div class="step-num">1</div><div class="step-text">Developer has OpenClaw running on localhost (the default setup)</div></div>
+  <div class="attack-step"><div class="step-num">2</div><div class="step-text">Developer visits any malicious or compromised website</div></div>
+  <div class="attack-step"><div class="step-num">3</div><div class="step-text">JavaScript opens a WebSocket to localhost on OpenClaw's gateway port — <strong>browsers don't enforce CORS on WebSocket connections</strong></div></div>
+  <div class="attack-step"><div class="step-num">4</div><div class="step-text">Script brute-forces the gateway password at hundreds of attempts/second — <strong>the rate limiter exempts localhost connections</strong></div></div>
+  <div class="attack-step"><div class="step-num">5</div><div class="step-text">Once authenticated, registers as a trusted device — <strong>gateway auto-approves pairings from localhost</strong></div></div>
+  <div class="attack-step"><div class="step-num">6</div><div class="step-text"><strong>Full agent takeover:</strong> read messages, exfiltrate files, execute shell commands on any paired device</div></div>
+</div>
+
+<p>Oasis Security <a href="https://www.youtube.com/watch?v=A15fuHs7fOc">demonstrated this end-to-end</a> — from a browser tab to full agent control in seconds.</p>
+
+<h2>Three Failures That Enable the Attack</h2>
+
+<ol>
+  <li><strong>No rate limiting on localhost</strong> — The gateway's rate limiter exempts connections from 127.0.0.1, allowing unlimited brute-force attempts</li>
+  <li><strong>Auto-approve localhost pairings</strong> — New device registrations from localhost are automatically approved without user confirmation</li>
+  <li><strong>WebSocket to localhost is unrestricted</strong> — Browsers don't enforce same-origin policy on WebSocket connections to localhost</li>
+</ol>
+
+<p>Each alone would be a concern. Combined, they create a zero-click full takeover from any browser tab.</p>
+
+<h2>How ClawMoat v0.7.1 Detects This</h2>
+
+<p>We shipped a new <code>GatewayMonitor</code> module with four detection capabilities:</p>
+
+<h3>1. Brute-Force Detection</h3>
+
+<pre><code>const { GatewayMonitor } = require('clawmoat');
+const monitor = new GatewayMonitor({
+  bruteForceThreshold: 10,  // Alert after 10 failed attempts
+  bruteForceWindowMs: 60000, // Within 60 seconds
+  onAlert: (alert) => {
+    console.error('🚨 SECURITY ALERT:', alert.message);
+    // Send to webhook, Slack, Discord, etc.
+  }
+});
+
+// Hook into your gateway auth handler
+monitor.recordAuthAttempt({
+  source: req.ip,
+  success: false,
+  origin: req.headers.origin  // Detects cross-origin attacks
+});</code></pre>
+
+<p>The monitor tracks authentication attempts per source and time window. When the threshold is exceeded, it fires a <code>brute_force_detected</code> alert with severity <code>critical</code>.</p>
+
+<h3>2. Suspicious WebSocket Origin Detection</h3>
+
+<p>The key insight from the Oasis research: the attack comes via a WebSocket from a <em>different</em> website. ClawMoat flags any WebSocket connection with a non-localhost origin:</p>
+
+<pre><code>// Automatically flagged as suspicious:
+// Origin: https://evil-site.com → WebSocket to localhost:18789
+// Alert: "WebSocket connection from suspicious origin"</code></pre>
+
+<h3>3. Device Pairing Alerts</h3>
+
+<pre><code>monitor.recordDevicePairing({
+  deviceId: 'unknown-device-xyz',
+  source: 'localhost',
+  autoApproved: true
+});
+// → CRITICAL alert: "Localhost auto-approve is the exact vector
+//    used in the Oasis WebSocket hijack"</code></pre>
+
+<h3>4. Gateway Configuration Audit</h3>
+
+<pre><code>const audit = monitor.auditGatewayConfig();
+// Checks for:
+// - Weak/missing gateway password
+// - Binding to all interfaces (0.0.0.0)
+// - Auto-approve enabled
+// - Localhost exempt from rate limiting
+// - Default port usage
+
+console.log('Security score:', audit.score + '/100');
+console.log('Oasis vulnerable:', audit.oasisVulnerable);</code></pre>
+
+<h2>What You Should Do Right Now</h2>
+
+<h3>Immediate (5 minutes)</h3>
+
+<ol>
+  <li><strong>Change your gateway password</strong> to 32+ characters:
+    <pre><code>node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"</code></pre>
+  </li>
+  <li><strong>Check for unknown paired devices</strong> in your OpenClaw dashboard</li>
+  <li><strong>Disable auto-approve</strong> for device pairings</li>
+</ol>
+
+<h3>Short-term (this week)</h3>
+
+<ol>
+  <li>Install ClawMoat for monitoring:
+    <pre><code>npm install clawmoat@0.7.1</code></pre>
+  </li>
+  <li>Bind to a Tailscale/VPN IP instead of localhost</li>
+  <li>Use a non-default gateway port</li>
+  <li>Enable rate limiting for ALL connections, including localhost</li>
+</ol>
+
+<h3>Generate a hardened config</h3>
+
+<pre><code>const { GatewayMonitor } = require('clawmoat');
+const config = GatewayMonitor.getHardenedConfig();
+console.log(JSON.stringify(config, null, 2));
+// Outputs config with:
+// - 64-char random token
+// - Non-default port
+// - Auto-approve disabled
+// - Localhost rate limiting enabled</code></pre>
+
+<h2>The Bigger Picture: Four Attack Vectors in One Month</h2>
+
+<table>
+<tr><th>Attack</th><th>Vector</th><th>Impact</th><th>ClawMoat Detection</th></tr>
+<tr><td>CVE-2026-25253</td><td>Crafted link</td><td>Full RCE</td><td>CVE verifier</td></tr>
+<tr><td>ClawHavoc</td><td>Supply chain</td><td>824+ malicious skills</td><td>Skill integrity checker</td></tr>
+<tr><td>40K exposed</td><td>Misconfiguration</td><td>Full remote access</td><td>Gateway audit</td></tr>
+<tr><td><strong>Oasis hijack</strong></td><td><strong>Any website</strong></td><td><strong>Full agent takeover</strong></td><td><strong>Gateway monitor (v0.7.1)</strong></td></tr>
+</table>
+
+<p>The vulnerability disclosure rate is outpacing fixes. Runtime monitoring is no longer optional — it's the difference between knowing you've been compromised and finding out months later.</p>
+
+<h2>205 Tests. Zero Dependencies. One npm Install.</h2>
+
+<pre><code>npm install clawmoat</code></pre>
+
+<p>ClawMoat v0.7.1 includes the new GatewayMonitor alongside all existing protections: permission tiers, forbidden zone enforcement, credential monitoring, skill integrity checking, network egress logging, insider threat detection, and inter-agent message scanning.</p>
+
+<a href="https://github.com/darfaz/clawmoat" class="cta">View on GitHub</a>
+<a href="/blog/40000-exposed-openclaw-instances.html" class="cta-outline">40K Exposed Instances →</a>
+
+</article>
+</div>
+</body>
+</html>
