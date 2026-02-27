@@ -144,6 +144,8 @@ Results appear as PR comments and job summaries. See [`examples/github-action-wo
 | 📊 **Session Audit Trail** | Full tamper-evident action log | ✅ v0.1 |
 | 🧠 **Behavioral Analysis** | Anomaly detection on agent behavior | ✅ v0.5 |
 | 🏠 **Host Guardian** | Runtime security for laptop-hosted agents | ✅ v0.4 |
+| 🔒 **Gateway Monitor** | Detects WebSocket hijack & brute-force (Oasis vuln) | ✅ v0.7.1 |
+| 💰 **Finance Guard** | Financial credential protection, transaction guardrails, SOX/PCI-DSS compliance | ✅ v0.8.0 |
 
 ## 🏠 Host Guardian — Security for Laptop-Hosted Agents
 
