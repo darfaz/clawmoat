@@ -11,6 +11,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://clawmoat.com/blog/ibm-experts-agent-runtime-protection.html</loc>
+    <lastmod>2026-02-27</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://clawmoat.com/blog/ollama-openclaw-security.html</loc>
     <lastmod>2026-02-27</lastmod>
     <priority>0.8</priority>

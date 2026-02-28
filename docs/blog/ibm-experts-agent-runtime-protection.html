@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBM's AI Security Experts Agree: Your Agent Needs Runtime Protection | ClawMoat Blog</title>
+<meta name="description" content="Three IBM security leaders — an IBM Fellow, an X-Force commander, and a Distinguished Engineer — lay out exactly why AI agents need runtime guardrails. Their concerns map directly to what ClawMoat protects.">
+<meta name="keywords" content="IBM AI security, AI agent security, runtime protection, prompt injection, least privilege, ClawMoat, agentic AI risks, shadow AI">
+<link rel="canonical" href="https://clawmoat.com/blog/ibm-experts-agent-runtime-protection.html">
+<meta property="og:title" content="IBM's AI Security Experts Agree: Your Agent Needs Runtime Protection">
+<meta property="og:description" content="Three IBM security leaders explain why AI agents need runtime guardrails. Their concerns map directly to ClawMoat.">
+<meta property="og:url" content="https://clawmoat.com/blog/ibm-experts-agent-runtime-protection.html">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.8}
+a{color:var(--blue)}
+.container{max-width:740px;margin:0 auto;padding:0 24px}
+nav{background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0;position:fixed;top:0;left:0;right:0;z-index:100}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.1rem;font-weight:700;color:var(--white);text-decoration:none}
+.logo span{color:var(--emerald)}
+nav a{color:var(--gray);font-size:.85rem;text-decoration:none}
+nav a:hover{color:var(--white)}
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.85rem;margin-bottom:32px}
+h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px}
+h2{font-size:1.3rem;font-weight:700;margin:40px 0 16px}
+h3{font-size:1.05rem;font-weight:600;margin:28px 0 12px}
+p{color:var(--gray);margin-bottom:20px;font-size:1rem}
+blockquote{border-left:3px solid var(--purple);padding:16px 24px;margin:24px 0;background:var(--navy-light);border-radius:0 8px 8px 0}
+blockquote p{color:var(--white);margin:0;font-style:italic}
+blockquote .attr{color:var(--gray);font-size:.85rem;margin-top:8px;font-style:normal}
+code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.9rem;color:var(--emerald)}
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:8px;padding:20px;overflow-x:auto;margin:24px 0;font-size:.85rem;line-height:1.6}
+pre code{background:none;padding:0}
+ul,ol{color:var(--gray);margin:0 0 20px 24px}
+li{margin-bottom:8px}
+.cta{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(59,130,246,.1));border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:32px;text-align:center;margin:48px 0}
+.cta h3{margin:0 0 12px;color:var(--white)}
+.cta p{margin:0 0 20px}
+.cta a{display:inline-block;background:var(--emerald);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;text-decoration:none}
+.cta a:hover{opacity:.9}
+.expert-card{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:20px 24px;margin:20px 0}
+.expert-card .name{color:var(--emerald);font-weight:700;font-size:.95rem}
+.expert-card .title{color:var(--gray);font-size:.8rem;margin-bottom:8px}
+.risk-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:16px 20px;margin:16px 0}
+.risk-box .label{color:var(--red);font-weight:700;font-size:.85rem;text-transform:uppercase;margin-bottom:4px}
+.fix-box{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:16px 20px;margin:16px 0}
+.fix-box .label{color:var(--emerald);font-weight:700;font-size:.85rem;text-transform:uppercase;margin-bottom:4px}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div style="display:flex;gap:20px">
+    <a href="/blog/">Blog</a>
+    <a href="/#features">Features</a>
+    <a href="/business/">For Business</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+  </div>
+</div>
+</nav>
+
+<article>
+<div class="container">
+
+<div class="meta">
+  <a href="/blog/" style="color:var(--gray)">← Back to Blog</a>
+</div>
+
+<h1>IBM's AI Security Experts Agree: Your Agent Needs Runtime Protection</h1>
+<div class="meta">February 27, 2026 · 8 min read · Based on <a href="https://www.youtube.com/watch?v=g9LO9M1ZLIk" target="_blank">IBM Security Intelligence Podcast</a></div>
+
+<p>Three of IBM's top security minds — an IBM Fellow, an X-Force Incident Command leader, and a Distinguished Engineer — sat down on the <em>Security Intelligence</em> podcast to discuss AI agent security. Their conclusions were sobering, specific, and directly relevant to anyone running an AI agent today.</p>
+
+<p>We listened to the whole episode. Here are the risks they identified — and how ClawMoat addresses every single one.</p>
+
+<div style="display:grid;gap:12px;margin:32px 0">
+  <div class="expert-card">
+    <div class="name">Sridhar Mupidi</div>
+    <div class="title">IBM Fellow & CTO, IBM Security</div>
+  </div>
+  <div class="expert-card">
+    <div class="name">Nick Bradley</div>
+    <div class="title">X-Force Incident Command, IBM Security</div>
+  </div>
+  <div class="expert-card">
+    <div class="name">Jeff Crume</div>
+    <div class="title">Distinguished Engineer & Master Inventor, AI and Data Security, IBM</div>
+  </div>
+</div>
+
+<!-- Risk 1 -->
+<h2>1. "We're giving agents system-level privileges and turning them loose"</h2>
+
+<blockquote>
+  <p>"You're going to turn that loose on your system and give it maybe system-level privileges so that it can modify files, enter terminal commands… This is something that is tremendously powerful if it's used well. But the fact of the matter is most people — this is going to be very opaque."</p>
+  <p class="attr">— Jeff Crume, IBM Distinguished Engineer</p>
+</blockquote>
+
+<p>Jeff nailed the core problem. AI agents aren't regular apps. They have shell access, file system access, and network access. Most users don't understand what they're granting when they install one.</p>
+
+<div class="risk-box">
+  <div class="label">🔴 The Risk</div>
+  <p style="margin:0">An agent with unconstrained system access can read credentials, modify files, and execute arbitrary commands — all while the user thinks it's just "helping with code."</p>
+</div>
+
+<div class="fix-box">
+  <div class="label">🟢 ClawMoat's Answer</div>
+  <p style="margin:0"><strong>Host Guardian</strong> monitors file system access, credential exposure, and system-level operations in real time. <strong>Secret Scanner</strong> catches credentials before they leak through agent outputs. <strong>Network Egress Logger</strong> tracks every outbound connection the agent makes.</p>
+</div>
+
+<!-- Risk 2 -->
+<h2>2. "Treat every agent like a privileged insider"</h2>
+
+<blockquote>
+  <p>"Treat every agent like an insider or a privileged account. Whether it's open source or not, make sure they're only allowed to do what they're allowed to do — nothing more, nothing less."</p>
+  <p class="attr">— Sridhar Mupidi, IBM Fellow & CTO</p>
+</blockquote>
+
+<blockquote>
+  <p>"The principle of least privilege. We have to lock these things down, only give them access that is absolutely necessary, that we approve of, that we understand, and don't give it to them for any longer than is necessary."</p>
+  <p class="attr">— Jeff Crume, IBM Distinguished Engineer</p>
+</blockquote>
+
+<p>Both Sridhar and Jeff independently converged on the same point: least privilege isn't optional for agents. It's the single most important security principle in the agentic era.</p>
+
+<div class="fix-box">
+  <div class="label">🟢 ClawMoat's Answer</div>
+  <p style="margin:0"><strong>McpFirewall</strong> enforces tool-level access control — define exactly which tools an agent can call and with what parameters. <strong>FinanceGuard</strong> applies domain-specific constraints (transaction limits, approved recipients) so agents can't exceed their authority even if compromised.</p>
+</div>
+
+<!-- Risk 3 -->
+<h2>3. "It processed exactly what it was supposed to — and got busted"</h2>
+
+<blockquote>
+  <p>"By the time you realize, it's too late and you run into situations like what happened with OpenClaw where it was running the direct prompt injections and it thought it wasn't doing anything wrong. It was processing exactly what it was supposed to, and you get busted."</p>
+  <p class="attr">— Nick Bradley, X-Force Incident Command</p>
+</blockquote>
+
+<p>Nick describes the fundamental nature of prompt injection: the agent can't tell the difference between legitimate instructions and malicious ones injected through data. It faithfully executes both.</p>
+
+<div class="risk-box">
+  <div class="label">🔴 The Risk</div>
+  <p style="margin:0">Prompt injection through web pages, emails, documents, or inter-agent messages. The agent follows malicious instructions embedded in content it was asked to process.</p>
+</div>
+
+<div class="fix-box">
+  <div class="label">🟢 ClawMoat's Answer</div>
+  <p style="margin:0"><strong>Prompt Injection Scanner</strong> analyzes inputs using pattern matching and heuristic analysis across 10+ attack vectors — before they reach the model. Zero dependencies, no API calls, runs entirely locally. Catches injection attempts in web content, emails, and inter-agent messages.</p>
+</div>
+
+<!-- Risk 4 -->
+<h2>4. "These are agents doing things for you based on very minimum supervision"</h2>
+
+<blockquote>
+  <p>"The reality is that these are agents that are doing things for you based on very minimum supervision. And that's scary to me. That is scary in terms of how much you want to give them permission to do."</p>
+  <p class="attr">— Sridhar Mupidi, IBM Fellow & CTO</p>
+</blockquote>
+
+<p>Agents operate autonomously. That's the whole point. But autonomy without monitoring is just unsupervised code execution with extra steps.</p>
+
+<div class="fix-box">
+  <div class="label">🟢 ClawMoat's Answer</div>
+  <p style="margin:0"><strong>Skill Integrity Checker</strong> verifies that agent skills haven't been tampered with — catching supply chain attacks before they execute. <strong>Network Egress Logger</strong> creates a full audit trail of every external connection. Every ClawMoat scanner produces structured alerts you can pipe to any monitoring system.</p>
+</div>
+
+<!-- Risk 5 -->
+<h2>5. "Don't say no — say how"</h2>
+
+<blockquote>
+  <p>"Don't say no, say how. If we just tell people don't do it, and we don't give them a sanctioned option, then they're just going to go do it in the bad way."</p>
+  <p class="attr">— Jeff Crume, IBM Distinguished Engineer</p>
+</blockquote>
+
+<blockquote>
+  <p>"Embrace that, give people a sanctioned option… provide things like OpenClaw or Claude with some more guardrails, some rules on which they can act."</p>
+  <p class="attr">— Sridhar Mupidi, IBM Fellow & CTO</p>
+</blockquote>
+
+<p>This is the argument for runtime security layers over outright bans. People are going to use AI agents regardless. The question is whether they do it with protection or without.</p>
+
+<div class="fix-box">
+  <div class="label">🟢 ClawMoat's Answer</div>
+  <p style="margin:0">ClawMoat is the "how." It doesn't block agents — it makes them safe to run. One <code>npm install</code>, zero configuration required, and your agent has prompt injection scanning, secret detection, egress monitoring, and tool-level access control. <strong>Say yes to agents. Say yes with guardrails.</strong></p>
+</div>
+
+<!-- Risk 6 -->
+<h2>6. "Security is the brakes that let you go fast"</h2>
+
+<blockquote>
+  <p>"The question of why you put brakes on a car — the answer is not to stop, it's so you can go really fast. And the reason I know that's the case is: how fast would you drive a car that had no brakes? You wouldn't. So security is the brakes on the car that let you take calculated risk."</p>
+  <p class="attr">— Jeff Crume, IBM Distinguished Engineer</p>
+</blockquote>
+
+<p>This might be the single best framing of AI agent security we've heard. Security isn't the thing that slows you down — it's the thing that lets you go faster with confidence.</p>
+
+<p>ClawMoat adds less than 2ms of latency per scan. It has zero dependencies. It runs entirely locally. These are brakes designed for a Formula One car, not a school bus.</p>
+
+<!-- The bigger picture -->
+<h2>The Pattern IBM Keeps Pointing To</h2>
+
+<p>Across the entire conversation, three themes repeat:</p>
+
+<ol>
+  <li><strong>Least privilege is non-negotiable.</strong> Every agent is a privileged insider. Constrain it accordingly.</li>
+  <li><strong>Monitoring must be continuous.</strong> Autonomy without observability is reckless.</li>
+  <li><strong>Banning agents doesn't work.</strong> Give people a secure way to use them, or they'll use them insecurely.</li>
+</ol>
+
+<p>These aren't hypothetical concerns from academics. These are the conclusions of IBM's CTO of Security, their X-Force incident response leader, and a Distinguished Engineer with decades of experience. They've seen what happens when organizations skip security for speed.</p>
+
+<p>ClawMoat was built for exactly the world they're describing.</p>
+
+<!-- CTA -->
+<div class="cta">
+  <h3>🏰 Add Runtime Protection in 30 Seconds</h3>
+  <p>277 tests. Zero dependencies. MIT license. The guardrails IBM's experts say you need.</p>
+  <pre style="text-align:left;margin:16px auto;max-width:340px"><code>npm install clawmoat</code></pre>
+  <a href="https://github.com/darfaz/clawmoat">⭐ Star on GitHub</a>
+</div>
+
+<p style="text-align:center;font-size:.85rem;margin-top:40px">
+  Source: <a href="https://www.youtube.com/watch?v=g9LO9M1ZLIk" target="_blank">IBM Security Intelligence Podcast</a> · Quotes lightly edited for clarity
+</p>
+
+</div>
+</article>
+
+<footer style="border-top:1px solid rgba(255,255,255,.06);padding:32px 0;color:var(--gray);font-size:.85rem;text-align:center">
+  © 2026 ClawMoat. Built for the OpenClaw community. 🏰
+</footer>
+</body>
+</html>
