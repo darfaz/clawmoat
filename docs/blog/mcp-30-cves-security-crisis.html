@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30 CVEs and Counting: The MCP Security Crisis Nobody's Talking About | ClawMoat</title>
+<meta name="description" content="MCP has hit 30 CVEs. 36% of servers have zero auth. A fresh Go SDK bypass just dropped. Here's the 3-layer attack surface — and how McpFirewall locks it down.">
+<meta property="og:title" content="30 CVEs and Counting: The MCP Security Crisis Nobody's Talking About">
+<meta property="og:description" content="MCP has 30 CVEs, 36% of servers lack authentication, and a new Go SDK bypass just dropped. The 3-layer attack surface explained.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/mcp-30-cves-security-crisis.html">
+<link rel="canonical" href="https://clawmoat.com/blog/mcp-30-cves-security-crisis.html">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root { --bg: #0a0a0f; --fg: #e0e0e8; --accent: #00d4aa; --muted: #888; --card: #14141f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7; }
+  .container { max-width:740px; margin:0 auto; padding:2rem 1.5rem; }
+  h1 { font-size:2.2rem; line-height:1.2; margin-bottom:.5rem; }
+  .meta { color:var(--muted); margin-bottom:2rem; }
+  h2 { color:var(--accent); margin:2rem 0 1rem; font-size:1.5rem; }
+  h3 { margin:1.5rem 0 .75rem; font-size:1.2rem; }
+  p { margin-bottom:1rem; }
+  a { color:var(--accent); }
+  code { background:#1a1a2e; padding:.15em .4em; border-radius:4px; font-size:.9em; }
+  pre { background:#1a1a2e; padding:1.25rem; border-radius:8px; overflow-x:auto; margin:1rem 0; }
+  pre code { background:none; padding:0; }
+  blockquote { border-left:3px solid var(--accent); padding-left:1rem; margin:1rem 0; color:#bbb; font-style:italic; }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin:1.5rem 0; }
+  .stat-card { background:var(--card); border:1px solid #2a2a3a; border-radius:8px; padding:1.25rem; text-align:center; }
+  .stat-card .number { font-size:2rem; font-weight:bold; color:var(--accent); }
+  .stat-card .label { color:var(--muted); font-size:.85rem; margin-top:.25rem; }
+  .cta { background:var(--accent); color:#000; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem .5rem 1rem 0; }
+  .cta:hover { opacity:.9; }
+  .cta-outline { border:1px solid var(--accent); color:var(--accent); background:transparent; padding:.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin:1rem 0; }
+  .warning { background:#2a1a1a; border:1px solid #ff4444; border-radius:8px; padding:1.25rem; margin:1.5rem 0; }
+  .warning h3 { color:#ff4444; margin-top:0; }
+  ul, ol { margin:0 0 1rem 1.5rem; }
+  li { margin-bottom:.5rem; }
+  .nav { padding:1rem 0; border-bottom:1px solid #2a2a3a; margin-bottom:2rem; }
+  .nav a { color:var(--fg); text-decoration:none; margin-right:1.5rem; }
+  .nav a:hover { color:var(--accent); }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; }
+  th, td { padding:.6rem .8rem; text-align:left; border-bottom:1px solid #2a2a3a; }
+  th { color:var(--accent); font-weight:600; }
+  .layer-card { background:var(--card); border:1px solid #2a2a3a; border-radius:8px; padding:1.25rem; margin:1rem 0; }
+  .layer-card h3 { color:var(--accent); margin-top:0; }
+  .layer-card .layer-num { font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:.25rem; }
+</style>
+</head>
+<body>
+<div class="container">
+<nav class="nav">
+  <a href="/">ClawMoat</a>
+  <a href="/blog/">Blog</a>
+  <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+</nav>
+
+<article>
+<h1>30 CVEs and Counting: The MCP Security Crisis Nobody's Talking About</h1>
+<p class="meta">February 28, 2026 · 10 min read</p>
+
+<p>Everyone's excited about MCP — the Model Context Protocol that lets AI agents talk to external services. Anthropic launched it. Every major AI lab adopted it. There are now thousands of MCP servers connecting agents to databases, APIs, financial platforms, and cloud infrastructure.</p>
+
+<p>Nobody's talking about the fact that <strong>MCP has accumulated 30 CVEs</strong> — and the pace is accelerating.</p>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="number">30</div><div class="label">Total MCP CVEs</div></div>
+  <div class="stat-card"><div class="number">36%</div><div class="label">Servers with zero auth</div></div>
+  <div class="stat-card"><div class="number">3</div><div class="label">Attack surface layers</div></div>
+  <div class="stat-card"><div class="number">1 day</div><div class="label">Since latest CVE</div></div>
+</div>
+
+<h2>The Latest: CVE-2026-27896 — Case-Insensitive JSON Parsing Bypass</h2>
+
+<p>Yesterday — literally yesterday — <strong>CVE-2026-27896</strong> was published. It affects the official MCP Go SDK.</p>
+
+<p>The vulnerability: the Go SDK's JSON parser handles field names case-insensitively. An attacker can craft a malicious MCP response with field names like <code>"Method"</code> instead of <code>"method"</code>, or <code>"PARAMS"</code> instead of <code>"params"</code>. The SDK accepts these silently, potentially bypassing validation logic that checks for exact field names.</p>
+
+<p>This is the kind of bug that sounds benign until you realize it means <strong>any security check that validates MCP message structure by field name can be bypassed</strong>. If your firewall checks for <code>"method": "tools/call"</code> but the attacker sends <code>"Method": "tools/call"</code>, the message passes validation but still gets processed by the SDK.</p>
+
+<div class="warning">
+<h3>⚠️ This affects any Go-based MCP implementation</h3>
+<p>If you're running MCP servers or clients built with the official Go SDK, you're vulnerable. The fix requires updating to a patched SDK version that enforces case-sensitive JSON parsing.</p>
+</div>
+
+<h2>The 3-Layer MCP Attack Surface</h2>
+
+<p>What makes MCP security uniquely dangerous is that the attack surface spans three distinct layers. A vulnerability in any layer compromises the entire chain.</p>
+
+<div class="layer-card">
+<div class="layer-num">Layer 1</div>
+<h3>🖥️ MCP Server Layer</h3>
+<p>The MCP servers themselves — QuickBooks, Stripe, database connectors, file system bridges. This is where the 36% no-auth stat comes from. Over a third of scanned MCP servers accept connections from any client without authentication.</p>
+<p><strong>Attack vectors:</strong> Unauthenticated access, insufficient authorization (any connected client can call any tool), missing input validation, SSRF through tool parameters, data exfiltration through tool responses.</p>
+<p><strong>Real CVEs:</strong> Multiple CVEs target server-side validation failures, allowing crafted tool calls to bypass intended restrictions or access unauthorized data.</p>
+</div>
+
+<div class="layer-card">
+<div class="layer-num">Layer 2</div>
+<h3>📦 SDK Layer</h3>
+<p>The protocol implementation libraries — the official TypeScript, Python, and Go SDKs that parse MCP messages. CVE-2026-27896 lives here. So do parsing bugs, serialization mismatches, and type confusion vulnerabilities.</p>
+<p><strong>Attack vectors:</strong> Case-insensitive parsing bypasses (CVE-2026-27896), malformed message handling, type confusion between SDK implementations, deserialization of untrusted data, protocol version mismatches.</p>
+<p><strong>Why it's dangerous:</strong> SDK bugs affect <em>every application</em> built on that SDK. One CVE in the Go SDK means every Go-based MCP server and client is vulnerable.</p>
+</div>
+
+<div class="layer-card">
+<div class="layer-num">Layer 3</div>
+<h3>🏠 Host Layer</h3>
+<p>The machine running the MCP client — your laptop, your server, your AI agent's runtime. MCP tool calls execute with the permissions of the host process. If the agent can call <code>create_invoice</code> on QuickBooks, it can also call <code>delete_all_invoices</code> unless something stops it.</p>
+<p><strong>Attack vectors:</strong> Unrestricted tool access (no allowlist), write operations through prompt injection, sensitive data leakage through tool responses, lateral movement via MCP server chains, credential theft from tool configurations.</p>
+<p><strong>The gap:</strong> Most MCP implementations have zero controls at this layer. The agent decides what to call. Nothing validates whether it <em>should</em>.</p>
+</div>
+
+<h2>The CVE Timeline: It's Getting Worse</h2>
+
+<p>MCP launched in late 2024. The first CVEs appeared in early 2025. The pace has accelerated dramatically:</p>
+
+<table>
+<tr><th>Period</th><th>CVEs</th><th>Notable</th></tr>
+<tr><td>2025 Q1-Q2</td><td>~5</td><td>Initial discovery phase — auth, SSRF basics</td></tr>
+<tr><td>2025 Q3-Q4</td><td>~10</td><td>SDK-level bugs emerge, cross-implementation issues</td></tr>
+<tr><td>2026 Q1 (so far)</td><td>~15</td><td>Acceleration — CVE-2026-27896 (Go SDK bypass), server auth failures</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>30</strong></td><td><strong>Spanning all 3 layers</strong></td></tr>
+</table>
+
+<p>Half of all MCP CVEs have been published in the last 3 months. The protocol is being stress-tested in production, and the cracks are showing.</p>
+
+<h2>36% of MCP Servers Have Zero Authentication</h2>
+
+<p>Let that number sink in. Over a third of MCP servers in the wild accept any connection without verifying the client's identity.</p>
+
+<p>This means:</p>
+<ul>
+<li>Any AI agent that discovers the server endpoint can connect</li>
+<li>Any tool call is accepted — including write operations</li>
+<li>There's no audit trail of who called what</li>
+<li>Prompt injection in one agent can pivot to unauthenticated MCP servers</li>
+</ul>
+
+<p>For financial MCP servers — QuickBooks, Stripe, Xero — this is catastrophic. An agent compromised through prompt injection can directly invoke financial operations on unauthenticated servers.</p>
+
+<h2>McpFirewall: What We Built to Fix This</h2>
+
+<p>ClawMoat's <a href="https://github.com/darfaz/clawmoat">McpFirewall</a> sits at Layer 3 — between your AI agent and MCP servers. It intercepts every tool call before it reaches the server, enforcing security policies that MCP itself doesn't provide.</p>
+
+<p>Here's what it does:</p>
+
+<h3>Read-Only Enforcement (29 Write Patterns)</h3>
+
+<p>Most organizations aren't ready for AI agents to <em>write</em> to financial systems. McpFirewall blocks write operations by matching against 29 patterns:</p>
+
+<pre><code>const { McpFirewall } = require('clawmoat/finance/mcp-firewall');
+
+const firewall = new McpFirewall({
+  mode: 'read-only',
+  onBlock: (event) => {
+    console.log(`Blocked ${event.tool} on ${event.server}: ${event.reason}`);
+  }
+});
+
+// Agent tries to create an invoice via MCP
+const result = firewall.intercept({
+  tool: 'create_invoice',
+  args: { amount: 50000, customer: 'Acme Corp' },
+  server: 'quickbooks-mcp'
+});
+
+// result.blocked = true
+// result.reason = "Write operation 'create_invoice' blocked in read-only mode"</code></pre>
+
+<p>The 29 write patterns cover: <code>create_</code>, <code>add_</code>, <code>update_</code>, <code>edit_</code>, <code>modify_</code>, <code>delete_</code>, <code>remove_</code>, <code>send_</code>, <code>post_</code>, <code>submit_</code>, <code>approve_</code>, <code>void_</code>, <code>cancel_</code>, <code>refund_</code>, <code>transfer_</code>, <code>pay_</code>, <code>charge_</code>, <code>issue_</code>, <code>record_</code>, <code>close_</code>, <code>batch_</code>, <code>import_</code>, <code>set_</code>, <code>assign_</code>, <code>link_</code>, <code>unlink_</code>, <code>archive_</code>, <code>restore_</code>, <code>merge_</code>.</p>
+
+<p>One compromised prompt can't trigger <code>transfer_funds</code> or <code>delete_all_customers</code> — the firewall catches it before the MCP server ever sees the request.</p>
+
+<h3>Field-Level Redaction</h3>
+
+<p>Even in read-only mode, the agent shouldn't see SSNs, bank account numbers, or API keys in MCP responses. McpFirewall redacts sensitive fields automatically:</p>
+
+<pre><code>const firewall = new McpFirewall({
+  mode: 'read-only',
+  redactFields: ['ssn', 'tax_id', 'bank_account', 'routing_number'],
+  redactResponses: true
+});
+
+// MCP response comes back with:
+// { customer: "Jane", ssn: "123-45-6789", balance: 5000 }
+//
+// After McpFirewall:
+// { customer: "Jane", ssn: "***-**-****", balance: 5000 }</code></pre>
+
+<p>The default configuration catches 16 categories of sensitive data — identity (SSN, tax ID), banking (account numbers, routing numbers, IBAN, SWIFT), payment (card numbers, CVV), auth tokens, and personal data (DOB, driver's license, passport).</p>
+
+<h3>Tool Allowlisting &amp; Blocklisting</h3>
+
+<p>Don't leave it to the agent to decide which tools are safe. Define an explicit allowlist:</p>
+
+<pre><code>const firewall = new McpFirewall({
+  mode: 'read-only',
+  allowedTools: ['get_invoices', 'get_profit_loss', 'get_balance_sheet'],
+  blockedTools: ['delete_company', 'export_all_data']
+});</code></pre>
+
+<p>Any tool not on the allowlist is automatically blocked. This directly mitigates prompt injection attacks — even if an attacker convinces the agent to call <code>transfer_funds</code>, it's not on the list.</p>
+
+<h3>Per-Tool Rate Limiting</h3>
+
+<p>Prevent data exfiltration through rapid-fire tool calls:</p>
+
+<pre><code>const firewall = new McpFirewall({
+  mode: 'read-only',
+  rateLimit: 10,  // max 10 calls per tool per minute
+  allowedTools: ['get_transactions']
+});</code></pre>
+
+<p>An agent trying to dump your entire transaction history through repeated <code>get_transactions</code> calls will hit the rate limit after 10 requests. The audit log captures every attempt.</p>
+
+<h3>15 Known Financial MCP Servers</h3>
+
+<p>McpFirewall ships with recognition for 15 financial MCP server patterns: QuickBooks, Xero, FreshBooks, Stripe, Plaid, Square, PayPal, Braintree, Coinbase, Mercury, Wise, Wave, Gusto, Rippling, and Bill.com. When it detects a connection to a known financial server, it automatically applies stricter defaults.</p>
+
+<h2>How CVE-2026-27896 Could Have Been Exploited</h2>
+
+<p>Here's a concrete attack scenario using the fresh Go SDK bypass:</p>
+
+<ol>
+<li><strong>Attacker crafts a malicious MCP response</strong> with mixed-case field names: <code>{"Method": "tools/call", "Params": {"name": "transfer_funds"}}</code></li>
+<li><strong>Validation logic checking for <code>"method"</code></strong> (lowercase) doesn't match — the message passes through</li>
+<li><strong>Go SDK accepts it anyway</strong> because Go's <code>encoding/json</code> is case-insensitive by default</li>
+<li><strong>The tool call executes</strong> with whatever permissions the MCP server grants</li>
+</ol>
+
+<p>McpFirewall mitigates this because it operates at the tool-call level, not the protocol-parsing level. It doesn't care how the message was parsed — it inspects the <em>resolved</em> tool name and arguments after SDK processing. A <code>transfer_funds</code> call is blocked whether it arrived as <code>"method"</code> or <code>"Method"</code>.</p>
+
+<h2>What You Should Do Right Now</h2>
+
+<div class="warning">
+<h3>🔥 Immediate Actions</h3>
+<ul>
+<li><strong>Audit your MCP servers</strong> — do they require authentication? If not, fix that first.</li>
+<li><strong>Update your SDKs</strong> — especially the Go SDK if you're using it. CVE-2026-27896 is one day old.</li>
+<li><strong>Add a firewall layer</strong> — never let agents call MCP tools without interception.</li>
+<li><strong>Inventory your MCP connections</strong> — know which servers your agents can reach.</li>
+<li><strong>Scan your setup</strong> — use ClawMoat's <a href="/scan/">free security scanner</a> for a quick assessment.</li>
+</ul>
+</div>
+
+<h2>The Bigger Picture</h2>
+
+<p>MCP is doing for AI agents what HTTP did for web browsers — creating a universal protocol for connecting to services. And just like early HTTP, the security model is an afterthought.</p>
+
+<p>30 CVEs in ~15 months isn't just a number. It's a pattern. The protocol was designed for functionality, not security. Authentication is optional. Authorization is "left to the implementation." Encryption is not required. There's no standard for tool-level access control.</p>
+
+<p>The community is building incredible things on MCP. But without security controls at every layer — server, SDK, and host — we're building on sand.</p>
+
+<p>ClawMoat's McpFirewall is one piece of the puzzle. It protects the host layer with 29 write patterns, field-level redaction, tool allowlisting, and rate limiting. It's open source, has zero dependencies, and is backed by 277 tests.</p>
+
+<p>But we need more. We need MCP servers to require authentication by default. We need SDKs to enforce strict parsing. We need the ecosystem to treat security as a feature, not a footnote.</p>
+
+<p>30 CVEs and counting. The clock is ticking.</p>
+
+<hr style="border:none;border-top:1px solid #2a2a3a;margin:2rem 0;">
+
+<h2>Get Started</h2>
+
+<pre><code>npm install clawmoat</code></pre>
+
+<p>
+<a href="https://github.com/darfaz/clawmoat" class="cta">⭐ Star on GitHub</a>
+<a href="/scan/" class="cta-outline">🔍 Free Security Scanner</a>
+</p>
+
+<p style="color:var(--muted);font-size:.9rem;">ClawMoat is open source (MIT license), has zero dependencies, and ships with 277 tests. McpFirewall is at <code>clawmoat/finance/mcp-firewall</code>.</p>
+
+</article>
+</div>
+</body>
+</html>
