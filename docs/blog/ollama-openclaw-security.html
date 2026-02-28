@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ollama Just Made OpenClaw One-Click. Here's How to Secure It. | ClawMoat</title>
+<meta name="description" content="Ollama 0.17 ships native OpenClaw integration. Great for adoption — terrifying for security. Here's what you need to know.">
+<meta property="og:title" content="Ollama Just Made OpenClaw One-Click. Here's How to Secure It.">
+<meta property="og:description" content="Ollama 0.17 ships native OpenClaw integration with web search. More installs = more exposed hosts. Here's how to lock it down.">
+<link rel="canonical" href="https://clawmoat.com/blog/ollama-openclaw-security.html">
+<style>
+:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--red:#ff4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.8}
+.container{max-width:750px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1rem 0;border-bottom:1px solid #2a2a3a;margin-bottom:2rem}
+nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}
+nav a:hover{color:var(--accent)}
+h1{font-size:2.2rem;line-height:1.2;margin-bottom:1rem}
+h2{color:var(--accent);margin:2rem 0 1rem;font-size:1.5rem}
+h3{margin:1.5rem 0 .75rem}
+p{margin-bottom:1rem}
+a{color:var(--accent)}
+pre{background:#1a1a2e;padding:1.25rem;border-radius:8px;overflow-x:auto;margin:1rem 0}
+code{background:#1a1a2e;padding:.15em .4em;border-radius:4px;font-size:.9em}
+pre code{background:none;padding:0}
+.meta{color:var(--muted);margin-bottom:2rem}
+.alert{background:#2a1a1a;border-left:4px solid var(--red);padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0}
+.tip{background:#1a2a1a;border-left:4px solid var(--accent);padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0}
+ul,ol{margin:1rem 0 1rem 1.5rem}
+li{margin-bottom:.5rem}
+blockquote{border-left:3px solid var(--muted);padding-left:1rem;color:var(--muted);margin:1rem 0}
+.cta{background:var(--accent);color:#000;padding:.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;display:inline-block;margin:1rem .5rem 1rem 0}
+</style>
+</head>
+<body>
+<div class="container">
+<nav>
+<a href="/" style="font-weight:bold">ClawMoat</a>
+<a href="/blog/">Blog</a>
+<a href="/finance/">Finance</a>
+<a href="https://github.com/darfaz/clawmoat">GitHub</a>
+</nav>
+
+<h1>Ollama Just Made OpenClaw One-Click. Here's How to Secure It.</h1>
+<p class="meta">February 27, 2026 · 5 min read</p>
+
+<p>Ollama 0.17 just shipped <strong>native OpenClaw integration</strong> with web search out of the box. Two commands and you have a personal AI agent running on your machine with local models.</p>
+
+<p>This is great for adoption. It's terrifying for security.</p>
+
+<h2>What Ollama 0.17 Does</h2>
+
+<p>Ollama's latest release lets you set up OpenClaw to work with open models (Llama, Mistral, DeepSeek, etc.) and web search. No cloud API keys needed. Fully local inference.</p>
+
+<pre><code>ollama launch openclaw</code></pre>
+
+<p>That's it. One command. You now have an AI agent that can:</p>
+<ul>
+<li>Send emails on your behalf</li>
+<li>Manage your calendar</li>
+<li>Read and write files on your machine</li>
+<li>Execute shell commands</li>
+<li>Search the web</li>
+<li>Connect to WhatsApp, Telegram, iMessage</li>
+</ul>
+
+<p>All running with <strong>your user permissions</strong>. On <strong>your actual machine</strong>.</p>
+
+<h2>Why This Is a Security Problem</h2>
+
+<div class="alert">
+<strong>⚠️ The Ollama + OpenClaw combo inherits every OpenClaw vulnerability.</strong> Local models don't fix host-level security.
+</div>
+
+<p>Running local models solves one problem (data doesn't leave your machine) but creates a false sense of security. Here's what's still exposed:</p>
+
+<h3>1. Your Entire Filesystem</h3>
+<p>The agent runs as your user. It can read <code>~/.ssh</code>, <code>~/.aws</code>, browser cookies, crypto wallets, tax documents — everything you can access.</p>
+
+<h3>2. The WebSocket Hijack (CVE-2026-25253)</h3>
+<p>OpenClaw's gateway listens on localhost WebSocket. <a href="/blog/oasis-websocket-hijack.html">Oasis Security proved</a> any website can brute-force the port and take full control of your agent. Local models don't change this — the gateway architecture is the same.</p>
+
+<h3>3. Prompt Injection via Web Search</h3>
+<p>Ollama 0.17 adds web search. That means the agent fetches content from the internet and processes it. A malicious webpage can embed prompt injection payloads that hijack the agent's behavior. Now your "local" agent is executing attacker instructions.</p>
+
+<h3>4. Skill Supply Chain</h3>
+<p>OpenClaw skills are npm packages or GitHub repos. <a href="/blog/40000-exposed-openclaw-instances.html">341+ malicious skills</a> have been documented. A compromised skill runs with full access to your system.</p>
+
+<h3>5. No Permission Boundaries</h3>
+<p>OpenClaw has no concept of "this agent can read files but not execute commands" or "this agent can access the calendar but not SSH keys." It's all-or-nothing.</p>
+
+<h2>The One-Click Problem</h2>
+
+<p>When something is easy to install, people don't think about security. Ollama's user base is developers and tinkerers who want to run AI locally — they're not enterprise security teams. They'll run <code>ollama launch openclaw</code>, connect it to WhatsApp, and forget about it.</p>
+
+<blockquote>Microsoft: "OpenClaw should be treated as untrusted code execution with persistent credentials. It is not appropriate to run on a standard personal or enterprise workstation."</blockquote>
+
+<p>Now Ollama is making it trivial to do exactly what Microsoft says not to do.</p>
+
+<h2>How to Secure Your Ollama + OpenClaw Setup</h2>
+
+<div class="tip">
+<strong>✅ ClawMoat adds the security layer that Ollama + OpenClaw are missing.</strong>
+</div>
+
+<pre><code>npm install -g clawmoat</code></pre>
+
+<h3>1. Set Up Permission Tiers</h3>
+<pre><code>const { HostGuardian } = require('clawmoat');
+const guardian = new HostGuardian({
+  mode: 'standard',  // observer → worker → standard → full
+  workspace: '~/openclaw-workspace',
+  forbiddenZones: ['~/.ssh', '~/.aws', '~/.gnupg'],
+});</code></pre>
+
+<h3>2. Monitor Network Egress</h3>
+<pre><code>const { NetworkEgressLogger } = require('clawmoat');
+const logger = new NetworkEgressLogger();
+// Blocks requests to cloud metadata, private IPs, known-bad domains
+// Alerts on unusual outbound connections</code></pre>
+
+<h3>3. Scan Skills Before Installing</h3>
+<pre><code># Audit all installed skills for suspicious patterns
+npx clawmoat skill-audit ~/.openclaw/skills/</code></pre>
+
+<h3>4. Detect WebSocket Hijack Attempts</h3>
+<pre><code>const { GatewayMonitor } = require('clawmoat');
+const monitor = new GatewayMonitor();
+// Detects brute-force port scanning, suspicious WS origins,
+// unauthorized device pairing attempts</code></pre>
+
+<h3>5. Protect Financial Data</h3>
+<pre><code>const { FinanceGuard } = require('clawmoat');
+const guard = new FinanceGuard();
+// Blocks access to crypto wallets, banking files, tax documents
+// Redacts financial secrets in agent output</code></pre>
+
+<h2>The Bottom Line</h2>
+
+<p>Ollama 0.17 is going to put OpenClaw on thousands of new machines. Most of those machines won't have any security layer between the agent and the host.</p>
+
+<p><strong>If you're going to run OpenClaw — with Ollama or otherwise — run it with a security moat.</strong></p>
+
+<p>
+<a href="https://github.com/darfaz/clawmoat" class="cta">⭐ Star on GitHub</a>
+<a href="/#pricing" class="cta" style="background:#1a1a2e;color:var(--accent);border:2px solid var(--accent)">Get Started Free</a>
+</p>
+
+<p style="color:var(--muted);margin-top:2rem;font-size:.9rem">ClawMoat is open-source (MIT), zero dependencies, 277 tests passing. Works with any OpenClaw deployment — cloud, local, or Ollama.</p>
+
+</div>
+</body>
+</html>
