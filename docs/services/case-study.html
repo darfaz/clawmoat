@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study: Maritime Logistics Saves 200+ Hours/Month — ClawMoat</title>
+<meta name="description" content="How a maritime logistics company deployed 8 AI agents to cut manual processing by 60%, reduce DSO by 15 days, and save 200+ hours per month.">
+<link rel="canonical" href="https://clawmoat.com/services/case-study.html">
+<meta property="og:title" content="Case Study: 200+ Hours Saved Per Month with AI Agents">
+<meta property="og:description" content="A maritime logistics company deployed 8 AI agents across finance, customs, and dispatch. Here's what happened.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/services/case-study.html">
+<meta property="og:type" content="article">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .nav-inner{max-width:1140px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+.hero{padding:140px 0 60px;text-align:center}
+.hero .label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:16px}
+.hero h1{font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:20px;letter-spacing:-.02em}
+.hero .meta{color:var(--gray);font-size:.95rem}
+
+.content{padding:40px 0 80px}
+.content h2{font-size:1.6rem;font-weight:700;margin:48px 0 16px;color:var(--white)}
+.content h3{font-size:1.2rem;font-weight:600;margin:32px 0 12px;color:var(--emerald)}
+.content p{color:var(--gray);font-size:1.02rem;margin-bottom:16px}
+
+.quote-block{background:var(--navy-light);border-left:4px solid var(--emerald);border-radius:0 12px 12px 0;padding:24px 28px;margin:32px 0;font-style:italic}
+.quote-block p{color:var(--white);font-size:1.05rem;margin-bottom:8px}
+.quote-block .attr{color:var(--emerald);font-style:normal;font-weight:600;font-size:.9rem}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin:32px 0}
+.result-card{background:var(--navy-light);border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:24px;text-align:center}
+.result-card .num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-card .desc{color:var(--gray);font-size:.85rem;margin-top:4px}
+
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:32px 0}
+.ba-col{background:var(--navy-light);border-radius:14px;padding:24px}
+.ba-col h4{font-size:1rem;font-weight:700;margin-bottom:12px}
+.ba-col.before h4{color:var(--red)}
+.ba-col.after h4{color:var(--emerald)}
+.ba-col ul{list-style:none;padding:0}
+.ba-col ul li{padding:6px 0;font-size:.9rem;color:var(--gray);border-bottom:1px solid rgba(255,255,255,.04)}
+.ba-col.before ul li::before{content:'✗ ';color:var(--red)}
+.ba-col.after ul li::before{content:'✓ ';color:var(--emerald)}
+
+.agents-table{width:100%;border-collapse:collapse;margin:24px 0}
+.agents-table th,.agents-table td{text-align:left;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+.agents-table th{color:var(--emerald);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.agents-table td{color:var(--gray)}
+.agents-table td:first-child{color:var(--white);font-weight:600}
+
+.cta-section{text-align:center;padding:80px 0;border-top:1px solid rgba(255,255,255,.06)}
+.cta-section h2{font-size:1.8rem;font-weight:700;margin-bottom:12px}
+.cta-section p{color:var(--gray);margin-bottom:24px;font-size:1.02rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-green{background:var(--emerald);color:#fff;font-size:1.1rem;padding:16px 36px}
+.btn-green:hover{background:#059669;text-decoration:none}
+.btn-outline{background:transparent;color:var(--white);border:1.5px solid var(--navy-mid);margin-left:12px}
+.btn-outline:hover{border-color:var(--blue);text-decoration:none}
+
+footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:var(--gray);font-size:.85rem}
+.footer-inner{max-width:1140px;margin:0 auto;padding:0 24px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+  .menu-toggle{display:block}
+  .hero{padding:110px 0 40px}
+  .before-after{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-inner">
+  <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/services/roi-calculator.html">ROI Calculator</a>
+    <a href="/blog/">Blog</a>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn-sm">Schedule a Call</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">Case Study</div>
+    <h1>How a Maritime Logistics Company<br>Saved 200+ Hours/Month with AI Agents</h1>
+    <p class="meta">8 agents · Finance, Customs, Dispatch, Collections · Deployed in 12 days</p>
+  </div>
+</section>
+
+<div class="content">
+<div class="container">
+
+<h2>The Company</h2>
+<p>Pacific Maritime Group* is a mid-size logistics and port agency company operating across three ports on the U.S. West Coast. With 45 employees handling freight forwarding, customs brokerage, port agency services, and vessel dispatch, their operations ran on a mix of spreadsheets, email chains, and WhatsApp groups.</p>
+<p style="font-size:.85rem;color:var(--navy-mid)">*Company name changed for confidentiality.</p>
+
+<h2>The Problem</h2>
+<p>Like many logistics companies, Pacific Maritime had grown faster than their systems could keep up. The CFO, Maria Delgado, described the situation bluntly:</p>
+
+<div class="quote-block">
+  <p>"We were drowning in manual work. Our customs team was typing the same entry data into three different systems. Our AR clerk spent half her week chasing overdue invoices by email. And our dispatchers were coordinating vessel arrivals through WhatsApp — at 2 AM."</p>
+  <div class="attr">— Maria Delgado, CFO, Pacific Maritime Group</div>
+</div>
+
+<p>The numbers told the story:</p>
+
+<div class="before-after">
+  <div class="ba-col before">
+    <h4>Before: Manual Everything</h4>
+    <ul>
+      <li>Customs entries typed by hand into 3 systems</li>
+      <li>AR collections via individual emails — 45+ day DSO</li>
+      <li>Dispatch coordinated through WhatsApp groups</li>
+      <li>Weekly P&L compiled manually in Excel</li>
+      <li>No real-time visibility into operations</li>
+      <li>200+ hours/month on repetitive admin tasks</li>
+    </ul>
+  </div>
+  <div class="ba-col after">
+    <h4>After: AI-Powered Operations</h4>
+    <ul>
+      <li>Customs entries auto-generated from shipping docs</li>
+      <li>Collections agent sends follow-ups automatically — 30-day DSO</li>
+      <li>Dispatch agent coordinates arrivals with port authorities</li>
+      <li>Daily P&L and cash flow reports auto-generated</li>
+      <li>Real-time KPI dashboard for executive team</li>
+      <li>Staff refocused on client relationships and growth</li>
+    </ul>
+  </div>
+</div>
+
+<h2>The Solution: 8 AI Agents, 12 Days</h2>
+<p>ClawMoat deployed eight specialized AI agents across Pacific Maritime's operations, each configured to follow their exact standard operating procedures:</p>
+
+<table class="agents-table">
+  <thead>
+    <tr><th>Agent</th><th>Department</th><th>What It Does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Finance Agent</td><td>Accounting</td><td>Daily P&L, cash flow analysis, expense categorization</td></tr>
+    <tr><td>Collections Agent</td><td>Finance</td><td>AR follow-ups, payment reminders, aging reports</td></tr>
+    <tr><td>Customs Agent</td><td>Brokerage</td><td>Entry preparation, document classification, compliance checks</td></tr>
+    <tr><td>Port Agency Agent</td><td>Operations</td><td>Vessel arrival coordination, port authority communications</td></tr>
+    <tr><td>Dispatch Agent</td><td>Operations</td><td>Scheduling, driver coordination, delivery tracking</td></tr>
+    <tr><td>Dashboard Agent</td><td>Executive</td><td>Real-time KPI dashboard, executive summaries</td></tr>
+    <tr><td>AP Agent</td><td>Finance</td><td>Invoice processing, vendor payment scheduling</td></tr>
+    <tr><td>Client Comms Agent</td><td>Sales</td><td>Status updates, ETA notifications, follow-ups</td></tr>
+  </tbody>
+</table>
+
+<div class="quote-block">
+  <p>"I was skeptical. We'd been pitched 'AI solutions' before that turned out to be glorified chatbots. ClawMoat was different — these agents actually understood our customs workflows. They follow our SOPs better than some of our employees."</p>
+  <div class="attr">— Maria Delgado, CFO</div>
+</div>
+
+<h2>The Results</h2>
+
+<div class="results-grid">
+  <div class="result-card">
+    <div class="num">60%</div>
+    <div class="desc">Reduction in manual processing time</div>
+  </div>
+  <div class="result-card">
+    <div class="num">200+</div>
+    <div class="desc">Hours saved per month</div>
+  </div>
+  <div class="result-card">
+    <div class="num">15 days</div>
+    <div class="desc">Reduction in DSO (from 45 to 30)</div>
+  </div>
+  <div class="result-card">
+    <div class="num">12 days</div>
+    <div class="desc">From first call to all agents live</div>
+  </div>
+</div>
+
+<h3>Financial Impact</h3>
+<p>The Collections Agent alone recovered an additional $180K in the first quarter by systematically following up on overdue invoices that had previously fallen through the cracks. The reduced DSO freed up working capital that Pacific Maritime used to fund a new service line.</p>
+
+<h3>Operational Efficiency</h3>
+<p>The Customs Agent cut entry preparation time by 70%. Documents that took 45 minutes to process by hand now take under 10 minutes of human review. The Dispatch Agent eliminated the 2 AM WhatsApp coordination — vessel arrivals are now tracked and communicated automatically.</p>
+
+<h3>People Impact</h3>
+<p>No one was laid off. Instead, the customs team shifted to compliance auditing and client advisory — higher-value work. The AR clerk now manages strategic vendor relationships instead of sending collection emails.</p>
+
+<div class="quote-block">
+  <p>"The real win isn't the hours saved — it's what our people do with those hours now. Our customs team went from data entry to compliance consulting. That's a completely different business."</p>
+  <div class="attr">— Maria Delgado, CFO</div>
+</div>
+
+<h2>Security & Compliance</h2>
+<p>As a company handling sensitive customs and financial data, security was non-negotiable. Every ClawMoat agent deployed at Pacific Maritime includes:</p>
+<ul style="list-style:none;padding:0;margin:16px 0">
+  <li style="padding:6px 0;color:var(--gray)">✓ Full audit trails for every action taken</li>
+  <li style="padding:6px 0;color:var(--gray)">✓ Financial data protection preventing unauthorized access</li>
+  <li style="padding:6px 0;color:var(--gray)">✓ On-premise deployment — data never leaves their network</li>
+  <li style="padding:6px 0;color:var(--gray)">✓ Role-based permissions — each agent accesses only what it needs</li>
+</ul>
+
+<h2>Timeline</h2>
+<p><strong>Day 1:</strong> Discovery call — mapped all processes and pain points<br>
+<strong>Days 2–4:</strong> Agent design — configured 8 agents to Pacific Maritime's SOPs<br>
+<strong>Days 5–9:</strong> Testing — agents run in parallel with human team<br>
+<strong>Days 10–12:</strong> Go live — full deployment with monitoring<br>
+<strong>Day 30:</strong> Optimization complete — all agents performing at full capacity</p>
+
+</div>
+</div>
+
+<section class="cta-section">
+<div class="container">
+  <h2>Ready to See Similar Results in Your Business?</h2>
+  <p>Every company is different. Let's map your processes and show you where AI agents can create the biggest impact.</p>
+  <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+  <a href="/services/roi-calculator.html" class="btn btn-outline">Calculate Your ROI →</a>
+</div>
+</section>
+
+<footer>
+<div class="footer-inner">
+  <p>© 2026 ClawMoat. <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>

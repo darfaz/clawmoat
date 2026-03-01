@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent ROI Calculator — ClawMoat</title>
+<meta name="description" content="Calculate how much your business could save with AI agents. Input your team size and see monthly savings, annual ROI, and payback period.">
+<link rel="canonical" href="https://clawmoat.com/services/roi-calculator.html">
+<meta property="og:title" content="AI Agent ROI Calculator — ClawMoat">
+<meta property="og:description" content="See exactly how much AI agents could save your business. Free ROI calculator.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/services/roi-calculator.html">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .nav-inner{max-width:1140px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+.hero{padding:140px 0 40px;text-align:center}
+.hero .label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:16px}
+.hero h1{font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-.02em}
+.hero p{color:var(--gray);font-size:1.05rem;max-width:600px;margin:0 auto}
+
+.calc-section{padding:40px 0 80px}
+.calc-card{background:var(--navy-light);border:2px solid rgba(59,130,246,.2);border-radius:20px;padding:40px;margin-bottom:32px}
+
+.input-group{margin-bottom:28px}
+.input-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.95rem}
+.input-group .hint{color:var(--gray);font-size:.82rem;margin-bottom:8px}
+.input-group input[type=range]{width:100%;margin:8px 0;accent-color:var(--blue)}
+.input-row{display:flex;align-items:center;gap:16px}
+.input-row input[type=number]{background:var(--navy);border:1px solid var(--navy-mid);border-radius:8px;padding:10px 14px;color:var(--white);font-size:1.1rem;font-weight:600;width:140px;text-align:right}
+.input-row input[type=number]:focus{outline:none;border-color:var(--blue)}
+.input-row .unit{color:var(--gray);font-size:.9rem}
+.range-labels{display:flex;justify-content:space-between;color:var(--navy-mid);font-size:.75rem}
+
+.results-card{background:var(--navy-light);border:2px solid var(--emerald);border-radius:20px;padding:40px;text-align:center}
+.results-card h2{font-size:1.3rem;font-weight:700;margin-bottom:24px;color:var(--emerald)}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-bottom:32px}
+.result-item{background:var(--navy);border-radius:14px;padding:20px}
+.result-item .num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-item .desc{color:var(--gray);font-size:.82rem;margin-top:4px}
+
+.breakdown{text-align:left;margin:24px 0;padding:20px;background:var(--navy);border-radius:12px}
+.breakdown h3{font-size:.9rem;color:var(--emerald);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.breakdown .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.9rem}
+.breakdown .row .label{color:var(--gray)}
+.breakdown .row .value{font-weight:600}
+.breakdown .row.total{border-top:2px solid var(--emerald);border-bottom:none;margin-top:8px;padding-top:12px;font-size:1rem}
+.breakdown .row.total .value{color:var(--emerald)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-green{background:var(--emerald);color:#fff;font-size:1.1rem;padding:16px 36px}
+.btn-green:hover{background:#059669;text-decoration:none}
+
+.note{color:var(--navy-mid);font-size:.8rem;text-align:center;margin-top:24px;font-style:italic}
+
+.cta-section{text-align:center;padding:60px 0;border-top:1px solid rgba(255,255,255,.06)}
+.cta-section h2{font-size:1.6rem;font-weight:700;margin-bottom:12px}
+.cta-section p{color:var(--gray);margin-bottom:24px;font-size:1rem}
+
+footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:var(--gray);font-size:.85rem}
+.footer-inner{max-width:1140px;margin:0 auto;padding:0 24px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+  .menu-toggle{display:block}
+  .hero{padding:110px 0 30px}
+  .calc-card,.results-card{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-inner">
+  <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/services/case-study.html">Case Study</a>
+    <a href="/blog/">Blog</a>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn-sm">Schedule a Call</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="label">ROI Calculator</div>
+    <h1>How Much Could AI Agents Save Your Business?</h1>
+    <p>Enter your numbers below. See your potential savings in 30 seconds.</p>
+  </div>
+</section>
+
+<div class="calc-section">
+<div class="container">
+
+<div class="calc-card">
+  <div class="input-group">
+    <label>Number of Employees Doing Repetitive Tasks</label>
+    <div class="hint">Count people who spend significant time on data entry, follow-ups, reporting, or coordination.</div>
+    <div class="input-row">
+      <input type="number" id="employees" value="10" min="1" max="500" onchange="calculate()">
+      <span class="unit">employees</span>
+    </div>
+    <input type="range" min="1" max="100" value="10" oninput="document.getElementById('employees').value=this.value;calculate()">
+    <div class="range-labels"><span>1</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+  </div>
+
+  <div class="input-group">
+    <label>Average Fully-Loaded Annual Salary</label>
+    <div class="hint">Include benefits, taxes, overhead. U.S. average for admin/ops roles: $55K–$85K.</div>
+    <div class="input-row">
+      <span class="unit">$</span>
+      <input type="number" id="salary" value="65000" min="20000" max="250000" step="5000" onchange="calculate()">
+      <span class="unit">/year</span>
+    </div>
+    <input type="range" min="20000" max="200000" step="5000" value="65000" oninput="document.getElementById('salary').value=this.value;calculate()">
+    <div class="range-labels"><span>$20K</span><span>$60K</span><span>$100K</span><span>$150K</span><span>$200K</span></div>
+  </div>
+
+  <div class="input-group">
+    <label>% of Time Spent on Repetitive, Automatable Tasks</label>
+    <div class="hint">Industry research suggests 40–60% for most operations and finance roles.</div>
+    <div class="input-row">
+      <input type="number" id="pct" value="50" min="10" max="90" onchange="calculate()">
+      <span class="unit">%</span>
+    </div>
+    <input type="range" min="10" max="90" value="50" oninput="document.getElementById('pct').value=this.value;calculate()">
+    <div class="range-labels"><span>10%</span><span>30%</span><span>50%</span><span>70%</span><span>90%</span></div>
+  </div>
+</div>
+
+<div class="results-card" id="results">
+  <h2>Your Estimated Savings</h2>
+  <div class="results-grid">
+    <div class="result-item">
+      <div class="num" id="r-monthly">$27,083</div>
+      <div class="desc">Monthly Savings</div>
+    </div>
+    <div class="result-item">
+      <div class="num" id="r-annual">$325,000</div>
+      <div class="desc">Annual Savings</div>
+    </div>
+    <div class="result-item">
+      <div class="num" id="r-roi">10.8x</div>
+      <div class="desc">Return on Investment</div>
+    </div>
+    <div class="result-item">
+      <div class="num" id="r-payback">&lt; 1 mo</div>
+      <div class="desc">Payback Period</div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <h3>Breakdown</h3>
+    <div class="row"><span class="label">Salary cost of automatable work</span><span class="value" id="b-waste">$325,000/yr</span></div>
+    <div class="row"><span class="label">Estimated agents needed</span><span class="value" id="b-agents">5 agents</span></div>
+    <div class="row"><span class="label">Agent cost ($2,500/agent/month)</span><span class="value" id="b-cost">$150,000/yr</span></div>
+    <div class="row total"><span class="label">Net Annual Savings</span><span class="value" id="b-net">$175,000/yr</span></div>
+  </div>
+
+  <div style="margin-top:28px">
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call%20—%20ROI%20Calculator" class="btn btn-green">See These Savings in Action — Schedule a Call →</a>
+  </div>
+</div>
+
+<p class="note">Estimates based on industry averages. Agent cost of $2,500/month vs. industry average of $3,350/month. Actual results vary by business. One agent typically handles work equivalent to 1–2 FTEs on repetitive tasks.</p>
+
+</div>
+</div>
+
+<section class="cta-section">
+<div class="container">
+  <h2>Want a Custom Analysis for Your Business?</h2>
+  <p>Our 15-minute discovery call goes deeper — we'll map your specific processes and give you a precise ROI estimate.</p>
+  <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+</div>
+</section>
+
+<footer>
+<div class="footer-inner">
+  <p>© 2026 ClawMoat. <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></p>
+</div>
+</footer>
+
+<script>
+function calculate() {
+  const emp = Math.max(1, parseInt(document.getElementById('employees').value) || 10);
+  const sal = Math.max(20000, parseInt(document.getElementById('salary').value) || 65000);
+  const pct = Math.max(10, Math.min(90, parseInt(document.getElementById('pct').value) || 50));
+
+  // Cost of automatable work
+  const wasteAnnual = emp * sal * (pct / 100);
+  const wasteMonthly = wasteAnnual / 12;
+
+  // Agents needed: roughly 1 agent per 2 employees' repetitive work
+  const agents = Math.max(1, Math.ceil(emp * (pct / 100) / 2));
+  const agentCostMonthly = agents * 2500;
+  const agentCostAnnual = agentCostMonthly * 12;
+
+  // Savings (assume agents capture 60% of the automatable work value)
+  const captureRate = 0.6;
+  const savingsAnnual = (wasteAnnual * captureRate) - agentCostAnnual;
+  const savingsMonthly = savingsAnnual / 12;
+
+  // ROI
+  const roi = agentCostAnnual > 0 ? ((wasteAnnual * captureRate) / agentCostAnnual) : 0;
+
+  // Payback period in months
+  const monthlyGross = (wasteAnnual * captureRate) / 12;
+  const paybackMonths = agentCostMonthly > 0 && monthlyGross > agentCostMonthly
+    ? agentCostMonthly / (monthlyGross - agentCostMonthly) : 99;
+
+  const fmt = (n) => {
+    if (Math.abs(n) >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+    if (Math.abs(n) >= 1000) return '$' + Math.round(n).toLocaleString();
+    return '$' + Math.round(n);
+  };
+
+  document.getElementById('r-monthly').textContent = savingsMonthly > 0 ? fmt(savingsMonthly) : '$0';
+  document.getElementById('r-annual').textContent = savingsAnnual > 0 ? fmt(savingsAnnual) : '$0';
+  document.getElementById('r-roi').textContent = roi > 0 ? roi.toFixed(1) + 'x' : '—';
+  document.getElementById('r-payback').textContent = paybackMonths < 1 ? '< 1 mo' : paybackMonths < 12 ? Math.ceil(paybackMonths) + ' mo' : '12+ mo';
+
+  document.getElementById('b-waste').textContent = fmt(wasteAnnual) + '/yr';
+  document.getElementById('b-agents').textContent = agents + ' agent' + (agents !== 1 ? 's' : '');
+  document.getElementById('b-cost').textContent = fmt(agentCostAnnual) + '/yr';
+  document.getElementById('b-net').textContent = (savingsAnnual > 0 ? fmt(savingsAnnual) : '-' + fmt(Math.abs(savingsAnnual))) + '/yr';
+}
+
+calculate();
+</script>
+
+</body>
+</html>
