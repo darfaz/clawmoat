@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Setup for Business — ClawMoat</title>
+<meta name="description" content="Done-for-you AI agent deployment for businesses. Custom agents following your SOPs, secured by ClawMoat, deployed in days.">
+<link rel="canonical" href="https://clawmoat.com/services/">
+<meta property="og:title" content="AI Agents for Your Business — ClawMoat">
+<meta property="og:description" content="We set up, configure, and secure autonomous AI agents that actually do the work. Deployed in days, not months.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/services/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white);margin-right:40px;flex-shrink:0}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+.hero{padding:160px 0 100px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero h1{font-size:clamp(2.5rem,6vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-.03em}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.2rem;color:var(--gray);max-width:640px;margin:0 auto 40px}
+
+section{padding:80px 0}
+.section-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:12px}
+.section-title{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
+.section-sub{color:var(--gray);font-size:1.05rem;max-width:600px;margin-bottom:48px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB;text-decoration:none}
+.btn-outline{background:transparent;color:var(--white);border:1.5px solid var(--navy-mid)}
+.btn-outline:hover{border-color:var(--blue);text-decoration:none}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+.deploy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px;transition:border-color .2s}
+.card:hover{border-color:var(--emerald)}
+.card .icon{font-size:2rem;margin-bottom:12px}
+.card h3{font-size:1.1rem;margin-bottom:8px}
+.card p{color:var(--gray);font-size:.9rem}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;margin-top:48px}
+.step{text-align:center;padding:32px}
+.step .num{width:48px;height:48px;background:var(--blue);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;margin-bottom:16px}
+.step h3{font-size:1.15rem;margin-bottom:8px}
+.step p{color:var(--gray);font-size:.9rem}
+
+.use-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.use-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:20px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
+.use-card:hover{border-color:var(--blue)}
+.use-card .icon{font-size:1.5rem;flex-shrink:0}
+.use-card span{font-size:.95rem}
+
+.security-section{background:var(--navy-light)}
+.security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:32px}
+.sec-item{display:flex;align-items:flex-start;gap:12px}
+.sec-item .check{color:var(--emerald);font-weight:700;font-size:1.2rem;flex-shrink:0}
+.sec-item p{font-size:.9rem;color:var(--gray)}
+.sec-item strong{color:var(--white)}
+
+.hw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px}
+.hw-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px;text-align:center}
+.hw-card:hover{border-color:var(--emerald)}
+.hw-card .icon{font-size:2.5rem;margin-bottom:12px}
+.hw-card h3{margin-bottom:8px}
+.hw-card p{color:var(--gray);font-size:.9rem}
+
+.social-proof{text-align:center;padding:60px 0;background:var(--navy-light);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.social-proof p{font-size:1.1rem;color:var(--gray);max-width:700px;margin:0 auto}
+
+.cta-section{text-align:center;padding:100px 0}
+.cta-section h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:16px}
+.cta-section p{color:var(--gray);margin-bottom:32px;font-size:1.05rem}
+
+footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:var(--gray);font-size:.85rem}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+  .menu-toggle{display:block}
+  .hero{padding:120px 0 60px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+  <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/business/">Business</a>
+    <a href="/finance/">Finance</a>
+    <a href="/services/" style="color:var(--emerald);font-weight:600">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn-sm">Schedule a Call</a>
+  </div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+<div class="container">
+  <p class="section-label">Done-For-You AI Agent Deployment</p>
+  <h1>AI Agents for Your Business.<br><span class="highlight">Deployed Securely in Days, Not Months.</span></h1>
+  <p>We set up, configure, and secure autonomous AI agents that actually do the work — following your SOPs, protecting your data, running 24/7.</p>
+  <div class="hero-btns">
+    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn btn-primary">Schedule a Discovery Call →</a>
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">See Our Open Source Security</a>
+  </div>
+</div>
+</section>
+
+<!-- What We Deploy -->
+<section>
+<div class="container">
+  <p class="section-label">What We Deploy</p>
+  <h2 class="section-title">Custom AI Agents, Tailored to Your Business</h2>
+  <p class="section-sub">Every agent is configured specifically for your operations — not a generic chatbot.</p>
+  <div class="deploy-grid">
+    <div class="card">
+      <div class="icon">🎯</div>
+      <h3>Custom AI Agents</h3>
+      <p>Tailored to your business — Finance, Operations, Sales, Customer Service, and more. Each agent understands your specific workflows.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧠</div>
+      <h3>Full Agent Architecture</h3>
+      <p>Every agent gets: personality (SOUL), knowledge of your team (USER), persistent memory (MEMORY), and automated routines (HEARTBEAT).</p>
+    </div>
+    <div class="card">
+      <div class="icon">💬</div>
+      <h3>Natural Integration</h3>
+      <p>Telegram, Slack, or WhatsApp integration so your team talks to agents naturally — no new tools to learn.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🛡️</div>
+      <h3>ClawMoat Security Layer</h3>
+      <p>Every agent is protected by Host Guardian, FinanceGuard, and McpFirewall. Enterprise-grade security from day one.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- How It Works -->
+<section style="background:var(--navy-light)">
+<div class="container">
+  <p class="section-label">How It Works</p>
+  <h2 class="section-title">Three Steps to Your AI Workforce</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <h3>Discovery Call</h3>
+      <p>We map your processes and pain points. Which tasks eat your team's time? Where do SOPs break down? We find the highest-impact opportunities.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h3>Build & Deploy</h3>
+      <p>Agents are configured, tested, and deployed on secure hardware. Each one is tuned to your workflows and protected by ClawMoat security.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h3>Go Live</h3>
+      <p>Your team starts working with their AI agents immediately. We monitor performance and tune until everything runs smoothly.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- What Agents Can Do -->
+<section>
+<div class="container">
+  <p class="section-label">Capabilities</p>
+  <h2 class="section-title">What Your Agents Can Do</h2>
+  <p class="section-sub">Real work, not demos. These agents handle production tasks daily.</p>
+  <div class="use-grid">
+    <div class="use-card"><div class="icon">📊</div><span>Financial reporting & cash flow analysis</span></div>
+    <div class="use-card"><div class="icon">💰</div><span>AR/AP automation & collections</span></div>
+    <div class="use-card"><div class="icon">📧</div><span>Customer communication & follow-up</span></div>
+    <div class="use-card"><div class="icon">📄</div><span>Document processing & data entry</span></div>
+    <div class="use-card"><div class="icon">📱</div><span>Social media & content management</span></div>
+    <div class="use-card"><div class="icon">📋</div><span>Project tracking & status updates</span></div>
+    <div class="use-card"><div class="icon">📅</div><span>Scheduling & calendar management</span></div>
+    <div class="use-card"><div class="icon">⚙️</div><span>Custom workflows from your SOPs</span></div>
+  </div>
+</div>
+</section>
+
+<!-- Security Built In -->
+<section class="security-section">
+<div class="container">
+  <p class="section-label">Security Built In</p>
+  <h2 class="section-title">Unlike Other Providers Deploying Naked AI Agents</h2>
+  <p class="section-sub">Every ClawMoat deployment includes enterprise-grade security. No exceptions.</p>
+  <div class="security-grid">
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Permission Tiers</strong><br>Agents only access what they need. Nothing more.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Forbidden Zones</strong><br>SSH keys, credentials, and sensitive files are off-limits.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Financial Data Protection</strong><br>FinanceGuard prevents unauthorized transactions and data leaks.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Full Audit Trails</strong><br>Every agent action is logged. Complete accountability.</p>
+    </div>
+  </div>
+  <p style="color:var(--gray);margin-top:32px;font-size:1.05rem;font-style:italic">Your agents handle sensitive data. We make sure it stays safe.</p>
+</div>
+</section>
+
+<!-- Hardware Options -->
+<section>
+<div class="container">
+  <p class="section-label">Deployment Options</p>
+  <h2 class="section-title">Run Anywhere You Want</h2>
+  <div class="hw-grid">
+    <div class="hw-card">
+      <div class="icon">💻</div>
+      <h3>Your Existing Laptop</h3>
+      <p>Install on hardware you already own. Zero additional cost. Your data never leaves your machine.</p>
+    </div>
+    <div class="hw-card">
+      <div class="icon">🖥️</div>
+      <h3>Dedicated Mini Server</h3>
+      <p>$400 Beelink mini PC — we configure it, ship it, you plug it in. Always-on, always-secure.</p>
+    </div>
+    <div class="hw-card">
+      <div class="icon">☁️</div>
+      <h3>Cloud Deployment</h3>
+      <p>AWS, GCP, or any cloud provider. We handle the infrastructure and security configuration.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Social Proof -->
+<div class="social-proof">
+<div class="container">
+  <p style="font-size:1.3rem;color:var(--white);font-weight:600;margin-bottom:8px">Built on OpenClaw</p>
+  <p>Securing 40K+ instances worldwide. 277 tests. Zero dependencies. MIT licensed.</p>
+</div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+<div class="container">
+  <h2>Ready to Put AI Agents to Work?</h2>
+  <p>No pitch decks. No vaporware. A 30-minute call to see if we're a fit.</p>
+  <div class="hero-btns">
+    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn btn-primary" style="font-size:1.1rem;padding:16px 36px">Schedule a Discovery Call →</a>
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">See Our Open Source Security</a>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <p>© 2026 ClawMoat. <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>

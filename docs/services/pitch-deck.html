@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Services — Pitch Deck — ClawMoat</title>
+<meta name="description" content="ClawMoat AI Agent deployment services. The problem, the solution, and why now.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+.slide{min-height:100vh;display:flex;align-items:center;padding:80px 0;position:relative}
+.slide:nth-child(even){background:var(--navy-light)}
+.slide-content{width:100%}
+
+h1{font-size:clamp(2.5rem,6vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-.03em}
+h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;margin-bottom:20px;letter-spacing:-.02em}
+.label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:12px}
+.subtitle{font-size:1.15rem;color:var(--gray);max-width:640px;margin-bottom:32px}
+
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:32px}
+.pain-card{background:var(--navy);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:24px}
+.pain-card .icon{font-size:2rem;margin-bottom:10px}
+.pain-card h3{font-size:1rem;margin-bottom:6px;color:var(--red)}
+.pain-card p{font-size:.9rem;color:var(--gray)}
+
+.validation{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+.val-card{background:var(--navy-light);border:1px solid rgba(59,130,246,.15);border-radius:12px;padding:28px}
+.val-card .big{font-size:2.5rem;font-weight:800;color:var(--blue);margin-bottom:8px}
+.val-card p{color:var(--gray);font-size:.9rem}
+.val-card strong{color:var(--white)}
+
+.compare-table{width:100%;margin-top:32px;border-collapse:collapse}
+.compare-table th,.compare-table td{padding:16px 20px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+.compare-table th{font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gray)}
+.compare-table .before{color:var(--red)}
+.compare-table .after{color:var(--emerald)}
+.compare-table td:first-child{font-weight:600;color:var(--white)}
+
+.solution-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:32px}
+.sol-card{background:var(--navy);border:1px solid rgba(16,185,129,.15);border-radius:12px;padding:24px}
+.sol-card .icon{font-size:2rem;margin-bottom:10px}
+.sol-card h3{font-size:1rem;margin-bottom:6px}
+.sol-card p{font-size:.9rem;color:var(--gray)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:16px 36px;border-radius:10px;font-weight:600;font-size:1.1rem;transition:all .2s;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB}
+
+.back-link{position:fixed;top:20px;left:20px;z-index:100;color:var(--gray);font-size:.85rem;background:rgba(15,23,42,.8);padding:8px 16px;border-radius:8px;backdrop-filter:blur(8px)}
+.back-link:hover{color:var(--white)}
+
+@media(max-width:768px){
+  .slide{min-height:auto;padding:60px 0}
+  .validation{grid-template-columns:1fr}
+  .compare-table{font-size:.85rem}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<a href="/services/" class="back-link">← Back to Services</a>
+
+<!-- Slide 1: Title -->
+<section class="slide">
+<div class="container">
+<div class="slide-content" style="text-align:center">
+  <p class="label">ClawMoat AI Agent Services</p>
+  <h1>Your SOPs Don't Run Themselves.<br><span class="highlight">Until Now.</span></h1>
+  <p class="subtitle" style="margin:0 auto 32px">Done-for-you AI agents that follow your processes, protect your data, and work 24/7.</p>
+  <img src="/logo.svg" alt="ClawMoat" style="height:40px;opacity:.6;margin-top:24px">
+</div>
+</div>
+</section>
+
+<!-- Slide 2: The Problem -->
+<section class="slide">
+<div class="container">
+<div class="slide-content">
+  <p class="label">The Problem</p>
+  <h2>Businesses Run on Manual Processes That Don't Scale</h2>
+  <p class="subtitle">Every company has SOPs. Almost none of them run automatically.</p>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="icon">⏰</div>
+      <h3>Time-Consuming Manual Work</h3>
+      <p>Your team spends hours on data entry, follow-ups, reporting, and status updates. Work that follows a process — but requires a human to push buttons.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">💸</div>
+      <h3>Expensive Employees on Cheap Tasks</h3>
+      <p>You're paying $60K-$120K/year for people to do work that follows a checklist. The talent is wasted on process execution.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">📋</div>
+      <h3>SOPs That Don't Run Themselves</h3>
+      <p>You documented the process. You trained the team. But the SOP sits in a folder while humans still do every step manually.</p>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- Slide 3: Market Validation -->
+<section class="slide">
+<div class="container">
+<div class="slide-content">
+  <p class="label">Market Validation</p>
+  <h2>This Isn't Theoretical. It's Happening Now.</h2>
+  <div class="validation">
+    <div class="val-card">
+      <div class="big">$3,350</div>
+      <p><strong>Origin Studios</strong> charges $3,350 per agent for AI agent setup services. Businesses are paying premium prices for this exact service.</p>
+    </div>
+    <div class="val-card">
+      <div class="big">60%</div>
+      <p><strong>Jason Calacanis</strong> is automating 60% of his VC firm's operations with AI agents. Not experimenting — replacing actual headcount.</p>
+    </div>
+    <div class="val-card">
+      <div class="big">40K+</div>
+      <p><strong>OpenClaw instances</strong> running worldwide. The platform we build on is proven at scale with a massive community.</p>
+    </div>
+    <div class="val-card">
+      <div class="big">277</div>
+      <p><strong>Security tests</strong> in ClawMoat. Zero dependencies. MIT licensed. The only open-source agent security layer.</p>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- Slide 4: The Solution -->
+<section class="slide">
+<div class="container">
+<div class="slide-content">
+  <p class="label">The Solution</p>
+  <h2>ClawMoat-Secured AI Agents, Deployed for You</h2>
+  <p class="subtitle">We don't sell software. We deploy working AI agents secured by the only open-source agent security layer.</p>
+  <div class="solution-grid">
+    <div class="sol-card">
+      <div class="icon">🤖</div>
+      <h3>Custom Agents</h3>
+      <p>Built around your processes. Finance, ops, sales, customer service — each with its own personality, memory, and capabilities.</p>
+    </div>
+    <div class="sol-card">
+      <div class="icon">🛡️</div>
+      <h3>Security-First</h3>
+      <p>Unlike competitors deploying naked agents, every deployment includes Host Guardian, FinanceGuard, and full audit trails.</p>
+    </div>
+    <div class="sol-card">
+      <div class="icon">💬</div>
+      <h3>Natural Interface</h3>
+      <p>Your team talks to agents via Telegram, Slack, or WhatsApp. No training. No new tools. Just message them.</p>
+    </div>
+    <div class="sol-card">
+      <div class="icon">🏠</div>
+      <h3>Your Hardware</h3>
+      <p>Run on your laptop, a $400 mini server, or cloud. Your data stays on your infrastructure. Always.</p>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- Slide 5: Before/After -->
+<section class="slide">
+<div class="container">
+<div class="slide-content">
+  <p class="label">Before & After</p>
+  <h2>A Day in the Life: CFO Edition</h2>
+  <table class="compare-table">
+    <thead>
+      <tr><th>Task</th><th>Before (Manual)</th><th>After (AI Agent)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Morning cash position</td>
+        <td class="before">45 min pulling bank data, building spreadsheet</td>
+        <td class="after">Agent sends report to Telegram at 7 AM</td>
+      </tr>
+      <tr>
+        <td>AR follow-ups</td>
+        <td class="before">Staff spends 2 hrs reviewing who's overdue, drafting emails</td>
+        <td class="after">Agent identifies overdue, drafts polite follow-ups, awaits approval</td>
+      </tr>
+      <tr>
+        <td>Expense categorization</td>
+        <td class="before">Bookkeeper manually tags 50+ transactions</td>
+        <td class="after">Agent categorizes, flags anomalies, you review exceptions</td>
+      </tr>
+      <tr>
+        <td>Board report prep</td>
+        <td class="before">3-4 hours pulling data from 5 sources</td>
+        <td class="after">Agent compiles draft with charts, you edit and present</td>
+      </tr>
+      <tr>
+        <td>Vendor payment tracking</td>
+        <td class="before">Manual spreadsheet, always behind</td>
+        <td class="after">Agent tracks due dates, alerts before deadlines</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="color:var(--gray);margin-top:24px;font-style:italic;text-align:center">Same results. A fraction of the time. No new hires.</p>
+</div>
+</div>
+</section>
+
+<!-- Slide 6: CTA -->
+<section class="slide">
+<div class="container">
+<div class="slide-content" style="text-align:center">
+  <p class="label">Next Step</p>
+  <h2>See If AI Agents Fit Your Business</h2>
+  <p class="subtitle" style="margin:0 auto 40px">30-minute discovery call. We'll map your processes and show you exactly where agents save you time and money.</p>
+  <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup%20-%20Discovery%20Call" class="btn btn-primary">Schedule a Discovery Call →</a>
+  <p style="color:var(--gray);margin-top:24px;font-size:.9rem">No pitch. No pressure. Just an honest assessment of where AI agents can help.</p>
+</div>
+</div>
+</section>
+
+</body>
+</html>
