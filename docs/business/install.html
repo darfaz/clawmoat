@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Install ClawMoat — One Command, Enterprise-Grade Agent Security</title>
+<meta name="description" content="Install ClawMoat in 60 seconds. One command sets up permission tiers, credential protection, audit trails, and secret scanning for your AI agents.">
+<link rel="canonical" href="https://clawmoat.com/business/install.html">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<meta property="og:title" content="One Command. Enterprise-Grade Agent Security.">
+<meta property="og:description" content="Install ClawMoat in 60 seconds — permission tiers, credential protection, audit trails for AI agents.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/business/install.html">
+<meta property="og:type" content="website">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B;--cyan:#06B6D4}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Nav */
+.nav{padding:1rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-logo{font-size:1.3rem;font-weight:700;color:var(--white)}
+.nav a{color:var(--gray);font-size:.9rem}
+.nav a:hover{color:var(--white)}
+
+/* Hero */
+.hero{text-align:center;padding:5rem 2rem 4rem;max-width:800px;margin:0 auto}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.2;margin-bottom:1rem}
+.hero h1 span{color:var(--emerald)}
+.hero p{color:var(--gray);font-size:1.15rem;margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* Install box */
+.install-box{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:2rem;max-width:700px;margin:0 auto 1.5rem;position:relative}
+.install-box code{font-family:'SF Mono',Monaco,'Cascadia Code',monospace;font-size:1.1rem;color:var(--emerald);display:block;padding:.8rem;background:rgba(0,0,0,.3);border-radius:8px;cursor:pointer;transition:background .2s}
+.install-box code:hover{background:rgba(0,0,0,.5)}
+.install-box .label{color:var(--gray);font-size:.85rem;margin-bottom:.5rem}
+.install-box .enterprise{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--navy-mid)}
+.install-box .enterprise code{color:var(--amber);font-size:.95rem}
+.copy-hint{color:var(--gray);font-size:.8rem;text-align:center;margin-bottom:3rem}
+.copied{color:var(--emerald) !important}
+
+/* Sections */
+.section{max-width:900px;margin:0 auto;padding:3rem 2rem}
+.section h2{font-size:1.8rem;margin-bottom:1.5rem;text-align:center}
+.section h2 span{color:var(--emerald)}
+
+/* Steps */
+.steps{display:grid;gap:1.5rem}
+.step{display:flex;gap:1.2rem;align-items:flex-start;background:var(--navy-light);padding:1.5rem;border-radius:10px;border:1px solid var(--navy-mid)}
+.step-num{background:var(--emerald);color:var(--navy);font-weight:700;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem}
+.step h3{font-size:1.05rem;margin-bottom:.3rem}
+.step p{color:var(--gray);font-size:.9rem}
+
+/* Comparison table */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.5rem}
+@media(max-width:600px){.compare{grid-template-columns:1fr}}
+.compare-col{background:var(--navy-light);border-radius:10px;padding:1.5rem;border:1px solid var(--navy-mid)}
+.compare-col.bad{border-color:rgba(239,68,68,.3)}
+.compare-col.good{border-color:rgba(16,185,129,.3)}
+.compare-col h3{font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.compare-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.compare-col.bad li::before{content:'❌ '}
+.compare-col.good li::before{content:'✅ '}
+.compare-col li{color:var(--gray);font-size:.9rem}
+
+/* FAQ */
+.faq{display:grid;gap:1rem;margin-top:1.5rem}
+.faq-item{background:var(--navy-light);border-radius:10px;padding:1.5rem;border:1px solid var(--navy-mid)}
+.faq-item h3{font-size:1rem;margin-bottom:.5rem;color:var(--white)}
+.faq-item p{color:var(--gray);font-size:.9rem}
+
+/* CTA */
+.cta{text-align:center;padding:4rem 2rem;border-top:1px solid var(--navy-mid)}
+.cta h2{font-size:1.8rem;margin-bottom:1rem}
+.cta p{color:var(--gray);margin-bottom:2rem}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border-radius:8px;font-weight:600;font-size:.95rem;transition:transform .2s,opacity .2s}
+.btn:hover{transform:translateY(-1px);text-decoration:none;opacity:.9}
+.btn-primary{background:var(--emerald);color:var(--navy)}
+.btn-secondary{background:var(--navy-light);color:var(--white);border:1px solid var(--navy-mid)}
+
+/* Footer */
+.footer{text-align:center;padding:2rem;color:var(--gray);font-size:.85rem;border-top:1px solid rgba(255,255,255,.06)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">🏰 ClawMoat</a>
+  <a href="/business/">Business</a>
+  <a href="/blog/">Blog</a>
+  <a href="https://github.com/ClawMoat/clawmoat">GitHub</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>One Command.<br><span>Enterprise-Grade Agent Security.</span></h1>
+  <p>Install ClawMoat in 60 seconds. Hardened config, credential protection, audit trails — all running locally on your machine.</p>
+
+  <div class="install-box">
+    <div class="label">Run this in your terminal:</div>
+    <code onclick="copyCmd(this, 'curl -fsSL https://clawmoat.com/install.sh | bash')">curl -fsSL https://clawmoat.com/install.sh | bash</code>
+    <div class="enterprise">
+      <div class="label">Enterprise (adds FinanceGuard, MCP Firewall, SOX templates):</div>
+      <code onclick="copyCmd(this, 'curl -fsSL https://clawmoat.com/install.sh | bash -s -- --enterprise')">curl -fsSL https://clawmoat.com/install.sh | bash -s -- --enterprise</code>
+    </div>
+  </div>
+  <div class="copy-hint">Click to copy • Works on Linux, macOS, and WSL</div>
+</section>
+
+<!-- What it does -->
+<section class="section">
+  <h2>What <span>It Does</span></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Detects Your OS</h3>
+        <p>Identifies Linux, macOS, or WSL and adapts accordingly. No sudo required.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Checks Node.js</h3>
+        <p>Verifies Node.js v18+ is installed. Offers to install via nvm if missing — no system packages modified.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Installs ClawMoat</h3>
+        <p><code style="background:none;padding:0;color:var(--cyan);font-size:.85rem">npm install -g clawmoat</code> — the open-source AI agent security toolkit.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>Generates Hardened Config</h3>
+        <p>Creates <code style="background:none;padding:0;color:var(--cyan);font-size:.85rem">~/.clawmoat/config.json</code> with worker-tier permissions, 17+ forbidden credential zones, secret scanning, network logging, and full audit trails.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div>
+        <h3>Runs Security Scan</h3>
+        <p>Scans your machine for exposed credentials, insecure permissions, and .env files. Generates a report showing what it found and what's now protected.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div>
+        <h3>Prints Next Steps</h3>
+        <p>Configure alert webhooks, run your first scan, connect to your team dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison -->
+<section class="section">
+  <h2>Without vs. <span>With ClawMoat</span></h2>
+  <div class="compare">
+    <div class="compare-col bad">
+      <h3>🚫 Without ClawMoat</h3>
+      <ul>
+        <li>Agents can read ~/.ssh, ~/.aws, any credential file</li>
+        <li>No record of what agents accessed or modified</li>
+        <li>Secrets leak silently in agent output</li>
+        <li>Network requests go unmonitored</li>
+        <li>No compliance evidence for auditors</li>
+        <li>One compromised agent = full system access</li>
+      </ul>
+    </div>
+    <div class="compare-col good">
+      <h3>🏰 With ClawMoat</h3>
+      <ul>
+        <li>17+ credential zones blocked by default</li>
+        <li>Tamper-protected audit trail of every action</li>
+        <li>Real-time secret detection with alerts</li>
+        <li>Full network egress logging</li>
+        <li>SOX-ready compliance templates (Enterprise)</li>
+        <li>Least-privilege tiers contain blast radius</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <h2>Frequently Asked <span>Questions</span></h2>
+  <div class="faq">
+    <div class="faq-item">
+      <h3>🔒 Is it safe to run?</h3>
+      <p>Yes. The script runs entirely locally — no data is sent anywhere. It installs an npm package, creates a config file in ~/.clawmoat/, and scans for existing credential exposure. No files are modified or deleted. The script is open-source and auditable on <a href="https://github.com/ClawMoat/clawmoat">GitHub</a>.</p>
+    </div>
+    <div class="faq-item">
+      <h3>📁 What does it change on my system?</h3>
+      <p>It installs the <code>clawmoat</code> npm package globally, creates the <code>~/.clawmoat/</code> directory with a config and audit logs, and optionally installs nvm if Node.js is missing. No system files are modified. No sudo required.</p>
+    </div>
+    <div class="faq-item">
+      <h3>🔄 Can I run it multiple times?</h3>
+      <p>Yes, the script is idempotent. Running it again updates ClawMoat and backs up your existing config before generating a new one.</p>
+    </div>
+    <div class="faq-item">
+      <h3>🗑️ Can I uninstall?</h3>
+      <p>Completely. Run <code>npm uninstall -g clawmoat</code> and <code>rm -rf ~/.clawmoat</code>. That's it — nothing else to clean up.</p>
+    </div>
+    <div class="faq-item">
+      <h3>💼 What does --enterprise add?</h3>
+      <p>FinanceGuard for monitoring high-value operations, MCP Firewall in read-only mode for tool-call governance, and SOX compliance audit templates with controls mapping.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Secure Your AI Agents Today</h2>
+  <p>Open-source core. Enterprise features for teams that need compliance.</p>
+  <div class="cta-buttons">
+    <a href="https://github.com/ClawMoat/clawmoat" class="btn btn-secondary">⭐ Star on GitHub</a>
+    <a href="/business/" class="btn btn-primary">Get ClawMoat Pro →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  © 2026 ClawMoat · <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="/support/">Support</a>
+</footer>
+
+<script>
+function copyCmd(el, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = el.textContent;
+    el.textContent = '✅ Copied!';
+    el.classList.add('copied');
+    setTimeout(() => { el.textContent = orig; el.classList.remove('copied'); }, 1500);
+  });
+}
+</script>
+</body>
+</html>
