@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Templates — ClawMoat</title>
+<style>
+  :root { --bg: #0a0a0a; --surface: #141414; --border: #2a2a2a; --text: #e0e0e0; --muted: #888; --accent: #4fc3f7; --accent2: #81c784; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 2.5rem; }
+  .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; transition: border-color 0.2s; }
+  .template-card:hover { border-color: var(--accent); }
+  .card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .card-header .icon { font-size: 1.8rem; }
+  .card-header h2 { font-size: 1.3rem; font-weight: 600; }
+  .card-desc { color: var(--muted); margin-bottom: 1rem; }
+  .files { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .files a { display: inline-block; padding: 0.35rem 0.75rem; background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.85rem; font-family: 'SF Mono', 'Fira Code', monospace; transition: background 0.2s; }
+  .files a:hover { background: #252540; }
+  .intro { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+  .intro h3 { color: var(--accent2); margin-bottom: 0.5rem; }
+  .intro code { background: #1a1a2e; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9rem; }
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 Agent Templates</h1>
+  <p class="subtitle">Pre-built OpenClaw agent configurations for common business roles. Copy, customize, deploy.</p>
+
+  <div class="intro">
+    <h3>How to Use</h3>
+    <p>Each template includes four files that configure an AI agent's personality, knowledge, and behavior:</p>
+    <ul style="margin: 0.75rem 0 0 1.5rem; color: var(--muted);">
+      <li><code>SOUL.md</code> — Personality, expertise, communication style, and boundaries</li>
+      <li><code>USER.md</code> — Information about the human the agent works with (fill in your details)</li>
+      <li><code>MEMORY.md</code> — Long-term knowledge: contacts, accounts, procedures, reference data</li>
+      <li><code>HEARTBEAT.md</code> — Proactive check schedule: what to monitor and when to alert</li>
+    </ul>
+    <p style="margin-top: 0.75rem; color: var(--muted);">Copy any template into your OpenClaw workspace, fill in the <code>[placeholders]</code>, and your agent is ready to go.</p>
+  </div>
+
+  <div class="template-card">
+    <div class="card-header"><span class="icon">💰</span><h2>Finance Agent</h2></div>
+    <p class="card-desc">A meticulous CFO assistant. Tracks cash position, AR/AP aging, financial reporting, month-end close, and budget variance. Conservative with numbers, proactive with alerts.</p>
+    <div class="files">
+      <a href="finance/SOUL.md">SOUL.md</a>
+      <a href="finance/USER.md">USER.md</a>
+      <a href="finance/MEMORY.md">MEMORY.md</a>
+      <a href="finance/HEARTBEAT.md">HEARTBEAT.md</a>
+    </div>
+  </div>
+
+  <div class="template-card">
+    <div class="card-header"><span class="icon">⚙️</span><h2>Operations Agent</h2></div>
+    <p class="card-desc">An efficient dispatcher. Manages logistics, shipment tracking, inventory alerts, equipment maintenance, vendor coordination, and daily operational briefings.</p>
+    <div class="files">
+      <a href="operations/SOUL.md">SOUL.md</a>
+      <a href="operations/USER.md">USER.md</a>
+      <a href="operations/MEMORY.md">MEMORY.md</a>
+      <a href="operations/HEARTBEAT.md">HEARTBEAT.md</a>
+    </div>
+  </div>
+
+  <div class="template-card">
+    <div class="card-header"><span class="icon">📈</span><h2>Sales Agent</h2></div>
+    <p class="card-desc">An energetic sales operations partner. Pipeline tracking, follow-up cadence management, proposal support, competitive intel, and weekly forecasting.</p>
+    <div class="files">
+      <a href="sales/SOUL.md">SOUL.md</a>
+      <a href="sales/USER.md">USER.md</a>
+      <a href="sales/MEMORY.md">MEMORY.md</a>
+      <a href="sales/HEARTBEAT.md">HEARTBEAT.md</a>
+    </div>
+  </div>
+
+  <div class="template-card">
+    <div class="card-header"><span class="icon">🎧</span><h2>Customer Service Agent</h2></div>
+    <p class="card-desc">A patient, empathetic support specialist. Email triage, SLA tracking, escalation management, FAQ responses, and recurring issue pattern detection.</p>
+    <div class="files">
+      <a href="customer-service/SOUL.md">SOUL.md</a>
+      <a href="customer-service/USER.md">USER.md</a>
+      <a href="customer-service/MEMORY.md">MEMORY.md</a>
+      <a href="customer-service/HEARTBEAT.md">HEARTBEAT.md</a>
+    </div>
+  </div>
+
+  <div class="template-card">
+    <div class="card-header"><span class="icon">👔</span><h2>Executive Agent</h2></div>
+    <p class="card-desc">A strategic chief-of-staff assistant. Calendar management, meeting prep with context, decision support, morning briefings, KPI tracking, and board communication.</p>
+    <div class="files">
+      <a href="executive/SOUL.md">SOUL.md</a>
+      <a href="executive/USER.md">USER.md</a>
+      <a href="executive/MEMORY.md">MEMORY.md</a>
+      <a href="executive/HEARTBEAT.md">HEARTBEAT.md</a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://clawmoat.com">ClawMoat</a> — AI agents for businesses that actually work.
+  </footer>
+</div>
+</body>
+</html>
