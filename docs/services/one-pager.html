@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat — AI Agents for Your Business</title>
+<style>
+  :root { --bg: #0f1117; --surface: #1a1d27; --accent: #6c63ff; --accent2: #00d4aa; --text: #e8e8ed; --muted: #8b8d97; --border: #2a2d3a; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); max-width: 800px; margin: 0 auto; padding: 40px 32px; line-height: 1.5; }
+  .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .logo-icon { font-size: 32px; }
+  .logo-text { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-text span { color: var(--accent); }
+  .tagline { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+  h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 24px; }
+  h1 span { color: var(--accent2); }
+  .stats { display: flex; gap: 16px; margin-bottom: 32px; }
+  .stat { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 800; color: var(--accent2); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  h2 { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin: 24px 0 12px; }
+  .what-we-do li, .steps li { margin-bottom: 8px; font-size: 15px; }
+  .what-we-do { list-style: none; padding: 0; }
+  .what-we-do li::before { content: "→ "; color: var(--accent); font-weight: 700; }
+  .steps { list-style: none; padding: 0; counter-reset: step; }
+  .steps li { counter-increment: step; display: flex; align-items: baseline; gap: 10px; }
+  .steps li::before { content: counter(step); background: var(--accent); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .usecases { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-bottom: 8px; }
+  .usecase { font-size: 14px; }
+  .security { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-size: 14px; color: var(--muted); margin: 16px 0; }
+  .security strong { color: var(--text); }
+  .contact { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .contact a { color: var(--accent); text-decoration: none; }
+  .contact p { font-size: 14px; color: var(--muted); }
+
+  @media print {
+    body { background: #fff; color: #111; padding: 20px; }
+    .stat { border: 1px solid #ccc; background: #f8f8f8; }
+    .stat-num { color: #333; }
+    .security { background: #f8f8f8; border-color: #ccc; }
+    .security strong { color: #111; }
+    h2 { color: #333; }
+    .contact a { color: #333; }
+    .what-we-do li::before { color: #333; }
+    .steps li::before { background: #333; }
+    :root { --muted: #555; --border: #ccc; }
+  }
+</style>
+</head>
+<body>
+  <div class="logo-area">
+    <div class="logo-icon">🏰</div>
+    <div class="logo-text">Claw<span>Moat</span></div>
+  </div>
+  <div class="tagline">Secure AI agents, built for your business</div>
+
+  <h1>AI Agents for <span>Your Business</span></h1>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">60%</div><div class="stat-label">of business tasks<br>are automatable</div></div>
+    <div class="stat"><div class="stat-num">200+</div><div class="stat-label">hours saved<br>per month</div></div>
+    <div class="stat"><div class="stat-num">$2,500</div><div class="stat-label">starting price<br>per agent</div></div>
+  </div>
+
+  <h2>What We Do</h2>
+  <ul class="what-we-do">
+    <li>We build AI agents that handle your team's repetitive work — so they can focus on what matters</li>
+    <li>Every agent is custom-built for your workflows, tools, and data</li>
+    <li>We handle setup, security, and ongoing maintenance — you just use it</li>
+  </ul>
+
+  <h2>How It Works</h2>
+  <ol class="steps">
+    <li><strong>Discovery call</strong> — We learn your workflows and identify what to automate</li>
+    <li><strong>Build & deploy</strong> — We build your agents in days, not months</li>
+    <li><strong>Monitor & improve</strong> — We keep everything running and optimize over time</li>
+  </ol>
+
+  <h2>What Agents Can Do</h2>
+  <div class="usecases">
+    <div class="usecase">📧 Triage and draft email responses</div>
+    <div class="usecase">📊 Generate reports from your data</div>
+    <div class="usecase">📅 Schedule meetings and manage calendars</div>
+    <div class="usecase">🔍 Research prospects and summarize findings</div>
+    <div class="usecase">📝 Process invoices and update records</div>
+    <div class="usecase">💬 Answer customer questions 24/7</div>
+  </div>
+
+  <div class="security">
+    <strong>🔒 Security built in.</strong> Every agent runs inside ClawMoat's security framework — permission tiers control what each agent can access, full audit trails track every action, and your data never leaves your infrastructure. Enterprise-grade security without enterprise complexity.
+  </div>
+
+  <div class="contact">
+    <p><strong>Ready to see what AI agents can do for you?</strong></p>
+    <p style="margin-top: 8px;"><a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a> · <a href="https://clawmoat.com/services">clawmoat.com/services</a></p>
+  </div>
+</body>
+</html>
