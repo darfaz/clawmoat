@@ -5,11 +5,11 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Agent Setup for Business — ClawMoat</title>
-<meta name="description" content="Done-for-you AI agent deployment for businesses. Custom agents following your SOPs, secured by ClawMoat, deployed in days.">
+<title>AI Agents That Do the Work Your Team Shouldn't — ClawMoat</title>
+<meta name="description" content="Your employees spend 60% of their time on tasks AI agents could handle. We deploy custom AI agents for your business in days — not months. See real ROI.">
 <link rel="canonical" href="https://clawmoat.com/services/">
-<meta property="og:title" content="AI Agents for Your Business — ClawMoat">
-<meta property="og:description" content="We set up, configure, and secure autonomous AI agents that actually do the work. Deployed in days, not months.">
+<meta property="og:title" content="Your Team Spends 60% of Their Time on Work AI Could Do — ClawMoat">
+<meta property="og:description" content="We deploy AI agents that handle finance, operations, collections, and reporting — secured, customized, live in days.">
 <meta property="og:image" content="https://clawmoat.com/og-image.png">
 <meta property="og:url" content="https://clawmoat.com/services/">
 <meta property="og:type" content="website">
@@ -32,44 +32,74 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
 .menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
 
-.hero{padding:160px 0 100px;text-align:center;position:relative}
+.hero{padding:160px 0 80px;text-align:center;position:relative}
 .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
 .hero .container{position:relative;z-index:1}
-.hero h1{font-size:clamp(2.5rem,6vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-.03em}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:24px;letter-spacing:-.03em}
 .hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:1.2rem;color:var(--gray);max-width:640px;margin:0 auto 40px}
+.hero p{font-size:1.15rem;color:var(--gray);max-width:660px;margin:0 auto 40px}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 
 section{padding:80px 0}
 .section-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:12px}
 .section-title{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
-.section-sub{color:var(--gray);font-size:1.05rem;max-width:600px;margin-bottom:48px}
+.section-sub{color:var(--gray);font-size:1.05rem;max-width:620px;margin-bottom:48px}
 
 .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-primary:hover{background:#2563EB;text-decoration:none}
 .btn-outline{background:transparent;color:var(--white);border:1.5px solid var(--navy-mid)}
 .btn-outline:hover{border-color:var(--blue);text-decoration:none}
-.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-green{background:var(--emerald);color:#fff;font-size:1.1rem;padding:16px 36px}
+.btn-green:hover{background:#059669;text-decoration:none}
 
-.deploy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+/* Pain section */
+.pain-section{background:var(--navy-light);border-top:1px solid rgba(239,68,68,.2);border-bottom:1px solid rgba(239,68,68,.2)}
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px}
+.pain-card{background:var(--navy);border:1px solid rgba(239,68,68,.15);border-radius:14px;padding:28px}
+.pain-card .icon{font-size:2rem;margin-bottom:12px}
+.pain-card h3{font-size:1.1rem;margin-bottom:8px;color:var(--red)}
+.pain-card p{color:var(--gray);font-size:.95rem}
+
+/* Stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;padding:60px 0;text-align:center}
+.stat-item .num{font-size:clamp(2rem,5vw,3rem);font-weight:800;background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-item .label{color:var(--gray);font-size:.9rem;margin-top:4px}
+
+/* Solution cards */
+.solution-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px;transition:border-color .2s}
 .card:hover{border-color:var(--emerald)}
 .card .icon{font-size:2rem;margin-bottom:12px}
 .card h3{font-size:1.1rem;margin-bottom:8px}
 .card p{color:var(--gray);font-size:.9rem}
 
+/* Steps */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;margin-top:48px}
 .step{text-align:center;padding:32px}
 .step .num{width:48px;height:48px;background:var(--blue);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;margin-bottom:16px}
 .step h3{font-size:1.15rem;margin-bottom:8px}
 .step p{color:var(--gray);font-size:.9rem}
 
-.use-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.use-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:20px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
-.use-card:hover{border-color:var(--blue)}
-.use-card .icon{font-size:1.5rem;flex-shrink:0}
-.use-card span{font-size:.95rem}
+/* Proof */
+.proof-section{background:var(--navy-light)}
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:32px}
+.proof-card{background:var(--navy);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px}
+.proof-card .quote{font-style:italic;color:var(--gray);font-size:1rem;margin-bottom:12px;line-height:1.7}
+.proof-card .source{color:var(--emerald);font-weight:600;font-size:.9rem}
 
+/* Pricing */
+.pricing-section{text-align:center}
+.price-card{background:var(--navy-light);border:2px solid var(--emerald);border-radius:20px;padding:48px;max-width:600px;margin:32px auto 0}
+.price-card .price{font-size:2.5rem;font-weight:800;margin-bottom:8px}
+.price-card .price .small{font-size:1rem;color:var(--gray);font-weight:400}
+.price-card .compare{color:var(--gray);font-size:.95rem;margin-bottom:24px}
+.price-card .compare s{color:var(--red)}
+.price-features{list-style:none;text-align:left;margin-bottom:32px}
+.price-features li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.95rem}
+.price-features li::before{content:'✓ ';color:var(--emerald);font-weight:700}
+
+/* Security */
 .security-section{background:var(--navy-light)}
 .security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:32px}
 .sec-item{display:flex;align-items:flex-start;gap:12px}
@@ -77,19 +107,15 @@ section{padding:80px 0}
 .sec-item p{font-size:.9rem;color:var(--gray)}
 .sec-item strong{color:var(--white)}
 
-.hw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px}
-.hw-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:28px;text-align:center}
-.hw-card:hover{border-color:var(--emerald)}
-.hw-card .icon{font-size:2.5rem;margin-bottom:12px}
-.hw-card h3{margin-bottom:8px}
-.hw-card p{color:var(--gray);font-size:.9rem}
-
-.social-proof{text-align:center;padding:60px 0;background:var(--navy-light);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
-.social-proof p{font-size:1.1rem;color:var(--gray);max-width:700px;margin:0 auto}
-
+/* CTA */
 .cta-section{text-align:center;padding:100px 0}
 .cta-section h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:16px}
 .cta-section p{color:var(--gray);margin-bottom:32px;font-size:1.05rem}
+
+/* Resource links */
+.resources{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.resources a{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px 24px;color:var(--white);font-weight:600;font-size:.95rem;transition:border-color .2s}
+.resources a:hover{border-color:var(--emerald);text-decoration:none}
 
 footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:var(--gray);font-size:.85rem}
 
@@ -112,52 +138,104 @@ footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:cent
     <a href="/business/">Business</a>
     <a href="/finance/">Finance</a>
     <a href="/services/" style="color:var(--emerald);font-weight:600">AI Agents</a>
+    <a href="/services/case-study.html">Case Study</a>
+    <a href="/services/roi-calculator.html">ROI Calculator</a>
+    <a href="/guides/business-deployment.html">Deploy Guide</a>
     <a href="/blog/">Blog</a>
-    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
-    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn-sm">Schedule a Call</a>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn-sm">Schedule a Call</a>
   </div>
 </div>
 </nav>
 
-<!-- Hero -->
+<!-- Hero: Direct problem + solution -->
 <section class="hero">
 <div class="container">
-  <p class="section-label">Done-For-You AI Agent Deployment</p>
-  <h1>AI Agents for Your Business.<br><span class="highlight">Deployed Securely in Days, Not Months.</span></h1>
-  <p>We set up, configure, and secure autonomous AI agents that actually do the work — following your SOPs, protecting your data, running 24/7.</p>
+  <h1>Your Employees Spend 60% of Their Time<br>on Work <span class="highlight">AI Agents Could Do.</span><br>We Fix That in Days.</h1>
+  <p>Custom AI agents that handle your finance, operations, collections, and reporting — deployed on your systems, secured from day one, working 24/7.</p>
   <div class="hero-btns">
-    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn btn-primary">Schedule a Discovery Call →</a>
-    <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">See Our Open Source Security</a>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+    <a href="/services/roi-calculator.html" class="btn btn-outline">Calculate Your ROI</a>
   </div>
 </div>
 </section>
 
-<!-- What We Deploy -->
+<!-- Amplify the Pain -->
+<section class="pain-section">
+<div class="container">
+  <p class="section-label">The Problem You Already Know</p>
+  <h2 class="section-title">Your Best People Are Doing Your Worst Work</h2>
+  <p class="section-sub">Every hour your $80K employee spends on data entry, follow-up emails, or manual reporting is money you're lighting on fire.</p>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="icon">⏰</div>
+      <h3>200+ Hours/Month on Manual Tasks</h3>
+      <p>Customs entries typed by hand. Invoices chased over email. Dispatch coordinated through WhatsApp. Your team is doing robot work at human prices.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">💸</div>
+      <h3>$15K–$40K/Month in Hidden Waste</h3>
+      <p>That's the salary cost of manual work that could be automated. It's not on any line item — but it's bleeding from every department.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">🐌</div>
+      <h3>Your Competitors Are Moving Faster</h3>
+      <p>While you're hiring for headcount, companies half your size are deploying AI agents that work nights, weekends, and holidays — at a fraction of the cost.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Stats -->
 <section>
 <div class="container">
-  <p class="section-label">What We Deploy</p>
-  <h2 class="section-title">Custom AI Agents, Tailored to Your Business</h2>
-  <p class="section-sub">Every agent is configured specifically for your operations — not a generic chatbot.</p>
-  <div class="deploy-grid">
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="num">60%</div>
+      <div class="label">of employee time spent on<br>automatable tasks*</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">$3,350</div>
+      <div class="label">industry average cost<br>per AI agent/month</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">Days</div>
+      <div class="label">not months — that's our<br>deployment timeline</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">24/7</div>
+      <div class="label">agents work around the clock<br>no overtime, no sick days</div>
+    </div>
+  </div>
+  <p style="color:var(--navy-mid);font-size:.8rem;text-align:center">*Jason Calacanis, This Week in Startups — citing enterprise AI adoption studies, 2026</p>
+</div>
+</section>
+
+<!-- Solution -->
+<section>
+<div class="container">
+  <p class="section-label">The Solution</p>
+  <h2 class="section-title">AI Agents That Actually Do the Work</h2>
+  <p class="section-sub">Not chatbots. Not demos. Real agents that process invoices, chase payments, generate reports, and manage operations — following your exact procedures.</p>
+  <div class="solution-grid">
     <div class="card">
-      <div class="icon">🎯</div>
-      <h3>Custom AI Agents</h3>
-      <p>Tailored to your business — Finance, Operations, Sales, Customer Service, and more. Each agent understands your specific workflows.</p>
+      <div class="icon">💰</div>
+      <h3>Finance & Collections</h3>
+      <p>Automated AR/AP, cash flow reporting, invoice processing, and collections follow-up. Reduce DSO by 15+ days.</p>
     </div>
     <div class="card">
-      <div class="icon">🧠</div>
-      <h3>Full Agent Architecture</h3>
-      <p>Every agent gets: personality (SOUL), knowledge of your team (USER), persistent memory (MEMORY), and automated routines (HEARTBEAT).</p>
+      <div class="icon">📦</div>
+      <h3>Operations & Logistics</h3>
+      <p>Dispatch coordination, customs documentation, inventory tracking, and vendor management — handled automatically.</p>
     </div>
     <div class="card">
-      <div class="icon">💬</div>
-      <h3>Natural Integration</h3>
-      <p>Telegram, Slack, or WhatsApp integration so your team talks to agents naturally — no new tools to learn.</p>
+      <div class="icon">📊</div>
+      <h3>Reporting & Dashboards</h3>
+      <p>Real-time KPI dashboards, daily P&L summaries, and executive reports delivered to your inbox every morning.</p>
     </div>
     <div class="card">
-      <div class="icon">🛡️</div>
-      <h3>ClawMoat Security Layer</h3>
-      <p>Every agent is protected by Host Guardian, FinanceGuard, and McpFirewall. Enterprise-grade security from day one.</p>
+      <div class="icon">📧</div>
+      <h3>Customer Communication</h3>
+      <p>Follow-ups, scheduling, status updates, and customer service — all handled through your existing email and messaging tools.</p>
     </div>
   </div>
 </div>
@@ -167,115 +245,107 @@ footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:cent
 <section style="background:var(--navy-light)">
 <div class="container">
   <p class="section-label">How It Works</p>
-  <h2 class="section-title">Three Steps to Your AI Workforce</h2>
+  <h2 class="section-title">From First Call to Live Agents in Under Two Weeks</h2>
   <div class="steps">
     <div class="step">
       <div class="num">1</div>
-      <h3>Discovery Call</h3>
-      <p>We map your processes and pain points. Which tasks eat your team's time? Where do SOPs break down? We find the highest-impact opportunities.</p>
+      <h3>15-Minute Discovery Call</h3>
+      <p>We learn your business, identify the tasks eating your team's time, and estimate your ROI. No pitch decks, no pressure.</p>
     </div>
     <div class="step">
       <div class="num">2</div>
-      <h3>Build & Deploy</h3>
-      <p>Agents are configured, tested, and deployed on secure hardware. Each one is tuned to your workflows and protected by ClawMoat security.</p>
+      <h3>Agent Design & Build</h3>
+      <p>We configure AI agents specifically for your workflows — trained on your procedures, connected to your tools, secured with enterprise-grade protection.</p>
     </div>
     <div class="step">
       <div class="num">3</div>
-      <h3>Go Live</h3>
-      <p>Your team starts working with their AI agents immediately. We monitor performance and tune until everything runs smoothly.</p>
-    </div>
-  </div>
-</div>
-</section>
-
-<!-- What Agents Can Do -->
-<section>
-<div class="container">
-  <p class="section-label">Capabilities</p>
-  <h2 class="section-title">What Your Agents Can Do</h2>
-  <p class="section-sub">Real work, not demos. These agents handle production tasks daily.</p>
-  <div class="use-grid">
-    <div class="use-card"><div class="icon">📊</div><span>Financial reporting & cash flow analysis</span></div>
-    <div class="use-card"><div class="icon">💰</div><span>AR/AP automation & collections</span></div>
-    <div class="use-card"><div class="icon">📧</div><span>Customer communication & follow-up</span></div>
-    <div class="use-card"><div class="icon">📄</div><span>Document processing & data entry</span></div>
-    <div class="use-card"><div class="icon">📱</div><span>Social media & content management</span></div>
-    <div class="use-card"><div class="icon">📋</div><span>Project tracking & status updates</span></div>
-    <div class="use-card"><div class="icon">📅</div><span>Scheduling & calendar management</span></div>
-    <div class="use-card"><div class="icon">⚙️</div><span>Custom workflows from your SOPs</span></div>
-  </div>
-</div>
-</section>
-
-<!-- Security Built In -->
-<section class="security-section">
-<div class="container">
-  <p class="section-label">Security Built In</p>
-  <h2 class="section-title">Unlike Other Providers Deploying Naked AI Agents</h2>
-  <p class="section-sub">Every ClawMoat deployment includes enterprise-grade security. No exceptions.</p>
-  <div class="security-grid">
-    <div class="sec-item">
-      <div class="check">✓</div>
-      <p><strong>Permission Tiers</strong><br>Agents only access what they need. Nothing more.</p>
-    </div>
-    <div class="sec-item">
-      <div class="check">✓</div>
-      <p><strong>Forbidden Zones</strong><br>SSH keys, credentials, and sensitive files are off-limits.</p>
-    </div>
-    <div class="sec-item">
-      <div class="check">✓</div>
-      <p><strong>Financial Data Protection</strong><br>FinanceGuard prevents unauthorized transactions and data leaks.</p>
-    </div>
-    <div class="sec-item">
-      <div class="check">✓</div>
-      <p><strong>Full Audit Trails</strong><br>Every agent action is logged. Complete accountability.</p>
-    </div>
-  </div>
-  <p style="color:var(--gray);margin-top:32px;font-size:1.05rem;font-style:italic">Your agents handle sensitive data. We make sure it stays safe.</p>
-</div>
-</section>
-
-<!-- Hardware Options -->
-<section>
-<div class="container">
-  <p class="section-label">Deployment Options</p>
-  <h2 class="section-title">Run Anywhere You Want</h2>
-  <div class="hw-grid">
-    <div class="hw-card">
-      <div class="icon">💻</div>
-      <h3>Your Existing Laptop</h3>
-      <p>Install on hardware you already own. Zero additional cost. Your data never leaves your machine.</p>
-    </div>
-    <div class="hw-card">
-      <div class="icon">🖥️</div>
-      <h3>Dedicated Mini Server</h3>
-      <p>$400 Beelink mini PC — we configure it, ship it, you plug it in. Always-on, always-secure.</p>
-    </div>
-    <div class="hw-card">
-      <div class="icon">☁️</div>
-      <h3>Cloud Deployment</h3>
-      <p>AWS, GCP, or any cloud provider. We handle the infrastructure and security configuration.</p>
+      <h3>Deploy & Optimize</h3>
+      <p>Agents go live on your systems. Your team interacts with them through Slack, email, or WhatsApp. We monitor and optimize until everything runs smoothly.</p>
     </div>
   </div>
 </div>
 </section>
 
 <!-- Social Proof -->
-<div class="social-proof">
+<section class="proof-section">
 <div class="container">
-  <p style="font-size:1.3rem;color:var(--white);font-weight:600;margin-bottom:8px">Built on OpenClaw</p>
-  <p>Securing 40K+ instances worldwide. 277 tests. Zero dependencies. MIT licensed.</p>
+  <p class="section-label">Why Companies Trust ClawMoat</p>
+  <h2 class="section-title">Real Results, Not Promises</h2>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="quote">"60% of what employees do today could be handled by AI agents. The companies that figure this out first will have an enormous competitive advantage."</div>
+      <div class="source">— Jason Calacanis, This Week in Startups</div>
+    </div>
+    <div class="proof-card">
+      <div class="quote">"ClawMoat agents transformed how we handle our creative operations. Tasks that took our team hours now happen automatically — and securely."</div>
+      <div class="source">— Origin Studios / LVRN (Music & Entertainment)</div>
+    </div>
+    <div class="proof-card">
+      <div class="quote">"A maritime logistics company deployed 8 AI agents across finance, customs, and dispatch. Result: 200+ hours saved per month, DSO reduced by 15 days."</div>
+      <div class="source">— <a href="/services/case-study.html" style="color:var(--emerald)">Read the Full Case Study →</a></div>
+    </div>
+  </div>
 </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing-section">
+<div class="container">
+  <p class="section-label">Investment</p>
+  <h2 class="section-title">Transparent Pricing, Immediate ROI</h2>
+  <div class="price-card">
+    <div class="price">$2,500 <span class="small">per agent/month</span></div>
+    <div class="compare">Industry average: <s>$3,350/agent/month</s> — you save 25% with ClawMoat</div>
+    <ul class="price-features">
+      <li>Custom AI agent configured for your specific workflows</li>
+      <li>Enterprise-grade security (data never leaves your systems)</li>
+      <li>Integration with your existing tools (email, Slack, WhatsApp)</li>
+      <li>24/7 operation — no overtime, no benefits, no sick days</li>
+      <li>Ongoing monitoring, optimization, and support</li>
+      <li>Full audit trails and compliance reporting</li>
+    </ul>
+    <p style="color:var(--gray);font-size:.9rem;margin-bottom:24px">Most companies deploy 3–8 agents and see full ROI within the first month.</p>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+  </div>
 </div>
+</section>
+
+<!-- Security -->
+<section class="security-section">
+<div class="container">
+  <p class="section-label">Security You Can Trust</p>
+  <h2 class="section-title">Your Data Never Leaves Your Control</h2>
+  <p class="section-sub">Unlike cloud-only AI tools, ClawMoat agents run on your infrastructure. Your sensitive data stays exactly where it belongs.</p>
+  <div class="security-grid">
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>On-Premise Deployment</strong><br>Agents run on your hardware or private cloud. Nothing leaves your network.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Financial Data Protection</strong><br>Built-in safeguards prevent unauthorized transactions and data exposure.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Full Audit Trails</strong><br>Every agent action is logged. Complete accountability for compliance.</p>
+    </div>
+    <div class="sec-item">
+      <div class="check">✓</div>
+      <p><strong>Permission Controls</strong><br>Agents only access what they need. Role-based, granular, enforced.</p>
+    </div>
+  </div>
+</div>
+</section>
 
 <!-- CTA -->
 <section class="cta-section">
 <div class="container">
-  <h2>Ready to Put AI Agents to Work?</h2>
-  <p>No pitch decks. No vaporware. A 30-minute call to see if we're a fit.</p>
-  <div class="hero-btns">
-    <a href="mailto:hello@clawmoat.com?subject=AI%20Agent%20Setup" class="btn btn-primary" style="font-size:1.1rem;padding:16px 36px">Schedule a Discovery Call →</a>
-    <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">See Our Open Source Security</a>
+  <h2>Stop Paying Human Prices for Robot Work</h2>
+  <p>A 15-minute call. We'll show you exactly which tasks to automate first and what the ROI looks like for your business.</p>
+  <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+  <div class="resources">
+    <a href="/services/case-study.html">📄 Read the Case Study</a>
+    <a href="/services/roi-calculator.html">🧮 Calculate Your ROI</a>
   </div>
 </div>
 </section>

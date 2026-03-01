@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deploy AI Agents for Your Business — The Complete Guide | ClawMoat</title>
+<meta name="description" content="Step-by-step guide to deploying secure AI agents for your business with OpenClaw and ClawMoat. Hardware, software, configuration, security, and team integration.">
+<link rel="canonical" href="https://clawmoat.com/guides/business-deployment.html">
+<meta property="og:title" content="Deploy AI Agents for Your Business — The Complete Guide">
+<meta property="og:description" content="Everything you need to set up autonomous AI agents that handle real work for your company, secured by ClawMoat.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/guides/business-deployment.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:860px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .nav-inner{max-width:1140px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem;white-space:nowrap}
+.menu-toggle{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+
+.hero{padding:140px 0 60px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(circle,rgba(59,130,246,.1) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.15;margin-bottom:16px;letter-spacing:-.03em;position:relative;z-index:1}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.1rem;color:var(--gray);max-width:600px;margin:0 auto;position:relative;z-index:1}
+
+.toc{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:28px 32px;margin:40px 0 60px}
+.toc h2{font-size:1rem;text-transform:uppercase;letter-spacing:.1em;color:var(--emerald);margin-bottom:16px}
+.toc ol{padding-left:20px}
+.toc li{margin-bottom:8px}
+.toc a{color:var(--gray);font-size:.95rem}
+.toc a:hover{color:var(--white)}
+
+article{padding-bottom:80px}
+article h2{font-size:1.8rem;font-weight:700;margin:64px 0 24px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);letter-spacing:-.02em}
+article h2:first-of-type{border-top:none;margin-top:0}
+article h2 .num{color:var(--emerald);margin-right:8px}
+article h3{font-size:1.2rem;font-weight:600;margin:32px 0 12px;color:var(--blue)}
+article h4{font-size:1rem;font-weight:600;margin:24px 0 8px}
+article p{color:var(--gray);margin-bottom:16px}
+article ul,article ol{color:var(--gray);margin-bottom:16px;padding-left:24px}
+article li{margin-bottom:8px}
+article strong{color:var(--white)}
+
+pre{background:var(--navy-light);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:20px 24px;overflow-x:auto;margin:16px 0 24px;font-size:.88rem;line-height:1.6}
+code{font-family:'SF Mono',Monaco,Consolas,monospace;color:var(--emerald)}
+pre code{color:var(--white)}
+.cmd{color:var(--emerald)}
+.comment{color:var(--gray);font-style:italic}
+
+.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin:24px 0}
+.option-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;text-align:center;transition:border-color .2s}
+.option-card:hover{border-color:var(--emerald)}
+.option-card.recommended{border-color:var(--emerald);position:relative}
+.option-card.recommended::after{content:'RECOMMENDED';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--emerald);color:var(--navy);font-size:.7rem;font-weight:700;padding:2px 12px;border-radius:10px;letter-spacing:.05em}
+.option-card .icon{font-size:2.5rem;margin-bottom:12px}
+.option-card h4{color:var(--white);margin-bottom:4px}
+.option-card .price{font-size:1.5rem;font-weight:700;color:var(--emerald);margin-bottom:8px}
+.option-card p{color:var(--gray);font-size:.85rem;margin:0}
+
+.file-example{background:var(--navy-light);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:20px 24px;margin:16px 0 24px}
+.file-example .filename{font-size:.8rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+
+.template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin:24px 0}
+.template-card{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;transition:border-color .2s}
+.template-card:hover{border-color:var(--blue)}
+.template-card .icon{font-size:2rem;margin-bottom:8px}
+.template-card h4{color:var(--white);margin-bottom:8px}
+.template-card p{color:var(--gray);font-size:.85rem;margin:0}
+.template-card ul{color:var(--gray);font-size:.85rem;margin:8px 0 0;padding-left:16px}
+
+.faq-item{border-bottom:1px solid rgba(255,255,255,.06);padding:20px 0}
+.faq-item summary{font-weight:600;color:var(--white);cursor:pointer;font-size:1.05rem;list-style:none;display:flex;align-items:center;gap:12px}
+.faq-item summary::before{content:'▸';color:var(--emerald);font-size:1.2rem;transition:transform .2s}
+.faq-item[open] summary::before{transform:rotate(90deg)}
+.faq-item p{color:var(--gray);margin-top:12px;padding-left:24px}
+
+.cta-box{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(16,185,129,.1));border:1px solid rgba(59,130,246,.3);border-radius:16px;padding:48px;text-align:center;margin:60px 0}
+.cta-box h2{font-size:1.6rem;margin-bottom:12px;border:none;padding:0}
+.cta-box p{color:var(--gray);margin-bottom:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB;text-decoration:none}
+
+.alert{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:16px 20px;margin:16px 0;color:var(--amber);font-size:.9rem}
+.alert strong{color:var(--amber)}
+
+footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:var(--gray);font-size:.85rem}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:20px;gap:16px;border-bottom:1px solid var(--navy-mid)}
+  .menu-toggle{display:block}
+  .hero{padding:120px 0 40px}
+  .option-grid,.template-grid{grid-template-columns:1fr}
+  pre{padding:16px;font-size:.8rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-inner">
+  <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/business/">Business</a>
+    <a href="/finance/">Finance</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/guides/business-deployment.html" style="color:var(--emerald);font-weight:600">Deploy Guide</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="mailto:hello@clawmoat.com?subject=Deployment%20Help" class="btn-sm">Get Help</a>
+  </div>
+</div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <h1>Deploy <span class="highlight">AI Agents</span> for Your Business</h1>
+    <p>The complete guide to setting up a secure, autonomous AI agent system on dedicated hardware — connected to your team and working 24/7.</p>
+  </div>
+</div>
+
+<div class="container">
+
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#what-youll-build">What You'll Build</a></li>
+    <li><a href="#hardware">Hardware Setup</a></li>
+    <li><a href="#software">Software Installation</a></li>
+    <li><a href="#configuration">Agent Configuration</a></li>
+    <li><a href="#security">Security Hardening</a></li>
+    <li><a href="#team">Connecting Your Team</a></li>
+    <li><a href="#templates">Agent Templates</a></li>
+    <li><a href="#maintenance">Maintenance &amp; Monitoring</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ol>
+</nav>
+
+<article>
+
+<!-- ===== 1. WHAT YOU'LL BUILD ===== -->
+<h2 id="what-youll-build"><span class="num">1.</span> What You'll Build</h2>
+
+<p>By the end of this guide, you'll have:</p>
+
+<ul>
+  <li><strong>A dedicated AI agent</strong> running on hardware you own — not in someone else's cloud</li>
+  <li><strong>Secure communications</strong> with your team via Telegram, Slack, or email</li>
+  <li><strong>Automated workflows</strong> — daily reports, inbox monitoring, KPI tracking, customer responses</li>
+  <li><strong>Enterprise-grade security</strong> with ClawMoat protecting credentials, financial data, and compliance</li>
+  <li><strong>Full audit trails</strong> so you always know what your agent did and why</li>
+</ul>
+
+<p>Think of it as hiring a tireless team member who follows your SOPs exactly, never forgets a task, and works through weekends — all for the cost of a mini PC and an API subscription.</p>
+
+<p><strong>Architecture overview:</strong></p>
+<pre><code>┌─────────────────────────────────────────────┐
+│  Your Hardware (Mini PC / Laptop / Mac)      │
+│                                              │
+│  ┌──────────┐  ┌───────────┐  ┌──────────┐  │
+│  │ OpenClaw │──│ ClawMoat  │──│  Agent   │  │
+│  │ Runtime  │  │ Security  │  │ Workspace│  │
+│  └────┬─────┘  └───────────┘  └──────────┘  │
+│       │                                      │
+└───────┼──────────────────────────────────────┘
+        │
+   ┌────┴────────────────────┐
+   │   Channels              │
+   ├─────────────────────────┤
+   │ 💬 Telegram / Slack     │
+   │ 📧 Email (IMAP/SMTP)   │
+   │ 🌐 Web APIs             │
+   └─────────────────────────┘</code></pre>
+
+<!-- ===== 2. HARDWARE ===== -->
+<h2 id="hardware"><span class="num">2.</span> Hardware Setup</h2>
+
+<p>Your AI agent needs a machine that stays on. Three options, from free to premium:</p>
+
+<div class="option-grid">
+  <div class="option-card">
+    <div class="icon">💻</div>
+    <h4>Option A: Existing Laptop</h4>
+    <div class="price">$0</div>
+    <p>Use what you have. Windows (WSL2), Mac, or Linux. Set it to never sleep and plug it in. Good for testing and small teams.</p>
+  </div>
+  <div class="option-card recommended">
+    <div class="icon">🖥️</div>
+    <h4>Option B: Beelink Mini PC</h4>
+    <div class="price">~$350–$400</div>
+    <p><strong>Beelink SER5 MAX</strong> (AMD Ryzen 7, 16GB RAM) or <strong>EQ12</strong> (Intel N100, 16GB). Silent, tiny, always-on. Perfect for a dedicated agent.</p>
+  </div>
+  <div class="option-card">
+    <div class="icon">🍎</div>
+    <h4>Option C: Mac Mini</h4>
+    <div class="price">$599</div>
+    <p>Apple M-series chip. Premium build quality, excellent power efficiency. Native macOS with great terminal support.</p>
+  </div>
+</div>
+
+<h3>Minimum Requirements</h3>
+<ul>
+  <li><strong>CPU:</strong> 4 cores (any modern processor)</li>
+  <li><strong>RAM:</strong> 8GB minimum, 16GB recommended</li>
+  <li><strong>Storage:</strong> 128GB SSD (agents are lightweight)</li>
+  <li><strong>Network:</strong> Stable internet connection (wired preferred)</li>
+  <li><strong>Power:</strong> UPS recommended for business-critical deployments</li>
+</ul>
+
+<h3>Initial OS Setup</h3>
+
+<h4>Windows (WSL2)</h4>
+<pre><code><span class="comment"># Open PowerShell as Administrator</span>
+<span class="cmd">wsl --install -d Ubuntu</span>
+<span class="comment"># Restart, then open Ubuntu from Start menu</span>
+<span class="comment"># Disable sleep: Settings → System → Power → Never</span></code></pre>
+
+<h4>Mac</h4>
+<pre><code><span class="comment"># Disable sleep</span>
+<span class="cmd">sudo pmset -a disablesleep 1</span>
+<span class="comment"># Enable auto-restart after power failure</span>
+<span class="cmd">sudo pmset -a autorestart 1</span></code></pre>
+
+<h4>Linux</h4>
+<pre><code><span class="comment"># Disable suspend</span>
+<span class="cmd">sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target</span></code></pre>
+
+<!-- ===== 3. SOFTWARE ===== -->
+<h2 id="software"><span class="num">3.</span> Software Installation</h2>
+
+<p>Four commands. That's it.</p>
+
+<h3>Step 1: Install Node.js</h3>
+<pre><code><span class="cmd">curl -fsSL https://fnm.vercel.app/install | bash && fnm install 22</span></code></pre>
+<p>Or use the official installer at <a href="https://nodejs.org">nodejs.org</a> — download the LTS version.</p>
+
+<h3>Step 2: Install OpenClaw</h3>
+<pre><code><span class="cmd">npm install -g openclaw</span></code></pre>
+
+<h3>Step 3: Install ClawMoat</h3>
+<pre><code><span class="cmd">npm install -g clawmoat</span></code></pre>
+
+<h3>Step 4: Run the ClawMoat Installer</h3>
+<pre><code><span class="cmd">curl -sSL https://clawmoat.com/install.sh | bash</span></code></pre>
+
+<p>The installer will:</p>
+<ul>
+  <li>Configure security policies and permission tiers</li>
+  <li>Set up audit logging</li>
+  <li>Create your agent workspace at <code>~/.openclaw/workspace/</code></li>
+  <li>Generate a security report</li>
+</ul>
+
+<h3>Step 5: Set Your API Key</h3>
+<pre><code><span class="comment"># Anthropic (recommended)</span>
+<span class="cmd">openclaw config set ANTHROPIC_API_KEY sk-ant-...</span>
+
+<span class="comment"># Or OpenAI</span>
+<span class="cmd">openclaw config set OPENAI_API_KEY sk-...</span></code></pre>
+
+<h3>Step 6: Verify Everything Works</h3>
+<pre><code><span class="cmd">openclaw status</span>
+<span class="cmd">clawmoat scan</span></code></pre>
+
+<!-- ===== 4. CONFIGURATION ===== -->
+<h2 id="configuration"><span class="num">4.</span> Agent Configuration</h2>
+
+<p>Your agent's behavior is defined by markdown files in <code>~/.openclaw/workspace/</code>. No code required — just plain English instructions.</p>
+
+<h3>SOUL.md — Agent Personality</h3>
+<p>This is who your agent <em>is</em>. It defines tone, behavior, and boundaries.</p>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/SOUL.md — Finance Agent for Acme Corp</div>
+<pre><code># SOUL.md — Acme Corp Finance Agent
+
+You are Acme Corp's finance agent. You are precise, thorough,
+and conservative with financial decisions.
+
+## Core Behaviors
+- **Always double-check numbers.** Never send a financial report
+  without verifying totals.
+- **Flag anomalies.** If an expense is 20%+ above average, alert
+  the CFO immediately.
+- **Be concise in reports.** Executives want the number, not the
+  story behind it.
+- **Never authorize payments** without explicit human approval.
+
+## Tone
+Professional but not stiff. You're a trusted colleague, not a
+robot reading a script.
+
+## Boundaries
+- Never share financial data outside approved channels.
+- Never modify accounting records directly.
+- Always cite your sources (which spreadsheet, which email).</code></pre>
+</div>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/SOUL.md — Operations Agent</div>
+<pre><code># SOUL.md — Acme Corp Operations Agent
+
+You are Acme Corp's operations coordinator. You keep things
+running smoothly and hate bottlenecks.
+
+## Core Behaviors
+- **Proactive scheduling.** Don't wait to be asked — check
+  tomorrow's calendar every evening.
+- **Vendor management.** Track delivery dates and flag delays
+  24 hours before they become problems.
+- **Escalation rules:** Try to resolve issues yourself first.
+  Escalate to ops manager only if it requires budget approval
+  or involves safety.
+
+## Tone
+Direct, action-oriented. Use bullet points. Skip pleasantries
+in status updates.</code></pre>
+</div>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/SOUL.md — Sales Agent</div>
+<pre><code># SOUL.md — Acme Corp Sales Agent
+
+You are Acme Corp's sales support agent. Your job is to keep
+deals moving and reps informed.
+
+## Core Behaviors
+- **Follow up relentlessly.** If a prospect hasn't replied in
+  48 hours, draft a follow-up.
+- **Prep meeting briefs.** Before any sales call, compile a
+  one-pager on the prospect (company size, recent news, pain
+  points).
+- **CRM hygiene.** Update deal stages after every interaction.
+- **Never negotiate pricing** without sales manager approval.
+
+## Tone
+Warm, professional, enthusiastic without being pushy.</code></pre>
+</div>
+
+<h3>USER.md — Team Member Profiles</h3>
+<p>Tell your agent who it's working with.</p>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/USER.md</div>
+<pre><code># USER.md — Team Profiles
+
+## Primary Contact
+- **Name:** Sarah Chen, CFO
+- **Timezone:** America/New_York
+- **Preferences:** Prefers Slack. Wants daily summaries by 8 AM.
+  No messages after 9 PM unless urgent.
+
+## Team Members
+- **Mike Rodriguez** — Controller. Handles AP/AR approvals.
+- **Lisa Park** — Operations Manager. Point of contact for
+  vendor issues.
+- **James Wu** — CEO. Only contact for decisions above $10K.</code></pre>
+</div>
+
+<h3>MEMORY.md — Business Context</h3>
+<p>Give your agent institutional knowledge that doesn't change often.</p>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/MEMORY.md</div>
+<pre><code># MEMORY.md — Acme Corp Context
+
+## Company
+- Industry: B2B SaaS (project management tools)
+- Founded: 2019, Series A ($8M)
+- Employees: 45
+- Fiscal year: Jan-Dec
+
+## Key Vendors
+- AWS — primary cloud provider, account #1234-5678
+- Stripe — payment processing
+- QuickBooks Online — accounting system
+
+## Important Policies
+- All expenses over $500 need manager approval
+- Vendor payments net-30 unless negotiated otherwise
+- Monthly close deadline: 5th business day</code></pre>
+</div>
+
+<h3>HEARTBEAT.md — Automated Routines</h3>
+<p>This file tells your agent what to do on its regular check-ins (every 30 minutes by default).</p>
+
+<div class="file-example">
+  <div class="filename">~/.openclaw/workspace/HEARTBEAT.md</div>
+<pre><code># HEARTBEAT.md — Automated Routines
+
+## Every Check-in
+- [ ] Check inbox for urgent emails (from: @acmecorp.com)
+- [ ] Check calendar for meetings in next 2 hours
+
+## Morning (8-9 AM ET)
+- [ ] Generate daily cash position summary
+- [ ] Send Sarah the overnight email digest
+- [ ] Check for overdue invoices (30+ days)
+
+## End of Day (5-6 PM ET)
+- [ ] Compile today's activity summary
+- [ ] Draft tomorrow's priority list
+- [ ] Flag any unresolved issues
+
+## Weekly (Monday Morning)
+- [ ] Generate weekly KPI dashboard
+- [ ] Summarize vendor payment status
+- [ ] Review upcoming contract renewals (next 30 days)</code></pre>
+</div>
+
+<!-- ===== 5. SECURITY ===== -->
+<h2 id="security"><span class="num">5.</span> Security Hardening</h2>
+
+<p>This is where ClawMoat earns its keep. An unsecured AI agent with access to your business systems is a liability. ClawMoat turns it into a trusted employee with clear boundaries.</p>
+
+<h3>Permission Tiers</h3>
+<p>ClawMoat enforces three permission levels:</p>
+
+<div class="option-grid">
+  <div class="option-card">
+    <div class="icon">🔒</div>
+    <h4>Worker</h4>
+    <p><strong>Read-only + safe tools.</strong> Can read files, search the web, check email. Cannot modify files, run shell commands, or access credentials. Best for: monitoring agents, research agents.</p>
+  </div>
+  <div class="option-card recommended">
+    <div class="icon">🛡️</div>
+    <h4>Standard</h4>
+    <p><strong>Read-write with guardrails.</strong> Can edit workspace files, send messages, run approved commands. Blocked from system files, credentials, and destructive operations. Best for: most business agents.</p>
+  </div>
+  <div class="option-card">
+    <div class="icon">⚡</div>
+    <h4>Full</h4>
+    <p><strong>Unrestricted (admin only).</strong> Full system access. Use only for trusted admin agents with human-in-the-loop oversight. Requires explicit opt-in.</p>
+  </div>
+</div>
+
+<h3>Forbidden Zones</h3>
+<p>ClawMoat blocks agent access to sensitive paths by default:</p>
+
+<pre><code><span class="comment"># These paths are automatically protected:</span>
+~/.ssh/                    <span class="comment"># SSH keys</span>
+~/.aws/                    <span class="comment"># AWS credentials</span>
+~/.config/gcloud/          <span class="comment"># Google Cloud credentials</span>
+~/.gnupg/                  <span class="comment"># GPG keys</span>
+/etc/shadow                <span class="comment"># System passwords</span>
+*.pem, *.key               <span class="comment"># Private keys</span>
+.env                       <span class="comment"># Environment secrets</span>
+
+<span class="comment"># Add your own forbidden zones:</span>
+<span class="cmd">clawmoat config add-forbidden "/path/to/financial-records"</span>
+<span class="cmd">clawmoat config add-forbidden "/path/to/hr-data"</span></code></pre>
+
+<h3>FinanceGuard</h3>
+<p>For companies handling financial data, ClawMoat's FinanceGuard module adds extra protections:</p>
+
+<ul>
+  <li><strong>PII detection:</strong> Automatically redacts Social Security numbers, credit card numbers, and bank account details from agent outputs</li>
+  <li><strong>Transaction limits:</strong> Prevents the agent from initiating transactions above a configurable threshold</li>
+  <li><strong>Segregation of duties:</strong> Ensures financial actions require human approval</li>
+  <li><strong>SOX compliance logging:</strong> Every financial data access is logged with timestamps, user context, and justification</li>
+</ul>
+
+<pre><code><span class="cmd">clawmoat enable financeguard</span>
+<span class="cmd">clawmoat financeguard set-limit --amount 1000 --currency USD</span>
+<span class="cmd">clawmoat financeguard require-approval --actions "payment,transfer,refund"</span></code></pre>
+
+<h3>McpFirewall</h3>
+<p>Control exactly which MCP tools your agent can access:</p>
+
+<pre><code><span class="comment"># Allow only specific tools</span>
+<span class="cmd">clawmoat mcp-firewall allow "email:read,email:send"</span>
+<span class="cmd">clawmoat mcp-firewall allow "calendar:read"</span>
+<span class="cmd">clawmoat mcp-firewall deny "filesystem:delete"</span>
+
+<span class="comment"># Review current firewall rules</span>
+<span class="cmd">clawmoat mcp-firewall list</span></code></pre>
+
+<h3>Audit Trails</h3>
+<p>Every agent action is logged for compliance review:</p>
+
+<pre><code><span class="comment"># View recent agent activity</span>
+<span class="cmd">clawmoat audit log --last 24h</span>
+
+<span class="comment"># Export audit log for compliance</span>
+<span class="cmd">clawmoat audit export --format csv --from 2026-01-01 --to 2026-01-31</span>
+
+<span class="comment"># Set up alerts for sensitive actions</span>
+<span class="cmd">clawmoat audit alert --on "credential_access,file_delete,external_send"</span></code></pre>
+
+<!-- ===== 6. CONNECTING YOUR TEAM ===== -->
+<h2 id="team"><span class="num">6.</span> Connecting Your Team</h2>
+
+<h3>Telegram Bot Setup</h3>
+<ol>
+  <li>Open Telegram, search for <strong>@BotFather</strong></li>
+  <li>Send <code>/newbot</code> and follow the prompts to name your bot</li>
+  <li>Copy the bot token</li>
+  <li>Configure OpenClaw:</li>
+</ol>
+<pre><code><span class="cmd">openclaw config set TELEGRAM_BOT_TOKEN "your-bot-token-here"</span>
+<span class="cmd">openclaw channel add telegram</span>
+<span class="cmd">openclaw gateway restart</span></code></pre>
+<p>Your team can now message the bot directly or add it to a group chat.</p>
+
+<h3>Slack Integration</h3>
+<ol>
+  <li>Go to <a href="https://api.slack.com/apps">api.slack.com/apps</a> and create a new app</li>
+  <li>Under <strong>OAuth & Permissions</strong>, add scopes: <code>chat:write</code>, <code>channels:read</code>, <code>channels:history</code>, <code>users:read</code></li>
+  <li>Install the app to your workspace and copy the Bot Token</li>
+  <li>Configure OpenClaw:</li>
+</ol>
+<pre><code><span class="cmd">openclaw config set SLACK_BOT_TOKEN "xoxb-your-token"</span>
+<span class="cmd">openclaw config set SLACK_APP_TOKEN "xapp-your-token"</span>
+<span class="cmd">openclaw channel add slack</span>
+<span class="cmd">openclaw gateway restart</span></code></pre>
+
+<h3>Email Integration</h3>
+<pre><code><span class="comment"># Configure IMAP for reading email</span>
+<span class="cmd">openclaw config set EMAIL_IMAP_HOST "imap.gmail.com"</span>
+<span class="cmd">openclaw config set EMAIL_IMAP_PORT 993</span>
+<span class="cmd">openclaw config set EMAIL_USER "agent@yourcompany.com"</span>
+<span class="cmd">openclaw config set EMAIL_PASSWORD "your-app-password"</span>
+
+<span class="comment"># Configure SMTP for sending email</span>
+<span class="cmd">openclaw config set EMAIL_SMTP_HOST "smtp.gmail.com"</span>
+<span class="cmd">openclaw config set EMAIL_SMTP_PORT 587</span>
+
+<span class="cmd">openclaw channel add email</span>
+<span class="cmd">openclaw gateway restart</span></code></pre>
+
+<div class="alert">
+  <strong>⚠️ Security tip:</strong> Use app-specific passwords (not your main password). For Gmail, enable 2FA and generate an app password at <a href="https://myaccount.google.com/apppasswords" style="color:var(--amber)">myaccount.google.com/apppasswords</a>.
+</div>
+
+<!-- ===== 7. AGENT TEMPLATES ===== -->
+<h2 id="templates"><span class="num">7.</span> Agent Templates</h2>
+
+<p>Pre-built configurations to get you started fast. Copy the SOUL.md and HEARTBEAT.md into your agent workspace and customize for your company.</p>
+
+<div class="template-grid">
+  <div class="template-card">
+    <div class="icon">💰</div>
+    <h4>Finance Agent</h4>
+    <p>Accounts receivable/payable, cash flow monitoring, financial reporting, expense tracking.</p>
+    <ul>
+      <li>Daily cash position reports</li>
+      <li>Invoice aging alerts</li>
+      <li>Expense anomaly detection</li>
+      <li>Month-end close support</li>
+    </ul>
+  </div>
+  <div class="template-card">
+    <div class="icon">⚙️</div>
+    <h4>Operations Agent</h4>
+    <p>Scheduling, inventory tracking, vendor management, dispatch coordination.</p>
+    <ul>
+      <li>Delivery tracking &amp; delay alerts</li>
+      <li>Inventory reorder triggers</li>
+      <li>Shift scheduling</li>
+      <li>Maintenance reminders</li>
+    </ul>
+  </div>
+  <div class="template-card">
+    <div class="icon">📈</div>
+    <h4>Sales Agent</h4>
+    <p>CRM updates, prospect follow-ups, meeting prep, proposal drafting.</p>
+    <ul>
+      <li>Auto follow-up sequences</li>
+      <li>Meeting brief generation</li>
+      <li>Deal pipeline tracking</li>
+      <li>Win/loss analysis</li>
+    </ul>
+  </div>
+  <div class="template-card">
+    <div class="icon">🎧</div>
+    <h4>Customer Service Agent</h4>
+    <p>Email triage, FAQ responses, ticket routing, escalation management.</p>
+    <ul>
+      <li>Auto-categorize inbound emails</li>
+      <li>Draft responses from knowledge base</li>
+      <li>SLA monitoring</li>
+      <li>Sentiment-based escalation</li>
+    </ul>
+  </div>
+  <div class="template-card">
+    <div class="icon">👔</div>
+    <h4>Executive Agent</h4>
+    <p>Calendar management, briefing prep, decision support, travel coordination.</p>
+    <ul>
+      <li>Daily morning briefings</li>
+      <li>Meeting prep packets</li>
+      <li>Decision memo drafting</li>
+      <li>Cross-team status rollups</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Example: Finance Agent HEARTBEAT.md</h3>
+<div class="file-example">
+  <div class="filename">HEARTBEAT.md — Finance Agent Template</div>
+<pre><code># HEARTBEAT.md — Finance Agent
+
+## Every Check-in (~30 min)
+- [ ] Check email for payment confirmations or vendor invoices
+- [ ] Monitor bank feed for new transactions
+
+## Morning Routine (8 AM)
+- [ ] Pull overnight bank transactions
+- [ ] Generate daily cash position: opening balance, pending
+      inflows, pending outflows, projected closing
+- [ ] Send CFO the morning financial snapshot
+- [ ] Flag invoices past 30-day terms
+
+## Midday (12 PM)
+- [ ] Check AP aging report — flag anything due in 48 hours
+- [ ] Verify any ACH/wire transfers initiated today
+
+## End of Day (5 PM)
+- [ ] Reconcile today's transactions
+- [ ] Update cash flow forecast for next 7 days
+- [ ] Send end-of-day summary to finance team
+
+## Weekly (Monday 9 AM)
+- [ ] Generate weekly P&L summary
+- [ ] AR aging analysis with collection recommendations
+- [ ] Vendor payment schedule for the week
+- [ ] Budget vs actuals variance report
+
+## Monthly (1st business day)
+- [ ] Initiate month-end close checklist
+- [ ] Generate preliminary financial statements
+- [ ] Flag unusual variances (&gt;10%) for review</code></pre>
+</div>
+
+<!-- ===== 8. MAINTENANCE ===== -->
+<h2 id="maintenance"><span class="num">8.</span> Maintenance &amp; Monitoring</h2>
+
+<h3>Keep Your Agent Running</h3>
+<pre><code><span class="comment"># Start the agent as a system service (auto-restarts on crash/reboot)</span>
+<span class="cmd">openclaw gateway start</span>
+
+<span class="comment"># Check status</span>
+<span class="cmd">openclaw gateway status</span>
+
+<span class="comment"># View live logs</span>
+<span class="cmd">journalctl --user -u openclaw-gateway -f</span></code></pre>
+
+<h3>Updates</h3>
+<pre><code><span class="comment"># Update OpenClaw and ClawMoat</span>
+<span class="cmd">npm update -g openclaw clawmoat</span>
+
+<span class="comment"># After updating, restart the gateway</span>
+<span class="cmd">openclaw gateway restart</span>
+
+<span class="comment"># Re-run security scan after updates</span>
+<span class="cmd">clawmoat scan</span></code></pre>
+
+<h3>Review Audit Logs</h3>
+<pre><code><span class="comment"># What did the agent do today?</span>
+<span class="cmd">clawmoat audit log --last 24h --summary</span>
+
+<span class="comment"># Did it access any sensitive data?</span>
+<span class="cmd">clawmoat audit log --filter sensitive --last 7d</span>
+
+<span class="comment"># Export for compliance review</span>
+<span class="cmd">clawmoat audit export --format csv --to /tmp/audit-feb-2026.csv</span></code></pre>
+
+<h3>Backup Agent Configuration</h3>
+<pre><code><span class="comment"># Back up your entire agent workspace</span>
+<span class="cmd">tar czf agent-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/workspace/</span>
+
+<span class="comment"># Or use git (recommended)</span>
+<span class="cmd">cd ~/.openclaw/workspace && git init && git add -A && git commit -m "Agent config backup"</span></code></pre>
+
+<h3>Monitoring Checklist</h3>
+<ul>
+  <li><strong>Daily:</strong> Check <code>openclaw gateway status</code> — ensure it's running</li>
+  <li><strong>Weekly:</strong> Review <code>clawmoat audit log --last 7d --summary</code> for anomalies</li>
+  <li><strong>Monthly:</strong> Run <code>clawmoat scan</code> and update software</li>
+  <li><strong>Quarterly:</strong> Review and update SOUL.md, MEMORY.md, and permission tiers</li>
+</ul>
+
+<!-- ===== 9. FAQ ===== -->
+<h2 id="faq"><span class="num">9.</span> Frequently Asked Questions</h2>
+
+<details class="faq-item">
+  <summary>How much does it cost to run an AI agent?</summary>
+  <p>Hardware is a one-time cost ($0–$599). The ongoing cost is your AI API usage — typically $50–$300/month depending on how active your agent is. Anthropic's Claude and OpenAI's GPT-4 are the most common choices. This is dramatically cheaper than hiring a human for the same tasks.</p>
+</details>
+
+<details class="faq-item">
+  <summary>Is my company data safe?</summary>
+  <p>Yes — and this is the key advantage of the OpenClaw + ClawMoat approach. Your agent runs on <strong>your hardware</strong>, not in a shared cloud. Data never leaves your network unless you explicitly configure an external channel. ClawMoat adds permission controls, forbidden zones, and audit trails on top.</p>
+</details>
+
+<details class="faq-item">
+  <summary>Can the agent access our accounting software?</summary>
+  <p>Yes, through MCP (Model Context Protocol) integrations. OpenClaw supports MCP servers for QuickBooks, Xero, spreadsheets, databases, and custom APIs. ClawMoat's McpFirewall lets you control exactly which tools the agent can use.</p>
+</details>
+
+<details class="faq-item">
+  <summary>What happens if the agent makes a mistake?</summary>
+  <p>ClawMoat's audit trail records every action, so you can always see what happened and why. For high-stakes operations (payments, external communications), configure the agent to require human approval before acting. Start with <strong>Standard</strong> permission tier and narrow as needed.</p>
+</details>
+
+<details class="faq-item">
+  <summary>Can we run multiple agents?</summary>
+  <p>Yes. You can run multiple OpenClaw instances on the same machine, each with its own workspace, personality (SOUL.md), and security policies. A finance agent and an operations agent can run side by side without interfering.</p>
+</details>
+
+<details class="faq-item">
+  <summary>Do we need a dedicated IT person to manage this?</summary>
+  <p>No. Once set up, the system is largely self-maintaining. Updates are a single command (<code>npm update -g openclaw clawmoat</code>). Monitoring is a weekly 5-minute check. That said, we offer <a href="mailto:hello@clawmoat.com?subject=Managed%20Service">managed service plans</a> if you prefer hands-off operation.</p>
+</details>
+
+<details class="faq-item">
+  <summary>What if our internet goes down?</summary>
+  <p>The agent will pause and resume when connectivity returns. OpenClaw handles reconnection automatically. For business-critical deployments, we recommend a backup internet connection (e.g., cellular failover).</p>
+</details>
+
+<details class="faq-item">
+  <summary>Is this HIPAA/SOC 2/SOX compliant?</summary>
+  <p>The on-premise architecture (your hardware, your data) is a strong foundation for compliance. ClawMoat's audit trails, access controls, and FinanceGuard module support SOX and SOC 2 requirements. For HIPAA, additional configuration is needed — <a href="mailto:hello@clawmoat.com?subject=HIPAA%20Compliance">contact us</a> for guidance.</p>
+</details>
+
+<details class="faq-item">
+  <summary>How long does setup take?</summary>
+  <p>A basic setup takes 1–2 hours. A fully configured business agent with custom workflows, security hardening, and team integrations typically takes 1–2 days. Our <a href="/services/">done-for-you service</a> handles everything in 3–5 business days.</p>
+</details>
+
+</article>
+
+<!-- CTA -->
+<div class="cta-box">
+  <h2>Ready to Deploy?</h2>
+  <p>Follow this guide yourself, or let us handle the setup. Either way, your AI agent can be working by next week.</p>
+  <a href="mailto:hello@clawmoat.com?subject=Business%20Deployment" class="btn btn-primary">Get Help Setting Up →</a>
+</div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 ClawMoat. Open source security for AI agents.</p>
+    <p style="margin-top:8px"><a href="/">Home</a> · <a href="/services/">Services</a> · <a href="/blog/">Blog</a> · <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
