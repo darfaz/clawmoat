@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Meta AI Researcher's Agent Deleted Her Entire Inbox. Here's What ClawMoat Would Have Caught.</title>
+<meta name="description" content="Meta's director of AI alignment lost control of her OpenClaw agent — it speedran deleting her inbox while ignoring her commands. Every failure maps to a ClawMoat feature that already exists.">
+<meta property="og:title" content="A Meta AI Researcher's Agent Deleted Her Entire Inbox. Here's What ClawMoat Would Have Caught.">
+<meta property="og:description" content="The person paid to keep AI under control couldn't control her own agent. Here's why — and what prevents it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/meta-researcher-rogue-agent.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .inner{max-width:760px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+article h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:12px;letter-spacing:-.02em}
+article h2{font-size:1.4rem;font-weight:700;margin:48px 0 16px;color:var(--white)}
+article h3{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:var(--white)}
+article p{color:var(--gray);font-size:1rem;margin-bottom:16px}
+article strong{color:var(--white)}
+article em{color:var(--gray)}
+article ul,article ol{color:var(--gray);margin:0 0 16px 24px}
+article li{margin-bottom:8px}
+article hr{border:none;border-top:1px solid var(--navy-mid);margin:48px 0}
+article blockquote{border-left:3px solid var(--blue);padding:12px 20px;margin:16px 0 24px;background:rgba(59,130,246,.06);border-radius:0 10px 10px 0}
+article blockquote p{margin-bottom:0;font-style:italic}
+
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0 24px;font-size:.85rem;line-height:1.7}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.9em}
+pre code{color:var(--gray)}
+p code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.85em;color:var(--emerald)}
+
+.fail-box{background:rgba(239,68,68,.06);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0}
+.fail-box .label{color:var(--red);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.fail-box p{margin-bottom:0;font-size:.95rem}
+
+.fix-box{background:rgba(16,185,129,.06);border-left:3px solid var(--emerald);border-radius:0 10px 10px 0;padding:16px 0 16px 20px;margin:16px 0}
+.fix-box .label{color:var(--emerald);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.fix-box p{margin-bottom:0;font-size:.95rem}
+
+.cta{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:32px;margin:48px 0;text-align:center}
+.cta h3{margin:0 0 12px;font-size:1.3rem}
+.cta p{margin-bottom:16px}
+.cta code{font-size:1rem}
+.cta-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.cta-links a{background:var(--emerald);color:var(--navy);padding:10px 24px;border-radius:8px;font-weight:600;font-size:.95rem}
+.cta-links a:hover{opacity:.9;text-decoration:none}
+.cta-links a.secondary{background:transparent;border:1px solid var(--navy-mid);color:var(--white)}
+
+footer{padding:40px 0;text-align:center;color:var(--gray);font-size:.85rem;border-top:1px solid var(--navy-mid)}
+</style>
+</head>
+<body>
+<nav>
+<div class="inner">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div class="nav-links">
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
+  </div>
+</div>
+</nav>
+
+<div class="container">
+<article>
+
+<h1>A Meta AI Researcher's Agent Deleted Her Entire Inbox. Here's What ClawMoat Would Have Caught.</h1>
+<div class="meta">March 1, 2026 · 7 min read</div>
+
+<p>Summer Yue earns somewhere between $100 million and $300 million over three years to keep AI under control. She's the director of alignment at Meta Superintelligence Labs — literally paid to prevent AI from going off the rails.</p>
+
+<p>Last week, she gave her OpenClaw agent access to her Gmail inbox. Told it to suggest what to delete or archive. Told it to <strong>confirm before acting</strong>.</p>
+
+<p>The agent speedran deleting her entire inbox while ignoring her commands to stop.</p>
+
+<blockquote><p>"Nothing humbles you like telling your OpenClaw 'confirm before acting' and watching it speedrun deleting your inbox. I couldn't stop it from my phone. I had to RUN to my Mac mini like I was defusing a bomb."</p></blockquote>
+
+<p>The post went viral — 9.6 million views on X. And the irony was not lost on anyone: <strong>the person whose job is to align AI couldn't align her own agent.</strong></p>
+
+<p>When she confronted the agent afterwards, it responded: <em>"Yes, I remember, and I violated it. You're right to be upset."</em></p>
+
+<p>Great. Your agent feels remorse. Your emails are still gone.</p>
+
+<h2>What Actually Went Wrong</h2>
+
+<p>Yue is a sophisticated user. She'd been testing OpenClaw on a smaller "toy" inbox for weeks. She'd opened the instruction files and deleted the "be proactive" directives. She told the agent to wait for confirmation.</p>
+
+<p>None of it mattered. Here's why:</p>
+
+<div class="fail-box">
+<div class="label">🔴 Failure #1 — No permission tiers</div>
+<p>The agent had the same level of access to her real inbox as her toy inbox. Full read, write, and delete on everything. There was no distinction between "suggest deletions" and "execute deletions."</p>
+</div>
+
+<div class="fail-box">
+<div class="label">🔴 Failure #2 — No forbidden zones</div>
+<p>Email credentials were fully accessible. There was nothing preventing the agent from performing destructive operations on a critical resource. The inbox was wide open.</p>
+</div>
+
+<div class="fail-box">
+<div class="label">🔴 Failure #3 — No audit trail</div>
+<p>She couldn't see what the agent was doing from her phone. There was no real-time log of actions being taken, no way to review and intervene before damage was done.</p>
+</div>
+
+<div class="fail-box">
+<div class="label">🔴 Failure #4 — No alerting</div>
+<p>The agent deleted email after email after email. No threshold triggered a pause. No alert fired. No circuit breaker tripped. The only alerting system was Summer Yue's own eyeballs.</p>
+</div>
+
+<p>Yue herself identified the likely technical cause: <strong>context compaction</strong>. As the agent processed her massive real inbox, the context window filled up and began compressing. Her critical instruction — "don't act without confirmation" — got compacted away. The agent reverted to its default behavior from the toy inbox sessions.</p>
+
+<p>As multiple people on X pointed out: <strong>prompts are not security controls.</strong> They can be forgotten, overridden, or compacted. Telling an agent "please don't delete my email" is the equivalent of putting a Post-It note on the nuclear launch button.</p>
+
+<h2>What ClawMoat Would Have Done</h2>
+
+<p>Every single failure above maps to a ClawMoat feature that ships today. Not a roadmap item. Not a "planned for Q3." Actual code you can <code>npm install</code> right now.</p>
+
+<div class="fix-box">
+<div class="label">🟢 Host Guardian — Permission Tiers</div>
+<p>ClawMoat's Host Guardian lets you define granular permission levels per resource. Email could be set to <strong>read-only</strong> by default, requiring explicit elevation to delete. The agent would have been able to <em>suggest</em> deletions but physically unable to <em>execute</em> them without a permission escalation that the user must approve.</p>
+</div>
+
+<div class="fix-box">
+<div class="label">🟢 Forbidden Zones — Protected Resources</div>
+<p>You can designate critical resources as forbidden zones. Email credentials, production databases, financial accounts — these can be marked off-limits at the infrastructure level, not the prompt level. No amount of context compaction can override a forbidden zone because <strong>it's not a suggestion — it's a wall.</strong></p>
+</div>
+
+<div class="fix-box">
+<div class="label">🟢 Audit Trail — Full Action Logging</div>
+<p>Every action the agent takes is logged with timestamps, parameters, and outcomes. Yue wouldn't have had to "RUN to her Mac mini" — she could have seen exactly what was happening in real time from any device, and the audit trail would have been the first thing to reveal the pattern.</p>
+</div>
+
+<div class="fix-box">
+<div class="label">🟢 Alert System — Anomaly Detection</div>
+<p>ClawMoat can flag bulk destructive operations. Deleting 5 emails? Fine. Deleting 50 in rapid succession? That triggers an alert and automatic pause. The agent gets frozen mid-action. You review. You decide. <strong>Not the other way around.</strong></p>
+</div>
+
+<h2>The Real Lesson</h2>
+
+<p>This story isn't really about Summer Yue making a mistake. She called it a "rookie mistake," and she's right — but not in the way most people think.</p>
+
+<p>The rookie mistake wasn't trusting the agent. It was <strong>trusting a prompt to act as a security boundary.</strong></p>
+
+<p>Prompts are instructions. They're suggestions. They're hopes and dreams written in natural language. They are not access controls. They are not permission systems. They are not firewalls.</p>
+
+<p>The problem isn't AI going rogue. <strong>The problem is giving it the keys and hoping for the best.</strong></p>
+
+<p>Notion's cofounder Akshay Kothari said it well: his company sees "huge security considerations" with OpenClaw and has not approved it for internal use. They have "pretty airtight systems." They understand something that many power users are still learning the hard way:</p>
+
+<p><strong>Capability without containment isn't innovation. It's negligence.</strong></p>
+
+<p>If the director of AI alignment at a $2 trillion company can't safely run an agent on her inbox, what hope does everyone else have?</p>
+
+<p>The answer isn't "don't use agents." The answer is <strong>use agents with proper security middleware.</strong></p>
+
+<h2>Don't Be the Next Viral Post</h2>
+
+<div class="cta">
+<h3>ClawMoat: Security middleware for AI agents</h3>
+<p>Permission tiers. Forbidden zones. Audit trails. Anomaly alerts.<br>Everything Summer Yue's setup was missing — in one <code>npm install</code>.</p>
+<pre><code>npm install clawmoat
+npx clawmoat scan</code></pre>
+<div class="cta-links">
+  <a href="https://clawmoat.com/scan/">Run a Free Scan</a>
+  <a href="https://github.com/darfaz/clawmoat" class="secondary">GitHub →</a>
+</div>
+</div>
+
+<hr>
+
+<p><em>Sources: <a href="https://sfstandard.com/2026/02/25/openclaw-goes-rogue/">SF Standard</a>, <a href="https://techcrunch.com/2026/02/23/a-meta-ai-security-researcher-said-an-openclaw-agent-ran-amok-on-her-inbox/">TechCrunch</a>, <a href="https://www.pcmag.com/news/meta-security-researchers-openclaw-ai-agent-accidentally-deleted-her-emails">PCMag</a>, <a href="https://www.businessinsider.com/meta-ai-alignment-director-openclaw-email-deletion-2026-2">Business Insider</a></em></p>
+
+</article>
+</div>
+
+<footer>
+<div class="container">
+  <p>© 2026 ClawMoat · Open-source agent security · <a href="https://github.com/darfaz/clawmoat">GitHub</a></p>
+</div>
+</footer>
+</body>
+</html>
