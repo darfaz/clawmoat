@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Dashboard — ClawMoat Affiliates</title>
+<meta name="robots" content="noindex">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--amber:#F59E0B;--purple:#8B5CF6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6}
+a{color:var(--blue);text-decoration:none}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+nav{background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+
+.dashboard{padding:60px 0}
+.dashboard h1{font-size:2rem;margin-bottom:8px}
+.dashboard .sub{color:var(--gray);margin-bottom:40px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
+.stat{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:24px;text-align:center}
+.stat .label{color:var(--gray);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat .value{font-size:2rem;font-weight:700}
+.stat .value.green{color:var(--emerald)}
+.stat .value.blue{color:var(--blue)}
+.stat .value.amber{color:var(--amber)}
+.stat .value.purple{color:var(--purple)}
+
+.coming-soon{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:16px;padding:48px;text-align:center}
+.coming-soon h2{font-size:1.5rem;margin-bottom:12px}
+.coming-soon p{color:var(--gray);margin-bottom:20px}
+.coming-soon a.btn{display:inline-block;padding:12px 28px;background:var(--emerald);color:#fff;border-radius:8px;font-weight:600}
+
+.referral-link{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:24px;margin-bottom:24px}
+.referral-link h3{margin-bottom:8px;font-size:1rem}
+.referral-link .link-box{display:flex;gap:8px}
+.referral-link input{flex:1;background:var(--navy);border:1px solid var(--navy-mid);border-radius:8px;padding:10px 14px;color:var(--emerald);font-family:monospace;font-size:.9rem}
+.referral-link button{padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+
+.activity{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:24px}
+.activity h3{margin-bottom:16px}
+.activity table{width:100%;border-collapse:collapse}
+.activity th,.activity td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--navy-mid);font-size:.9rem}
+.activity th{color:var(--gray);font-size:.75rem;text-transform:uppercase}
+.activity td{color:var(--gray)}
+.activity .status{padding:2px 8px;border-radius:4px;font-size:.8rem;font-weight:600}
+.activity .converted{background:rgba(16,185,129,.15);color:var(--emerald)}
+.activity .pending{background:rgba(245,158,11,.15);color:var(--amber)}
+
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div style="display:flex;gap:16px;font-size:.9rem">
+    <a href="/affiliates/" style="color:var(--gray)">← Back to Affiliates</a>
+  </div>
+</div>
+</nav>
+
+<section class="dashboard">
+<div class="container">
+  <h1>Partner Dashboard</h1>
+  <p class="sub">Track your referrals, conversions, and earnings.</p>
+
+  <!-- Stats cards (UI mockup — values are placeholders) -->
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Total Clicks</div>
+      <div class="value blue">—</div>
+    </div>
+    <div class="stat">
+      <div class="label">Conversions</div>
+      <div class="value green">—</div>
+    </div>
+    <div class="stat">
+      <div class="label">Commission Earned</div>
+      <div class="value amber">—</div>
+    </div>
+    <div class="stat">
+      <div class="label">Pending Payout</div>
+      <div class="value purple">—</div>
+    </div>
+  </div>
+
+  <!-- Referral link -->
+  <div class="referral-link">
+    <h3>Your Referral Link</h3>
+    <div class="link-box">
+      <input type="text" value="https://clawmoat.com?ref=YOUR_ID" readonly id="refLink">
+      <button onclick="navigator.clipboard.writeText(document.getElementById('refLink').value)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Coming soon overlay -->
+  <div class="coming-soon">
+    <h2>🚧 Dashboard Coming Soon</h2>
+    <p>We're building the real-time partner dashboard. In the meantime, email us for your current stats and earnings report.</p>
+    <a href="mailto:hello@clawmoat.com?subject=Affiliate%20Stats%20Request" class="btn">Request My Stats →</a>
+  </div>
+
+  <!-- Activity table (mockup) -->
+  <div class="activity" style="margin-top:24px;opacity:.5">
+    <h3>Recent Activity (preview)</h3>
+    <table>
+      <thead><tr><th>Date</th><th>Event</th><th>Plan</th><th>Commission</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>—</td><td>Click</td><td>—</td><td>—</td><td><span class="status pending">Pending</span></td></tr>
+        <tr><td>—</td><td>Conversion</td><td>Pro Yearly</td><td>$74.50</td><td><span class="status converted">Converted</span></td></tr>
+        <tr><td>—</td><td>Click</td><td>—</td><td>—</td><td><span class="status pending">Pending</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+</body>
+</html>

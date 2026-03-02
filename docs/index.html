@@ -1049,6 +1049,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <a href="https://github.com/darfaz/clawmoat" style="color:var(--gray)">GitHub</a>
     <a href="https://www.npmjs.com/package/clawmoat" style="color:var(--gray)">npm</a>
     <a href="/blog/" style="color:var(--gray)">Blog</a>
+    <a href="/affiliates/" style="color:var(--gray)">Affiliates</a>
     <a href="mailto:hello@clawmoat.com" style="color:var(--gray)">hello@clawmoat.com</a>
   </div>
   <p style="text-align:center;color:var(--gray);font-size:.85rem">© 2026 ClawMoat</p>
@@ -1056,13 +1057,32 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </footer>
 
 <script>
+/* Affiliate referral tracking */
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref') || params.get('utm_medium');
+  if (ref) {
+    localStorage.setItem('clawmoat_ref', ref);
+    localStorage.setItem('clawmoat_ref_ts', Date.now().toString());
+  }
+})();
+function getRef() {
+  const ref = localStorage.getItem('clawmoat_ref');
+  const ts = parseInt(localStorage.getItem('clawmoat_ref_ts') || '0');
+  if (ref && (Date.now() - ts) < 30 * 24 * 60 * 60 * 1000) return ref;
+  return null;
+}
+
 const API_URL = 'https://clawmoat-production.up.railway.app';
 async function checkout(plan) {
   try {
+    const payload = { plan };
+    const ref = getRef();
+    if (ref) payload.client_reference_id = ref;
     const res = await fetch(API_URL + '/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan })
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
