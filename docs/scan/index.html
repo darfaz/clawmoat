@@ -112,6 +112,13 @@ Examples: API keys, credentials, prompt injection payloads, dangerous commands..
 <div class="stat"><div class="num" id="lowCount" style="color:var(--green)">0</div><div class="label">LOW</div></div>
 </div>
 <div id="findings"></div>
+<div id="badgeSection" style="display:none;margin-top:2rem;background:#14141f;border:1px solid #2a2a3a;border-radius:8px;padding:1.5rem;text-align:center">
+<p style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Your Security Score: <span id="badgeGrade" style="color:var(--accent)"></span></p>
+<div id="badgePreview" style="margin:.75rem 0"></div>
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:.5rem">Add this badge to your README:</p>
+<pre id="badgeMd" onclick="navigator.clipboard.writeText(this.textContent)" style="background:#1a1a2e;border:1px solid #2a2a3a;border-radius:6px;padding:.75rem;font-size:.8rem;cursor:pointer;overflow-x:auto;text-align:left"></pre>
+<p style="color:var(--muted);font-size:.75rem;margin-top:.5rem">Click to copy · <a href="/badge/">Customize your badge →</a></p>
+</div>
 <div style="text-align:center;margin-top:2rem">
 <p>Want continuous protection? ClawMoat monitors your agent in real-time.</p>
 <a href="/#pricing" class="btn">Get ClawMoat</a>
@@ -199,6 +206,14 @@ function runScan() {
   } else {
     findingsDiv.innerHTML = unique.map(f => '<div class="finding ' + f.severity + '"><span class="severity severity-' + f.severity + '">' + f.severity.toUpperCase() + '</span><span style="color:var(--muted);font-size:.8rem">' + f.category + '</span><h3>' + f.label + '</h3><p>Found: <code style="color:var(--red)">' + escHtml(f.match) + '</code></p><p>💡 ' + f.fix + '</p></div>').join('');
   }
+  // Show badge section
+  const gradeFileMap = {'A+':'score-Aplus','A':'score-A','B':'score-B','C':'score-C','D':'score-D','F':'score-F'};
+  const badgeFile = gradeFileMap[grade] || 'score-F';
+  const badgeUrl = 'https://clawmoat.com/badge/' + badgeFile + '.svg';
+  document.getElementById('badgeSection').style.display = 'block';
+  document.getElementById('badgeGrade').textContent = grade;
+  document.getElementById('badgePreview').innerHTML = '<a href="https://clawmoat.com/scan/"><img src="/badge/' + badgeFile + '.svg" alt="ClawMoat Security: ' + grade + '" height="20"></a>';
+  document.getElementById('badgeMd').textContent = '[![ClawMoat Security: ' + grade + '](' + badgeUrl + ')](https://clawmoat.com/scan/)';
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
 }
 

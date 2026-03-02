@@ -7,6 +7,7 @@
 <p align="center">Runtime protection against prompt injection, tool misuse, and data exfiltration.</p>
 
 <p align="center">
+  <a href="https://clawmoat.com/scan/"><img src="https://clawmoat.com/badge/score-Aplus.svg" alt="ClawMoat Security: A+"></a>
   <a href="https://github.com/darfaz/clawmoat/actions/workflows/test.yml"><img src="https://github.com/darfaz/clawmoat/actions/workflows/test.yml/badge.svg" alt="CI"></a>
   <a href="https://www.npmjs.com/package/clawmoat"><img src="https://img.shields.io/npm/v/clawmoat?style=flat-square&color=3B82F6" alt="npm"></a>
   <a href="https://github.com/darfaz/clawmoat/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License"></a>

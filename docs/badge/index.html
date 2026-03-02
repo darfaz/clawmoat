@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Score Badge — ClawMoat</title>
+<meta name="description" content="Add a ClawMoat security score badge to your project README. Show the world your AI agent security posture.">
+<meta property="og:title" content="ClawMoat Security Score Badge">
+<meta property="og:description" content="Embeddable badge showing your project's AI agent security score. Free.">
+<link rel="canonical" href="https://clawmoat.com/badge/">
+<link rel="icon" href="/favicon.png">
+<style>
+:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--border:#2a2a3a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7}
+.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center}
+nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}
+nav a:hover{color:var(--accent)}
+h1{font-size:2.2rem;text-align:center;margin-bottom:.5rem}
+h2{color:var(--accent);margin:2.5rem 0 1rem;font-size:1.3rem}
+p{margin-bottom:1rem}
+a{color:var(--accent)}
+.hero{text-align:center;padding:2rem 0 1rem}
+.hero-sub{color:var(--muted);font-size:1.05rem;max-width:550px;margin:0 auto 2rem}
+.badge-row{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin:1.5rem 0}
+.badge-row img{height:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1.5rem 0}
+label{display:block;font-weight:600;margin-bottom:.5rem}
+input[type=text]{width:100%;background:#1a1a2e;border:2px solid var(--border);border-radius:6px;color:var(--fg);font-size:1rem;padding:.6rem 1rem;outline:none}
+input[type=text]:focus{border-color:var(--accent)}
+.output{margin-top:1rem}
+.output pre{background:#1a1a2e;border:1px solid var(--border);border-radius:6px;padding:1rem;font-size:.85rem;overflow-x:auto;position:relative;cursor:pointer}
+.output pre:hover::after{content:'Click to copy';position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#000;padding:2px 8px;border-radius:4px;font-size:.75rem}
+.btn{background:var(--accent);color:#000;padding:.75rem 2rem;border:none;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;display:inline-block;text-decoration:none;margin:.5rem .5rem .5rem 0}
+.btn:hover{opacity:.9}
+.btn-outline{background:transparent;border:2px solid var(--accent);color:var(--accent);padding:.65rem 1.5rem;border-radius:6px;font-weight:600;text-decoration:none;display:inline-block}
+.steps{counter-reset:step}
+.steps li{counter-increment:step;list-style:none;margin-bottom:1.5rem;padding-left:2.5rem;position:relative}
+.steps li::before{content:counter(step);position:absolute;left:0;width:1.8rem;height:1.8rem;background:var(--accent);color:#000;border-radius:50%;text-align:center;line-height:1.8rem;font-weight:700;font-size:.85rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;text-align:center;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav>
+  <a href="/" style="font-weight:700">🏰 ClawMoat</a>
+  <div>
+    <a href="/scan/">Scanner</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>🛡️ Security Score Badge</h1>
+  <p class="hero-sub">Show the world your AI agent security posture. Add a ClawMoat badge to your README — it takes 30 seconds.</p>
+</div>
+
+<h2>Example Badges</h2>
+<div class="badge-row">
+  <img src="score-Aplus.svg" alt="A+ badge">
+  <img src="score-A.svg" alt="A badge">
+  <img src="score-B.svg" alt="B badge">
+  <img src="score-C.svg" alt="C badge">
+  <img src="score-D.svg" alt="D badge">
+  <img src="score-F.svg" alt="F badge">
+  <img src="scanning.svg" alt="Scanning badge">
+</div>
+
+<h2>Get Your Badge</h2>
+<ol class="steps">
+  <li><strong>Scan your project</strong> — paste your config into the <a href="/scan/">free scanner</a> and get your grade.</li>
+  <li><strong>Generate the badge</strong> — enter your repo below and copy the markdown.</li>
+  <li><strong>Add to README</strong> — paste into your README.md and push.</li>
+</ol>
+
+<div class="card">
+  <label for="repoInput">GitHub Repository</label>
+  <input type="text" id="repoInput" placeholder="owner/repo (e.g. darfaz/clawmoat)" oninput="generateBadge()">
+
+  <label style="margin-top:1rem" for="gradeSelect">Your Score</label>
+  <select id="gradeSelect" onchange="generateBadge()" style="background:#1a1a2e;border:2px solid var(--border);border-radius:6px;color:var(--fg);font-size:1rem;padding:.6rem 1rem;width:100%;outline:none">
+    <option value="Aplus">A+</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+    <option value="F">F</option>
+  </select>
+
+  <div class="output" id="output" style="display:none">
+    <label>Markdown</label>
+    <pre id="mdSnippet" onclick="copySnippet(this)"></pre>
+    <label style="margin-top:1rem">HTML</label>
+    <pre id="htmlSnippet" onclick="copySnippet(this)"></pre>
+    <label style="margin-top:1rem">Preview</label>
+    <div id="preview" style="margin-top:.5rem"></div>
+  </div>
+</div>
+
+<div style="text-align:center;margin:2.5rem 0">
+  <a href="/scan/" class="btn">Run the Scanner</a>
+  <a href="https://github.com/darfaz/clawmoat" class="btn-outline">⭐ Star on GitHub</a>
+</div>
+
+<h2>Why Add a Badge?</h2>
+<ul style="list-style:none;padding:0">
+  <li style="margin-bottom:.75rem">✅ <strong>Build trust</strong> — show users your project takes AI security seriously</li>
+  <li style="margin-bottom:.75rem">✅ <strong>Stand out</strong> — most AI agent projects don't audit security at all</li>
+  <li style="margin-bottom:.75rem">✅ <strong>Stay accountable</strong> — a visible score motivates continuous improvement</li>
+  <li style="margin-bottom:.75rem">✅ <strong>Free forever</strong> — badges are static SVGs, no API calls needed</li>
+</ul>
+
+<footer>
+  <p>© 2026 ClawMoat · <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a></p>
+</footer>
+</div>
+
+<script>
+const gradeMap = {Aplus:'A%2B',A:'A',B:'B',C:'C',D:'D',F:'F'};
+const fileMap = {Aplus:'score-Aplus',A:'score-A',B:'score-B',C:'score-C',D:'score-D',F:'score-F'};
+const labelMap = {Aplus:'A+',A:'A',B:'B',C:'C',D:'D',F:'F'};
+
+function generateBadge(){
+  const repo = document.getElementById('repoInput').value.trim();
+  const grade = document.getElementById('gradeSelect').value;
+  const out = document.getElementById('output');
+  if(!repo){out.style.display='none';return;}
+  out.style.display='block';
+  const badgeUrl = 'https://clawmoat.com/badge/' + fileMap[grade] + '.svg';
+  const linkUrl = 'https://clawmoat.com/scan/';
+  const md = '[![ClawMoat Security: ' + labelMap[grade] + '](' + badgeUrl + ')](' + linkUrl + ')';
+  const html = '<a href="' + linkUrl + '"><img src="' + badgeUrl + '" alt="ClawMoat Security: ' + labelMap[grade] + '"></a>';
+  document.getElementById('mdSnippet').textContent = md;
+  document.getElementById('htmlSnippet').textContent = html;
+  document.getElementById('preview').innerHTML = html;
+}
+
+function copySnippet(el){
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const orig = el.style.borderColor;
+    el.style.borderColor = 'var(--accent)';
+    setTimeout(()=>el.style.borderColor = orig, 1000);
+  });
+}
+</script>
+</body>
+</html>
