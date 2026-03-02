@@ -57,14 +57,17 @@
 </head>
 <body>
 <div class="container">
-<nav class="nav">
-  <div>
-    <a href="/" style="font-weight:bold;font-size:1.1rem">ClawMoat</a>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
     <a href="/blog/">Blog</a>
-    <a href="/finance/" style="color:var(--gold)">Finance</a>
-    <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
   </div>
-  <a href="#pricing" class="cta" style="margin:0;font-size:.9rem;padding:.5rem 1rem">Get Started</a>
+</div>
 </nav>
 
 <div class="hero">

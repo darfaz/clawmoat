@@ -150,14 +150,13 @@ section{padding:80px 0}
 <!-- Nav -->
 <nav>
 <div class="container">
-  <a href="/" class="logo">🏰 Claw<span>Moat</span> <span style="font-size:.75rem;color:var(--gray);font-weight:400;margin-left:4px">for Business</span></a>
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
   <div class="nav-links">
-    <a href="#problem">The Risk</a>
-    <a href="#how">How It Works</a>
-    <a href="#pricing">Pricing</a>
-    <a href="/business/install.html">Self-Install</a>
-    <a href="/">Open Source</a>
-    <a href="#contact" class="btn-sm">Get a Quote</a>
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
   </div>
 </div>
 </nav>
@@ -510,19 +509,15 @@ section{padding:80px 0}
 </section>
 
 <!-- Footer -->
-<footer style="padding:40px 0;border-top:1px solid rgba(255,255,255,.06)">
-<div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
-  <div style="color:var(--gray);font-size:.85rem">
-    🏰 ClawMoat — Open source AI agent security
-  </div>
-  <div style="display:flex;gap:24px;font-size:.85rem;flex-wrap:wrap">
-    <a href="/" style="color:var(--gray)">Home</a>
+<footer>
+<div class="container">
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
     <a href="https://github.com/darfaz/clawmoat" style="color:var(--gray)">GitHub</a>
+    <a href="https://www.npmjs.com/package/clawmoat" style="color:var(--gray)">npm</a>
     <a href="/blog/" style="color:var(--gray)">Blog</a>
     <a href="mailto:hello@clawmoat.com" style="color:var(--gray)">hello@clawmoat.com</a>
-    <a href="tel:+16503838190" style="color:var(--gray)">(650) 383-8190</a>
-    <span style="color:var(--gray)">10000 Washington Blvd, Culver City, CA 90232</span>
   </div>
+  <p style="text-align:center;color:var(--gray);font-size:.85rem">© 2026 ClawMoat</p>
 </div>
 </footer>
 

@@ -134,15 +134,11 @@ footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:cent
   <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
   <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
   <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/business/">Business</a>
-    <a href="/finance/">Finance</a>
-    <a href="/services/" style="color:var(--emerald);font-weight:600">AI Agents</a>
-    <a href="/services/case-study.html">Case Study</a>
-    <a href="/services/roi-calculator.html">ROI Calculator</a>
-    <a href="/guides/business-deployment.html">Deploy Guide</a>
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
     <a href="/blog/">Blog</a>
-    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn-sm">Schedule a Call</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
+    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn-sm">Get Started</a>
   </div>
 </div>
 </nav>
@@ -292,21 +288,57 @@ footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:cent
 <section class="pricing-section">
 <div class="container">
   <p class="section-label">Investment</p>
-  <h2 class="section-title">Transparent Pricing, Immediate ROI</h2>
-  <div class="price-card">
-    <div class="price">$2,500 <span class="small">per agent/month</span></div>
-    <div class="compare">Industry average: <s>$3,350/agent/month</s> — you save 25% with ClawMoat</div>
-    <ul class="price-features">
-      <li>Custom AI agent configured for your specific workflows</li>
-      <li>Enterprise-grade security (data never leaves your systems)</li>
-      <li>Integration with your existing tools (email, Slack, WhatsApp)</li>
-      <li>24/7 operation — no overtime, no benefits, no sick days</li>
-      <li>Ongoing monitoring, optimization, and support</li>
-      <li>Full audit trails and compliance reporting</li>
-    </ul>
-    <p style="color:var(--gray);font-size:.9rem;margin-bottom:24px">Most companies deploy 3–8 agents and see full ROI within the first month.</p>
-    <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
+  <h2 class="section-title">Simple Pricing. Real Results.</h2>
+  <p class="section-sub" style="text-align:center;margin:0 auto 48px">No surprise fees. No 6-month contracts. Pick what fits and get started this week.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1000px;margin:0 auto">
+
+    <!-- Tier 1 -->
+    <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:36px;display:flex;flex-direction:column">
+      <h3 style="font-size:1.15rem;margin-bottom:4px">Setup Only</h3>
+      <div style="font-size:2.2rem;font-weight:800;margin:12px 0 4px">$1,500 <span style="font-size:.9rem;font-weight:400;color:var(--gray)">per agent</span></div>
+      <p style="color:var(--gray);font-size:.9rem;margin-bottom:20px">You run it, we build it.</p>
+      <ul class="price-features" style="flex:1">
+        <li>SOUL, USER, MEMORY, HEARTBEAT configuration</li>
+        <li>Tool access setup + Telegram/Slack integration</li>
+        <li>ClawMoat security hardening</li>
+        <li>Post-deployment testing</li>
+      </ul>
+      <a href="mailto:hello@clawmoat.com?subject=Setup%20Only%20—%20Discovery%20Call" class="btn btn-outline" style="width:100%;justify-content:center">Schedule a Discovery Call</a>
+    </div>
+
+    <!-- Tier 2 -->
+    <div style="background:var(--navy-light);border:2px solid var(--emerald);border-radius:16px;padding:36px;display:flex;flex-direction:column;position:relative">
+      <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--emerald);color:#fff;padding:4px 16px;border-radius:20px;font-size:.75rem;font-weight:700">Most Popular</div>
+      <h3 style="font-size:1.15rem;margin-bottom:4px">Setup + Managed</h3>
+      <div style="font-size:2.2rem;font-weight:800;margin:12px 0 4px">$2,500 <span style="font-size:.9rem;font-weight:400;color:var(--gray)">setup + $299/mo</span></div>
+      <p style="color:var(--gray);font-size:.9rem;margin-bottom:20px">We build it and keep it running.</p>
+      <ul class="price-features" style="flex:1">
+        <li>Everything in Setup Only</li>
+        <li>24/7 monitoring &amp; maintenance</li>
+        <li>Monthly tuning &amp; optimization</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="mailto:hello@clawmoat.com?subject=Managed%20Plan%20—%20Discovery%20Call" class="btn btn-green" style="width:100%;justify-content:center">Schedule a 15-Minute Discovery Call →</a>
+    </div>
+
+    <!-- Tier 3 -->
+    <div style="background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:36px;display:flex;flex-direction:column">
+      <h3 style="font-size:1.15rem;margin-bottom:4px">Full Package</h3>
+      <div style="font-size:2.2rem;font-weight:800;margin:12px 0 4px">$5,000 <span style="font-size:.9rem;font-weight:400;color:var(--gray)">flat + $499/mo</span></div>
+      <p style="color:var(--gray);font-size:.9rem;margin-bottom:20px">Up to 5 agents. For companies ready to go all-in.</p>
+      <ul class="price-features" style="flex:1">
+        <li>Everything in Managed</li>
+        <li>Dedicated hardware setup (Beelink mini PC)</li>
+        <li>Multi-agent orchestration</li>
+        <li>Custom integrations</li>
+      </ul>
+      <a href="mailto:hello@clawmoat.com?subject=Full%20Package%20—%20Discovery%20Call" class="btn btn-outline" style="width:100%;justify-content:center">Schedule a Discovery Call</a>
+    </div>
+
   </div>
+
+  <p style="color:var(--gray);font-size:.9rem;text-align:center;margin-top:32px;max-width:500px;margin-left:auto;margin-right:auto">Most companies see full ROI within the first month. A 15-minute call — we'll show you exactly what to automate first.</p>
 </div>
 </section>
 
@@ -344,15 +376,24 @@ footer{padding:40px 0;border-top:1px solid rgba(255,255,255,.06);text-align:cent
   <p>A 15-minute call. We'll show you exactly which tasks to automate first and what the ROI looks like for your business.</p>
   <a href="mailto:hello@clawmoat.com?subject=15-Min%20Discovery%20Call" class="btn btn-green">Schedule a 15-Minute Discovery Call →</a>
   <div class="resources">
-    <a href="/services/case-study.html">📄 Read the Case Study</a>
-    <a href="/services/roi-calculator.html">🧮 Calculate Your ROI</a>
+    <a href="/services/case-study.html">📄 Case Study</a>
+    <a href="/services/roi-calculator.html">🧮 ROI Calculator</a>
+    <a href="/guides/business-deployment.html">📋 Deploy Guide</a>
+    <a href="/templates/">📝 Templates</a>
+    <a href="/services/one-pager.html">📄 One-Pager</a>
   </div>
 </div>
 </section>
 
 <footer>
 <div class="container">
-  <p>© 2026 ClawMoat. <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></p>
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+    <a href="https://github.com/darfaz/clawmoat" style="color:var(--gray)">GitHub</a>
+    <a href="https://www.npmjs.com/package/clawmoat" style="color:var(--gray)">npm</a>
+    <a href="/blog/" style="color:var(--gray)">Blog</a>
+    <a href="mailto:hello@clawmoat.com" style="color:var(--gray)">hello@clawmoat.com</a>
+  </div>
+  <p style="text-align:center;color:var(--gray);font-size:.85rem">© 2026 ClawMoat</p>
 </div>
 </footer>
 

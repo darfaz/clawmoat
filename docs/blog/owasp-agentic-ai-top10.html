@@ -58,14 +58,16 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 0;color:var(--gra
 <body>
 
 <nav>
-  <div class="inner">
-    <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/blog/">Blog</a>
-      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
-    </div>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
   </div>
+</div>
 </nav>
 
 <div class="container">
@@ -182,7 +184,15 @@ clawmoat scan "test prompt"</code></pre>
 </div>
 
 <footer>
-  <div>© 2026 ClawMoat. Built for the OpenClaw community. 🏰</div>
+<div class="container">
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+    <a href="https://github.com/darfaz/clawmoat" style="color:var(--gray)">GitHub</a>
+    <a href="https://www.npmjs.com/package/clawmoat" style="color:var(--gray)">npm</a>
+    <a href="/blog/" style="color:var(--gray)">Blog</a>
+    <a href="mailto:hello@clawmoat.com" style="color:var(--gray)">hello@clawmoat.com</a>
+  </div>
+  <p style="text-align:center;color:var(--gray);font-size:.85rem">© 2026 ClawMoat</p>
+</div>
 </footer>
 
 </body>

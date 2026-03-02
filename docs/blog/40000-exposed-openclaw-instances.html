@@ -46,10 +46,17 @@
 </head>
 <body>
 <div class="container">
-<nav class="nav">
-  <a href="/">ClawMoat</a>
-  <a href="/blog/">Blog</a>
-  <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+<nav>
+<div class="container">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
+  <div class="nav-links">
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
+  </div>
+</div>
 </nav>
 
 <article>
