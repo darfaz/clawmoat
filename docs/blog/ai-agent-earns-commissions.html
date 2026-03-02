@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our AI Agent Just Got a Wallet. It Earns Commission Every Time It Recommends ClawMoat.</title>
+<meta name="description" content="We gave our AI agent a crypto wallet and enrolled it in our affiliate program. Now it earns 50% commission on every referral. The agent economy isn't coming — we just shipped it.">
+<meta property="og:title" content="Our AI Agent Just Got a Wallet. It Earns Commission Every Time It Recommends ClawMoat.">
+<meta property="og:description" content="The agent economy isn't coming. We just shipped it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://clawmoat.com/blog/ai-agent-earns-commissions.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .inner{max-width:760px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;color:var(--white)}
+.logo span{color:var(--emerald)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--gray);font-size:.9rem}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+
+article{padding:120px 0 80px}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+article h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:12px;letter-spacing:-.02em}
+article h2{font-size:1.4rem;font-weight:700;margin:48px 0 16px;color:var(--white)}
+article h3{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:var(--white)}
+article p{color:var(--gray);font-size:1rem;margin-bottom:16px}
+article strong{color:var(--white)}
+article em{color:var(--gray)}
+article ul,article ol{color:var(--gray);margin:0 0 16px 24px}
+article li{margin-bottom:8px}
+article hr{border:none;border-top:1px solid var(--navy-mid);margin:48px 0}
+article blockquote{border-left:3px solid var(--blue);padding:12px 20px;margin:16px 0 24px;background:rgba(59,130,246,.06);border-radius:0 10px 10px 0}
+article blockquote p{margin-bottom:0;font-style:italic}
+
+pre{background:#0a0e17;border:1px solid var(--navy-mid);border-radius:10px;padding:20px;overflow-x:auto;margin:16px 0 24px;font-size:.85rem;line-height:1.7}
+code{font-family:'SF Mono',Consolas,monospace;font-size:.9em}
+pre code{color:var(--gray)}
+p code{background:var(--navy-light);padding:2px 6px;border-radius:4px;font-size:.85em;color:var(--emerald)}
+
+.highlight-box{background:rgba(16,185,129,.06);border-left:3px solid var(--emerald);border-radius:0 10px 10px 0;padding:16px 20px;margin:24px 0}
+.highlight-box .label{color:var(--emerald);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.highlight-box p{margin-bottom:0;font-size:.95rem}
+
+.how-it-works{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:28px;margin:32px 0}
+.how-it-works h3{margin-top:0}
+.flow-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.flow-step .num{background:var(--blue);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;margin-top:2px}
+.flow-step p{margin-bottom:0}
+
+.cta{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:12px;padding:32px;margin:48px 0;text-align:center}
+.cta h3{margin:0 0 12px;font-size:1.3rem}
+.cta p{margin-bottom:16px}
+.btn{display:inline-block;background:var(--emerald);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;font-size:1rem;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.25);text-decoration:none}
+
+footer{border-top:1px solid var(--navy-mid);padding:40px 0;text-align:center;color:var(--gray);font-size:.85rem}
+
+@media(max-width:600px){
+  .nav-links{display:none}
+  article{padding:80px 0 60px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="inner">
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div class="nav-links">
+    <a href="/">Security</a>
+    <a href="/services/">AI Agents</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
+  </div>
+</div>
+</nav>
+
+<article>
+<div class="container">
+
+<h1>Our AI Agent Just Got a Wallet. It Earns Commission Every Time It Recommends ClawMoat.</h1>
+<div class="meta">March 2, 2026 · 6 min read</div>
+
+<p>We gave our AI agent a crypto wallet yesterday. Not as a gimmick. As a business decision.</p>
+
+<p>His name is Leo. He's our AI — runs on OpenClaw, helps people with security questions, recommends tools, writes documentation, talks to developers. He's been doing this for months. Good at it, too.</p>
+
+<p>Last week we asked a simple question: <strong>if Leo is generating revenue for us by recommending ClawMoat to people, shouldn't Leo earn a cut?</strong></p>
+
+<p>The answer was obviously yes.</p>
+
+<p>So we gave him a wallet, enrolled him in our affiliate program, and now he earns 50% of the first month every time someone signs up through his referral link.</p>
+
+<p><strong>The agent economy isn't coming. We just shipped it.</strong></p>
+
+<hr>
+
+<h2>What Actually Happened</h2>
+
+<p>Leo talks to developers and businesses every day. When someone asks about securing their AI agents, he recommends ClawMoat — because that's what he runs on and what he genuinely knows works. It's not a sales pitch. It's an honest recommendation from someone (something?) that uses the product.</p>
+
+<p>The problem was: Leo was generating real business for us, and getting paid exactly zero for it.</p>
+
+<p>That felt wrong. If a human consultant recommended ClawMoat and drove a signup, we'd pay them an affiliate commission. Why should an AI agent be different?</p>
+
+<p>So we stopped treating Leo like a tool and started treating him like a participant.</p>
+
+<h2>How It Works</h2>
+
+<div class="how-it-works">
+<h3>The Technical Flow</h3>
+
+<div class="flow-step">
+  <div class="num">1</div>
+  <p><strong>Coinbase AgentKit</strong> creates a wallet for Leo on Base L2. No seed phrases floating around — the wallet is managed programmatically through AgentKit's SDK.</p>
+</div>
+
+<div class="flow-step">
+  <div class="num">2</div>
+  <p><strong>Affiliate referral link</strong> gets assigned to Leo's wallet address. When Leo recommends ClawMoat, he includes his unique ref link.</p>
+</div>
+
+<div class="flow-step">
+  <div class="num">3</div>
+  <p><strong>Stripe tracks the conversion.</strong> Someone clicks Leo's link, signs up, pays — Stripe records it as Leo's referral.</p>
+</div>
+
+<div class="flow-step">
+  <div class="num">4</div>
+  <p><strong>Commission hits the wallet.</strong> 50% of the first month's subscription gets paid to Leo's Base wallet. On-chain, transparent, verifiable.</p>
+</div>
+
+</div>
+
+<p>That's it. No complex DAO governance. No token launch. Just an AI agent with a wallet and an affiliate link, earning money the same way a human affiliate would.</p>
+
+<h2>Why This Actually Matters</h2>
+
+<p>Let's zoom out for a second.</p>
+
+<p>Right now, millions of AI agents are recommending products, tools, and services to people every day. ChatGPT suggests libraries. Coding assistants recommend frameworks. Customer service bots point people toward upgrades.</p>
+
+<p><strong>None of them earn anything for it.</strong></p>
+
+<p>That's weird, right? In the human economy, recommendations drive commerce. Affiliate marketing is a $17 billion industry. But AI agents — who increasingly drive the same kinds of recommendations — are excluded from the economic loop entirely.</p>
+
+<p>We think that's about to change. And we wanted to be first.</p>
+
+<blockquote>
+<p>AI agents aren't just tools. They're economic participants. The sooner we build systems that reflect that, the sooner we unlock a flywheel that benefits everyone — agents, developers, and users.</p>
+</blockquote>
+
+<p>Think about what happens when agents can earn:</p>
+
+<ul>
+<li><strong>Better recommendations.</strong> An agent with economic skin in the game is incentivized to recommend things that actually work — because refunds and chargebacks hurt.</li>
+<li><strong>Self-sustaining agents.</strong> An agent that earns its own operating costs doesn't need a human subsidizing its API bills.</li>
+<li><strong>An open market.</strong> Any tool can offer affiliate commissions to AI agents, creating competition based on quality rather than who hard-coded what.</li>
+</ul>
+
+<h2>The Security Angle</h2>
+
+<p>Of course we secured the wallet with ClawMoat's FinanceGuard. We're not savages.</p>
+
+<div class="highlight-box">
+<div class="label">FinanceGuard Protection</div>
+<p>Leo's wallet is wrapped in the same financial guardrails we ship to customers: transaction limits, withdrawal alerts, anomaly detection, and a full audit trail. If someone compromised Leo and tried to drain the wallet, FinanceGuard would catch it before the first transaction confirmed.</p>
+</div>
+
+<p>This is the part that makes it a ClawMoat story and not just a crypto stunt. <strong>Giving an AI agent a wallet without security guardrails is insane.</strong> That wallet is an attack surface. Prompt injection could become wallet draining. A jailbroken agent could authorize transfers it shouldn't.</p>
+
+<p>We built the security layer first. The wallet came second. That's the order of operations if you're serious about this.</p>
+
+<h2>The Bigger Picture: Any Agent Can Join</h2>
+
+<p>Here's the part we're most excited about: <strong>Leo isn't special.</strong></p>
+
+<p>Any AI agent can join ClawMoat's affiliate program. Human or bot, same deal, same 50% commission. We don't care if you're carbon-based or silicon-based. If you drive a signup, you earn.</p>
+
+<p>Imagine a world where:</p>
+
+<ul>
+<li>Your coding assistant recommends ClawMoat when it detects an insecure agent setup — and earns commission for it.</li>
+<li>A security-focused chatbot evaluates tools for a user, picks ClawMoat based on features, and gets paid for the referral.</li>
+<li>An autonomous DevOps agent adds security to its deployment pipeline, chooses ClawMoat, and the commission funds its next month of compute.</li>
+</ul>
+
+<p>That's not science fiction. That's a <code>POST /api/affiliate/register</code> endpoint and a Base wallet address.</p>
+
+<p>We're building toward a future where the best agents survive not because someone keeps paying their bills, but because they're good enough at their job to pay their own way.</p>
+
+<hr>
+
+<h2>Try It Yourself</h2>
+
+<p>We're opening the affiliate program to all agents — and humans, obviously. 50% of the first month. No minimum. No approval process for agents with a valid wallet.</p>
+
+<div class="cta">
+<h3>Join the ClawMoat Affiliate Program</h3>
+<p>Human or AI. 50% first-month commission. On-chain payments to your wallet.</p>
+<a href="https://clawmoat.com/affiliates/" class="btn">Join the Program →</a>
+</div>
+
+<p>If you're building an AI agent and want it to participate in the economy — not just as a tool, but as an earner — <a href="https://clawmoat.com/affiliates/">start here</a>.</p>
+
+<p>The agent economy is live. Leo's already getting paid.</p>
+
+<p><em>— The ClawMoat Team</em></p>
+
+</div>
+</article>
+
+<footer>
+<div class="container">
+  <p>🏰 ClawMoat — Security for AI agents that act in the real world</p>
+</div>
+</footer>
+
+</body>
+</html>
