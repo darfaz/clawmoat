@@ -446,13 +446,13 @@ function cmdTest() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
-function cmdWatch(args) {
+async function cmdWatch(args) {
   const isDaemon = args.includes('--daemon');
   const webhookArg = args.find(a => a.startsWith('--alert-webhook='));
   const webhookUrl = webhookArg ? webhookArg.split('=').slice(1).join('=') : null;
   const filteredArgs = args.filter(a => a !== '--daemon' && !a.startsWith('--alert-webhook='));
-  const agentDir = filteredArgs[0] || path.join(process.env.HOME, '.openclaw/agents/main');
-  const { watchSessions } = require('../src/middleware/openclaw');
+  const watchDir = filteredArgs[0] || path.join(process.env.HOME, '.openclaw');
+  const { LiveMonitor } = require('../src/watch/live-monitor');
 
   // Daemon mode: fork to background
   if (isDaemon) {
@@ -475,33 +475,45 @@ function cmdWatch(args) {
   if (webhookUrl) alertChannels.push('webhook');
   const alertMgr = new AlertManager({ channels: alertChannels, webhookUrl });
 
-  console.log(`${BOLD}🏰 ClawMoat Live Monitor${RESET}`);
-  console.log(`${DIM}Watching: ${agentDir}${RESET}`);
-  if (webhookUrl) console.log(`${DIM}Webhook: ${webhookUrl}${RESET}`);
-  console.log(`${DIM}Press Ctrl+C to stop${RESET}\n`);
+  // Create and start live monitor
+  const monitor = new LiveMonitor({
+    watchDir,
+    refreshRate: 1000,
+    showNetworkGraph: true,
+    showThreatMap: true,
+    maxHistoryItems: 100,
+    animateCharts: true
+  });
 
-  const monitor = watchSessions({ agentDir });
-  if (!monitor) process.exit(1);
+  // Connect alert manager to monitor events
+  monitor.on('threat-detected', (threat) => {
+    alertMgr.send({
+      type: 'threat',
+      severity: threat.severity,
+      message: `Threat detected: ${threat.type}/${threat.subtype}`
+    });
+  });
 
   // Also start credential monitor
-  const credMon = new CredentialMonitor({ quiet: false, onAlert: (a) => alertMgr.send(a) });
+  const credMon = new CredentialMonitor({ quiet: true, onAlert: (a) => alertMgr.send(a) });
   credMon.start();
 
-  // Print summary every 60s
-  setInterval(() => {
-    const summary = monitor.getSummary();
-    if (summary.scanned > 0) {
-      console.log(`${DIM}[ClawMoat] Stats: ${summary.scanned} scanned, ${summary.blocked} blocked, ${summary.warnings} warnings${RESET}`);
-    }
-  }, 60000);
-
+  // Handle shutdown gracefully
   process.on('SIGINT', () => {
     monitor.stop();
     credMon.stop();
-    const summary = monitor.getSummary();
-    console.log(`\n${BOLD}Session Summary:${RESET} ${summary.scanned} scanned, ${summary.blocked} blocked, ${summary.warnings} warnings`);
+    console.log(`\n${GREEN}ClawMoat Live Monitor stopped.${RESET}`);
     process.exit(0);
   });
+
+  process.on('SIGTERM', () => {
+    monitor.stop();
+    credMon.stop();
+    process.exit(0);
+  });
+
+  // Start the live monitor
+  await monitor.start();
 }
 
 function cmdSkillAudit(args) {
