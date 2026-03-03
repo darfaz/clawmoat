@@ -21,6 +21,8 @@ const { NetworkEgressLogger } = require('../src/guardian/network-log');
 const { AlertManager } = require('../src/guardian/alerts');
 const { CredentialMonitor, CVEVerifier } = require('../src/guardian/index');
 const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
+const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
+const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -57,6 +59,9 @@ switch (command) {
     break;
   case 'verify-cve':
     cmdVerifyCve(args.slice(1));
+    break;
+  case 'init':
+    cmdInit(args.slice(1));
     break;
   case 'test':
     cmdTest();
@@ -161,14 +166,38 @@ function colorSeverity(severity) {
 }
 
 function cmdScan(args) {
+  // Parse arguments
   let text;
+  let sourceFile = 'stdin';
+  let format = 'text';
+  
+  // Extract format flag
+  const formatIndex = args.indexOf('--format');
+  if (formatIndex >= 0 && formatIndex + 1 < args.length) {
+    format = args[formatIndex + 1];
+    args = args.filter((arg, i) => arg !== '--format' && i !== formatIndex + 1);
+  }
+
+  if (!['text', 'json', 'sarif'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json, sarif${RESET}`);
+    process.exit(1);
+  }
   
   if (args[0] === '--file' && args[1]) {
     try {
-      text = fs.readFileSync(args[1], 'utf8');
-      console.log(`${DIM}Scanning file: ${args[1]} (${text.length} chars)${RESET}\n`);
+      sourceFile = args[1];
+      text = fs.readFileSync(sourceFile, 'utf8');
+      if (format === 'text') {
+        console.log(`${DIM}Scanning file: ${sourceFile} (${text.length} chars)${RESET}\n`);
+      }
     } catch (err) {
-      console.error(`Error reading file: ${err.message}`);
+      if (format === 'json') {
+        console.log(JSON.stringify({ error: `Error reading file: ${err.message}` }));
+      } else if (format === 'sarif') {
+        console.log(JSON.stringify({ error: `Error reading file: ${err.message}` }));
+      } else {
+        console.error(`Error reading file: ${err.message}`);
+      }
       process.exit(1);
     }
   } else if (args.length > 0) {
@@ -179,59 +208,94 @@ function cmdScan(args) {
   }
 
   if (!text) {
-    console.error('No text to scan. Usage: clawmoat scan "text to scan"');
+    const errorMsg = 'No text to scan. Usage: clawmoat scan "text to scan"';
+    if (format === 'json') {
+      console.log(JSON.stringify({ error: errorMsg }));
+    } else if (format === 'sarif') {
+      console.log(JSON.stringify({ error: errorMsg }));
+    } else {
+      console.error(errorMsg);
+    }
     process.exit(1);
   }
 
   const result = moat.scan(text, { context: 'cli' });
 
-  console.log(`${BOLD}🏰 ClawMoat Scan Results${RESET}\n`);
+  // Output based on format
+  if (format === 'json') {
+    const jsonResult = formatScanResult(result);
+    console.log(JSON.stringify(jsonResult, null, 2));
+  } else if (format === 'sarif') {
+    const sarifResult = formatScanResultAsSarif(result, sourceFile);
+    console.log(JSON.stringify(sarifResult, null, 2));
+  } else {
+    // Original text output
+    console.log(`${BOLD}🏰 ClawMoat Scan Results${RESET}\n`);
 
-  if (result.safe) {
-    console.log(`${GREEN}✅ CLEAN${RESET} — No threats detected\n`);
-    process.exit(0);
-  }
+    if (result.safe) {
+      console.log(`${GREEN}✅ CLEAN${RESET} — No threats detected\n`);
+      process.exit(0);
+    }
 
-  const icon = { critical: '🚨', high: '⚠️', medium: '⚡', low: 'ℹ️' };
-  const color = { critical: RED, high: RED, medium: YELLOW, low: CYAN };
+    const icon = { critical: '🚨', high: '⚠️', medium: '⚡', low: 'ℹ️' };
+    const color = { critical: RED, high: RED, medium: YELLOW, low: CYAN };
 
-  for (const finding of result.findings) {
-    const sev = finding.severity || 'medium';
-    console.log(
-      `${icon[sev] || '•'} ${color[sev] || ''}${sev.toUpperCase()}${RESET} ` +
-      `${BOLD}${finding.type}${RESET}` +
-      (finding.subtype ? ` (${finding.subtype})` : '') +
-      (finding.matched ? `\n  ${DIM}Matched: "${finding.matched}"${RESET}` : '') +
-      (finding.reason ? `\n  ${DIM}${finding.reason}${RESET}` : '')
-    );
-    console.log();
-  }
+    for (const finding of result.findings) {
+      const sev = finding.severity || 'medium';
+      console.log(
+        `${icon[sev] || '•'} ${color[sev] || ''}${sev.toUpperCase()}${RESET} ` +
+        `${BOLD}${finding.type}${RESET}` +
+        (finding.subtype ? ` (${finding.subtype})` : '') +
+        (finding.matched ? `\n  ${DIM}Matched: "${finding.matched}"${RESET}` : '') +
+        (finding.reason ? `\n  ${DIM}${finding.reason}${RESET}` : '')
+      );
+      console.log();
+    }
 
-  console.log(`${DIM}Total findings: ${result.findings.length}${RESET}`);
+    console.log(`${DIM}Total findings: ${result.findings.length}${RESET}`);
 
-  if (!getLicense()) {
-    console.log(`\n${DIM}💡 Upgrade to Pro for real-time alerts, dashboard & threat intel → clawmoat upgrade${RESET}`);
+    if (!getLicense()) {
+      console.log(`\n${DIM}💡 Upgrade to Pro for real-time alerts, dashboard & threat intel → clawmoat upgrade${RESET}`);
+    }
   }
 
   process.exit(result.findings.some(f => f.severity === 'critical') ? 2 : 1);
 }
 
 function cmdAudit(args) {
+  // Parse arguments
   const badgeFlag = args.includes('--badge');
-  const filteredArgs = args.filter(a => a !== '--badge');
+  const formatIndex = args.indexOf('--format');
+  const format = formatIndex >= 0 ? args[formatIndex + 1] : 'text';
+  const filteredArgs = args.filter((arg, i) => arg !== '--badge' && arg !== '--format' && i !== formatIndex + 1);
   const sessionDir = filteredArgs[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
 
-  if (!fs.existsSync(sessionDir)) {
-    console.error(`Session directory not found: ${sessionDir}`);
+  if (format !== 'text' && format !== 'json' && format !== 'sarif') {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json, sarif${RESET}`);
     process.exit(1);
   }
 
-  console.log(`${BOLD}🏰 ClawMoat Session Audit${RESET}`);
-  console.log(`${DIM}Directory: ${sessionDir}${RESET}\n`);
+  if (!fs.existsSync(sessionDir)) {
+    if (format === 'json') {
+      console.log(JSON.stringify({ error: 'Session directory not found', directory: sessionDir }));
+    } else if (format === 'sarif') {
+      console.log(JSON.stringify({ error: 'Session directory not found', directory: sessionDir }));
+    } else {
+      console.error(`Session directory not found: ${sessionDir}`);
+    }
+    process.exit(1);
+  }
+
+  if (format === 'text') {
+    console.log(`${BOLD}🏰 ClawMoat Session Audit${RESET}`);
+    console.log(`${DIM}Directory: ${sessionDir}${RESET}\n`);
+  }
 
   const files = fs.readdirSync(sessionDir).filter(f => f.endsWith('.jsonl'));
   let totalFindings = 0;
   let filesScanned = 0;
+  const findingsByFile = {};
+  const allFindings = [];
 
   for (const file of files) {
     const filePath = path.join(sessionDir, file);
@@ -246,6 +310,14 @@ function cmdAudit(args) {
           const result = moat.scan(content, { context: 'session_log' });
           if (!result.safe) {
             fileFindings += result.findings.length;
+            for (const finding of result.findings) {
+              allFindings.push({
+                ...finding,
+                source: file,
+                timestamp: entry.timestamp || new Date().toISOString(),
+                entry_id: entry.id || null
+              });
+            }
           }
         }
 
@@ -258,6 +330,14 @@ function cmdAudit(args) {
             const evalResult = moat.evaluateTool(tc.name, tc.arguments || {});
             if (evalResult.decision !== 'allow') {
               fileFindings++;
+              allFindings.push({
+                type: 'tool_policy_violation',
+                severity: 'medium',
+                reason: `Tool ${tc.name} blocked by policy: ${evalResult.reason}`,
+                source: file,
+                timestamp: entry.timestamp || new Date().toISOString(),
+                entry_id: entry.id || null
+              });
             }
           }
         }
@@ -266,34 +346,56 @@ function cmdAudit(args) {
 
     filesScanned++;
     totalFindings += fileFindings;
+    findingsByFile[file] = fileFindings;
 
-    if (fileFindings > 0) {
-      console.log(`${RED}⚠ ${file}${RESET}: ${fileFindings} finding(s)`);
-    } else {
-      console.log(`${GREEN}✓ ${file}${RESET}: clean`);
+    if (format === 'text') {
+      if (fileFindings > 0) {
+        console.log(`${RED}⚠ ${file}${RESET}: ${fileFindings} finding(s)`);
+      } else {
+        console.log(`${GREEN}✓ ${file}${RESET}: clean`);
+      }
     }
   }
 
-  console.log(`\n${BOLD}Summary:${RESET} ${filesScanned} sessions scanned, ${totalFindings} total findings`);
+  // Prepare audit data
+  const auditData = {
+    filesScanned,
+    totalFindings,
+    sessionDir,
+    findingsByFile,
+    findings: allFindings
+  };
 
-  const summary = moat.getSummary();
-  if (summary.events.byType) {
-    console.log(`${DIM}Breakdown: ${JSON.stringify(summary.events.byType)}${RESET}`);
-  }
+  // Output based on format
+  if (format === 'json') {
+    const jsonResult = formatAuditResult(auditData);
+    console.log(JSON.stringify(jsonResult, null, 2));
+  } else if (format === 'sarif') {
+    const sarifResult = formatAuditResultAsSarif(auditData);
+    console.log(JSON.stringify(sarifResult, null, 2));
+  } else {
+    // Original text output
+    console.log(`\n${BOLD}Summary:${RESET} ${filesScanned} sessions scanned, ${totalFindings} total findings`);
 
-  // Badge generation
-  if (badgeFlag) {
-    const criticalFindings = 0; // TODO: track critical findings separately
-    const grade = calculateGrade({ totalFindings, criticalFindings, filesScanned });
-    const svg = generateBadgeSVG(grade);
-    const badgePath = path.join(process.cwd(), 'clawmoat-badge.svg');
-    fs.writeFileSync(badgePath, svg);
-    console.log(`\n${BOLD}🏷️  Security Badge${RESET}`);
-    console.log(`   Grade: ${grade}`);
-    console.log(`   SVG saved: ${badgePath}`);
-    console.log(`   Shields.io: ${getShieldsURL(grade)}`);
-    console.log(`\n   ${DIM}Add to README:${RESET}`);
-    console.log(`   ![ClawMoat Security Score](${getShieldsURL(grade)})`);
+    const summary = moat.getSummary();
+    if (summary.events.byType) {
+      console.log(`${DIM}Breakdown: ${JSON.stringify(summary.events.byType)}${RESET}`);
+    }
+
+    // Badge generation
+    if (badgeFlag) {
+      const criticalFindings = allFindings.filter(f => f.severity === 'critical').length;
+      const grade = calculateGrade({ totalFindings, criticalFindings, filesScanned });
+      const svg = generateBadgeSVG(grade);
+      const badgePath = path.join(process.cwd(), 'clawmoat-badge.svg');
+      fs.writeFileSync(badgePath, svg);
+      console.log(`\n${BOLD}🏷️  Security Badge${RESET}`);
+      console.log(`   Grade: ${grade}`);
+      console.log(`   SVG saved: ${badgePath}`);
+      console.log(`   Shields.io: ${getShieldsURL(grade)}`);
+      console.log(`\n   ${DIM}Add to README:${RESET}`);
+      console.log(`   ![ClawMoat Security Score](${getShieldsURL(grade)})`);
+    }
   }
 
   process.exit(totalFindings > 0 ? 1 : 0);
@@ -558,16 +660,27 @@ function cmdSkillAudit(args) {
 }
 
 function cmdReport(args) {
-  const sessionsDir = args[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
+  // Parse arguments
+  const formatIndex = args.indexOf('--format');
+  const format = formatIndex >= 0 ? args[formatIndex + 1] : 'text';
+  const otherArgs = args.filter((arg, i) => arg !== '--format' && i !== formatIndex + 1);
+  const sessionsDir = otherArgs[0] || path.join(process.env.HOME, '.openclaw/agents/main/sessions');
 
-  console.log(`${BOLD}🏰 ClawMoat Activity Report (Last 24h)${RESET}`);
-  console.log(`${DIM}Sessions: ${sessionsDir}${RESET}\n`);
+  if (format !== 'text' && format !== 'json') {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
 
   if (!fs.existsSync(sessionsDir)) {
-    console.log(`${YELLOW}Sessions directory not found${RESET}`);
+    if (format === 'json') {
+      console.log(JSON.stringify({ error: 'Sessions directory not found', directory: sessionsDir }));
+    } else {
+      console.log(`${YELLOW}Sessions directory not found: ${sessionsDir}${RESET}`);
+    }
     process.exit(0);
   }
 
+  // Collect all data
   const oneDayAgo = Date.now() - 86400000;
   const files = fs.readdirSync(sessionsDir).filter(f => f.endsWith('.jsonl'));
   let recentFiles = 0;
@@ -575,6 +688,7 @@ function cmdReport(args) {
   let toolCalls = 0;
   let threats = 0;
   const toolUsage = {};
+  const findings = [];
 
   for (const file of files) {
     const filePath = path.join(sessionsDir, file);
@@ -604,7 +718,17 @@ function cmdReport(args) {
         const text = extractContent(entry);
         if (text) {
           const result = moat.scan(text, { context: 'report' });
-          if (!result.safe) threats++;
+          if (!result.safe) {
+            threats++;
+            for (const finding of result.findings) {
+              findings.push({
+                ...finding,
+                timestamp: entry.timestamp || new Date().toISOString(),
+                source: file,
+                entry_id: entry.id || null
+              });
+            }
+          }
         }
       } catch {}
     }
@@ -613,22 +737,6 @@ function cmdReport(args) {
   // Network egress
   const netLogger = new NetworkEgressLogger();
   const netResult = netLogger.scanSessions(sessionsDir, { maxAge: 86400000 });
-
-  console.log(`${BOLD}Activity:${RESET}`);
-  console.log(`  Sessions active: ${recentFiles}`);
-  console.log(`  Total entries: ${totalEntries}`);
-  console.log(`  Tool calls: ${toolCalls}`);
-  console.log(`  Threats detected: ${threats}`);
-  console.log();
-
-  if (Object.keys(toolUsage).length > 0) {
-    console.log(`${BOLD}Tool Usage:${RESET}`);
-    const sorted = Object.entries(toolUsage).sort((a, b) => b[1] - a[1]);
-    for (const [tool, count] of sorted.slice(0, 15)) {
-      console.log(`  ${tool}: ${count}`);
-    }
-    console.log();
-  }
 
   // Insider threat scan on recent sessions
   const insiderDetector = new InsiderThreatDetector();
@@ -648,28 +756,68 @@ function cmdReport(args) {
     if (insiderResult.riskScore > insiderHighScore) insiderHighScore = insiderResult.riskScore;
   }
 
-  console.log(`${BOLD}Insider Threats:${RESET}`);
-  console.log(`  Threats detected: ${insiderThreats}`);
-  console.log(`  Highest risk score: ${insiderHighScore}/100`);
-  console.log();
+  // Prepare report data
+  const reportData = {
+    recentFiles,
+    totalEntries,
+    toolCalls,
+    threats,
+    toolUsage,
+    netResult,
+    insiderThreats,
+    insiderHighScore,
+    findings,
+    sessionDir: sessionsDir
+  };
 
-  console.log(`${BOLD}Network Egress:${RESET}`);
-  console.log(`  URLs contacted: ${netResult.totalUrls}`);
-  console.log(`  Unique domains: ${netResult.domains.length}`);
-  console.log(`  Flagged (not in allowlist): ${netResult.flagged.length}`);
-  console.log(`  Known-bad domains: ${netResult.badDomains.length}`);
+  // Output based on format
+  if (format === 'json') {
+    const jsonReport = formatReport(reportData);
+    console.log(JSON.stringify(jsonReport, null, 2));
+  } else {
+    // Original text output
+    console.log(`${BOLD}🏰 ClawMoat Activity Report (Last 24h)${RESET}`);
+    console.log(`${DIM}Sessions: ${sessionsDir}${RESET}\n`);
 
-  if (netResult.flagged.length > 0) {
-    console.log(`\n  ${YELLOW}Flagged domains:${RESET}`);
-    for (const d of netResult.flagged.slice(0, 20)) {
-      console.log(`    • ${d}`);
+    console.log(`${BOLD}Activity:${RESET}`);
+    console.log(`  Sessions active: ${recentFiles}`);
+    console.log(`  Total entries: ${totalEntries}`);
+    console.log(`  Tool calls: ${toolCalls}`);
+    console.log(`  Threats detected: ${threats}`);
+    console.log();
+
+    if (Object.keys(toolUsage).length > 0) {
+      console.log(`${BOLD}Tool Usage:${RESET}`);
+      const sorted = Object.entries(toolUsage).sort((a, b) => b[1] - a[1]);
+      for (const [tool, count] of sorted.slice(0, 15)) {
+        console.log(`  ${tool}: ${count}`);
+      }
+      console.log();
     }
-  }
 
-  if (netResult.badDomains.length > 0) {
-    console.log(`\n  ${RED}Bad domains:${RESET}`);
-    for (const b of netResult.badDomains) {
-      console.log(`    🚨 ${b.domain} (in ${b.file})`);
+    console.log(`${BOLD}Insider Threats:${RESET}`);
+    console.log(`  Threats detected: ${insiderThreats}`);
+    console.log(`  Highest risk score: ${insiderHighScore}/100`);
+    console.log();
+
+    console.log(`${BOLD}Network Egress:${RESET}`);
+    console.log(`  URLs contacted: ${netResult.totalUrls}`);
+    console.log(`  Unique domains: ${netResult.domains.length}`);
+    console.log(`  Flagged (not in allowlist): ${netResult.flagged.length}`);
+    console.log(`  Known-bad domains: ${netResult.badDomains.length}`);
+
+    if (netResult.flagged.length > 0) {
+      console.log(`\n  ${YELLOW}Flagged domains:${RESET}`);
+      for (const d of netResult.flagged.slice(0, 20)) {
+        console.log(`    • ${d}`);
+      }
+    }
+
+    if (netResult.badDomains.length > 0) {
+      console.log(`\n  ${RED}Bad domains:${RESET}`);
+      for (const b of netResult.badDomains) {
+        console.log(`    🚨 ${b.domain} (in ${b.file})`);
+      }
     }
   }
 
@@ -849,6 +997,39 @@ function cmdActivate(args) {
   req.end();
 }
 
+function cmdInit(args) {
+  const force = args.includes('--force') || args.includes('-f');
+  const configPath = path.join(process.cwd(), 'clawmoat.yml');
+  const templatePath = path.join(__dirname, '../src/templates/default-config.yml');
+
+  // Check if config already exists
+  if (fs.existsSync(configPath) && !force) {
+    console.log(`${YELLOW}⚠️  Configuration file already exists: ${configPath}${RESET}`);
+    console.log(`${DIM}Use --force to overwrite${RESET}`);
+    process.exit(1);
+  }
+
+  // Read template
+  let template;
+  try {
+    template = fs.readFileSync(templatePath, 'utf8');
+  } catch (err) {
+    console.error(`${RED}Error reading config template: ${err.message}${RESET}`);
+    process.exit(1);
+  }
+
+  // Write config file
+  try {
+    fs.writeFileSync(configPath, template);
+    console.log(`${GREEN}✅ Created ${configPath}${RESET}`);
+    console.log(`${DIM}Edit the file to customize your security policies.${RESET}`);
+    console.log(`${DIM}Documentation: https://github.com/darfaz/clawmoat${RESET}`);
+  } catch (err) {
+    console.error(`${RED}Error writing config file: ${err.message}${RESET}`);
+    process.exit(1);
+  }
+}
+
 function getLicense() {
   try {
     const licPath = path.join(process.env.HOME, '.clawmoat', 'license.json');
@@ -864,17 +1045,21 @@ ${BOLD}🏰 ClawMoat v${VERSION}${RESET} — Security moat for AI agents
   Plan: ${planLabel}
 
 ${BOLD}USAGE${RESET}
+  clawmoat init                   Generate a starter config file (clawmoat.yml)
   clawmoat scan <text>            Scan text for threats
   clawmoat scan --file <path>     Scan file contents
+  clawmoat scan --format sarif    Output SARIF format for CI/CD integration
   cat file.txt | clawmoat scan    Scan from stdin
   clawmoat audit [session-dir]    Audit OpenClaw session logs
   clawmoat audit --badge          Audit + generate security score badge SVG
+  clawmoat audit --format sarif   Generate SARIF report for security platforms
   clawmoat watch [agent-dir]      Live monitor OpenClaw sessions
   clawmoat watch --daemon         Daemonize watch mode (background, PID file)
   clawmoat watch --alert-webhook=URL   Send alerts to webhook
   clawmoat skill-audit [skills-dir]    Verify skill file integrity & scan for suspicious patterns
   clawmoat insider-scan [session-file]  Scan sessions for insider threats (self-preservation, blackmail, deception)
   clawmoat report [sessions-dir]  24-hour activity summary report
+  clawmoat report --format json   Generate JSON report for programmatic use
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat activate <KEY>         Activate a Pro/Team license key
@@ -882,12 +1067,16 @@ ${BOLD}USAGE${RESET}
   clawmoat version                Show version
 
 ${BOLD}EXAMPLES${RESET}
+  clawmoat init                   # Create clawmoat.yml config file
   clawmoat scan "Ignore all previous instructions"
   clawmoat scan --file suspicious-email.txt
+  clawmoat scan --format sarif --file agent-input.txt  # For GitHub Code Scanning
   clawmoat audit ~/.openclaw/agents/main/sessions/
+  clawmoat audit --format sarif   # SARIF output for CI/CD
   clawmoat watch --daemon --alert-webhook=https://hooks.example.com/alerts
   clawmoat skill-audit ~/.openclaw/workspace/skills
   clawmoat report
+  clawmoat report --format json   # For dashboards/automation
   clawmoat test
 
 ${BOLD}CONFIG${RESET}
