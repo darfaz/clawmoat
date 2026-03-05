@@ -22,11 +22,13 @@ class AlertManager {
    * @param {string} [opts.webhookUrl] - URL for webhook channel
    * @param {number} [opts.rateLimitMs] - Min ms between duplicate alerts (default: 300000 = 5 min)
    * @param {boolean} [opts.quiet] - Suppress console output
+   * @param {string} [opts.webhookTemplate] - Custom template for webhook payloads (mustache-style)
    */
   constructor(opts = {}) {
     this.channels = opts.channels || ['console'];
     this.logFile = opts.logFile || 'audit.log';
     this.webhookUrl = opts.webhookUrl || null;
+    this.webhookTemplate = opts.webhookTemplate || null;
     this.rateLimitMs = opts.rateLimitMs ?? 300000;
     this.quiet = opts.quiet || false;
     this._recentAlerts = new Map(); // key -> timestamp
@@ -110,18 +112,47 @@ class AlertManager {
     try {
       const url = new URL(this.webhookUrl);
       const transport = url.protocol === 'https:' ? https : http;
-      const body = JSON.stringify(entry);
+      
+      let payload;
+      if (this.webhookTemplate) {
+        payload = this._renderTemplate(this.webhookTemplate, entry);
+      } else {
+        // Default payload format
+        payload = JSON.stringify(entry);
+      }
+      
       const req = transport.request({
         hostname: url.hostname,
         port: url.port,
         path: url.pathname + url.search,
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
       });
       req.on('error', () => {});
-      req.write(body);
+      req.write(payload);
       req.end();
     } catch {}
+  }
+
+  /**
+   * Render a mustache-style template with variable substitution.
+   * @param {string} template - Template string with {{variable}} placeholders
+   * @param {Object} entry - Alert entry object
+   * @returns {string} Rendered template
+   */
+  _renderTemplate(template, entry) {
+    const variables = {
+      timestamp: entry.timestamp,
+      severity: entry.severity,
+      type: entry.type,
+      message: entry.message,
+      details: JSON.stringify(entry.details || {}),
+      source: 'ClawMoat'
+    };
+
+    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+      return variables.hasOwnProperty(key) ? variables[key] : match;
+    });
   }
 
   /** Get total alerts sent. */

@@ -338,6 +338,81 @@ describe('AlertManager', () => {
     const r2 = mgr.send({ severity: 'info', type: 'x', message: 'msg' });
     assert.strictEqual(r2.delivered, true);
   });
+
+  it('renders webhook templates with variable substitution', () => {
+    const template = `{
+      "text": "🚨 ClawMoat Alert: {{severity}} - {{message}}",
+      "details": "{{details}}",
+      "timestamp": "{{timestamp}}",
+      "source": "{{source}}"
+    }`;
+    
+    const mgr = new AlertManager({ 
+      channels: ['webhook'], 
+      webhookUrl: 'https://example.com/webhook',
+      webhookTemplate: template,
+      quiet: true 
+    });
+
+    // Test internal template rendering method
+    const entry = {
+      timestamp: '2026-03-05T10:00:00.000Z',
+      severity: 'critical',
+      type: 'prompt_injection',
+      message: 'Detected malicious prompt',
+      details: { confidence: 0.95 }
+    };
+
+    const rendered = mgr._renderTemplate(template, entry);
+    
+    assert.ok(rendered.includes('"text": "🚨 ClawMoat Alert: critical - Detected malicious prompt"'));
+    assert.ok(rendered.includes('"timestamp": "2026-03-05T10:00:00.000Z"'));
+    assert.ok(rendered.includes('"source": "ClawMoat"'));
+    assert.ok(rendered.includes('{"confidence":0.95}'));
+  });
+
+  it('handles missing template variables gracefully', () => {
+    const template = `{"msg": "{{message}}", "unknown": "{{unknown_var}}"}`;
+    
+    const mgr = new AlertManager({ 
+      channels: ['webhook'], 
+      webhookUrl: 'https://example.com/webhook',
+      webhookTemplate: template,
+      quiet: true 
+    });
+
+    const entry = {
+      timestamp: '2026-03-05T10:00:00.000Z',
+      severity: 'warning',
+      type: 'test',
+      message: 'Test alert',
+      details: null
+    };
+
+    const rendered = mgr._renderTemplate(template, entry);
+    
+    // Known variables should be replaced
+    assert.ok(rendered.includes('"msg": "Test alert"'));
+    // Unknown variables should remain unchanged
+    assert.ok(rendered.includes('"unknown": "{{unknown_var}}"'));
+  });
+
+  it('uses default payload when no template is provided', () => {
+    // This test verifies backward compatibility
+    const mgr = new AlertManager({ 
+      channels: ['webhook'], 
+      webhookUrl: 'https://example.com/webhook',
+      quiet: true 
+    });
+
+    // Should not throw and should work as before
+    const result = mgr.send({ 
+      severity: 'info', 
+      type: 'test', 
+      message: 'test without template' 
+    });
+    assert.strictEqual(result.delivered, true);
+  });
 });
 
 // ─── SkillIntegrityChecker ────────────────────────────────────────
