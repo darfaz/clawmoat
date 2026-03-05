@@ -369,3 +369,10 @@ const { scanMultimodalInput, scanImageDataUrl, scanFileMetadata } = require('./m
 module.exports.scanMultimodalInput = scanMultimodalInput;
 module.exports.scanImageDataUrl = scanImageDataUrl;
 module.exports.scanFileMetadata = scanFileMetadata;
+
+// AgentMesh Governance Integration
+const { AgentMeshBridge, OWASP_AGENTIC_MAPPING, DEFAULT_POLICIES, GOVERNANCE_ACTIONS } = require('./integrations/agentmesh');
+module.exports.AgentMeshBridge = AgentMeshBridge;
+module.exports.OWASP_AGENTIC_MAPPING = OWASP_AGENTIC_MAPPING;
+module.exports.DEFAULT_POLICIES = DEFAULT_POLICIES;
+module.exports.GOVERNANCE_ACTIONS = GOVERNANCE_ACTIONS;
