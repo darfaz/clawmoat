@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "clawmoat-langchain"
+version = "0.1.0"
+description = "ClawMoat security callbacks for LangChain — prompt injection, jailbreak, PII, and secret scanning"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "ClawMoat", email = "hello@clawmoat.com" }]
+keywords = ["langchain", "security", "ai-agents", "prompt-injection", "clawmoat"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+dependencies = [
+    "langchain-core>=0.1.0",
+    "httpx>=0.24.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[project.urls]
+Homepage = "https://clawmoat.com"
+Repository = "https://github.com/darfaz/clawmoat"
+Issues = "https://github.com/darfaz/clawmoat/issues"

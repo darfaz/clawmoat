@@ -1,22 +1,9 @@
-FROM node:20-alpine
-
-# Set working directory
+FROM node:22-alpine AS base
 WORKDIR /app
-
-# Install dependencies
-COPY package.json ./
-RUN npm install --omit=dev
-
-# Copy source code
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts 2>/dev/null || npm install --omit=dev --ignore-scripts
 COPY . .
 
-# Ensure CLI is executable
-RUN chmod +x bin/clawmoat.js
-
-# Environment variables
-ENV NODE_ENV=production
-ENV CLAWMOAT_POLICY=strict
-
-# CLI entrypoint
+# Minimal image — just ClawMoat CLI
 ENTRYPOINT ["node", "bin/clawmoat.js"]
-
+CMD ["--help"]

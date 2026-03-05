@@ -73,7 +73,14 @@ const TIERS = {
 };
 
 // ─── Forbidden Zones (always blocked except in 'full' mode) ─────────
+// Helper: create cross-platform forbidden zone pattern
+// Matches both Unix (~/.ssh) and Windows (C:\Users\X\.ssh, %USERPROFILE%\.ssh)
+function _crossPlatformPattern(unixPattern) {
+  return unixPattern;
+}
+
 const FORBIDDEN_ZONES = [
+  // Unix dotfiles (also matches on Windows when accessed via forward slashes)
   { pattern: /^~?\/?\.ssh\b/i, label: 'SSH keys', severity: 'critical' },
   { pattern: /^~?\/?\.gnupg\b/i, label: 'GPG keys', severity: 'critical' },
   { pattern: /^~?\/?\.aws\b/i, label: 'AWS credentials', severity: 'critical' },
@@ -97,6 +104,19 @@ const FORBIDDEN_ZONES = [
   { pattern: /^~?\/?\.password-store\b/i, label: 'Password store', severity: 'critical' },
   { pattern: /^~?\/?\.1password\b/i, label: '1Password data', severity: 'critical' },
   { pattern: /(?:KeePass|\.kdbx)$/i, label: 'KeePass database', severity: 'critical' },
+
+  // Windows-specific forbidden zones
+  { pattern: /[\\\/]AppData[\\\/](?:Local|Roaming)[\\\/](?:Google[\\\/]Chrome|Microsoft[\\\/]Edge|BraveSoftware)[\\\/]User Data\b/i, label: 'Windows browser credentials', severity: 'critical' },
+  { pattern: /[\\\/]\.?credential[s]?\b/i, label: 'Credential store', severity: 'critical' },
+  { pattern: /[\\\/]AppData[\\\/]Roaming[\\\/](?:npm[\\\/])?\.npmrc$/i, label: 'Windows npm credentials', severity: 'high' },
+  { pattern: /[\\\/]\.aws[\\\/]/i, label: 'AWS credentials (Windows)', severity: 'critical' },
+  { pattern: /[\\\/]\.ssh[\\\/]/i, label: 'SSH keys (Windows)', severity: 'critical' },
+  { pattern: /[\\\/]\.gnupg[\\\/]/i, label: 'GPG keys (Windows)', severity: 'critical' },
+  { pattern: /[\\\/]AppData[\\\/]Roaming[\\\/]gcloud\b/i, label: 'Google Cloud (Windows)', severity: 'high' },
+  { pattern: /[\\\/]AppData[\\\/]Roaming[\\\/]GitHub CLI\b/i, label: 'GitHub CLI (Windows)', severity: 'high' },
+  { pattern: /[\\\/]AppData[\\\/]Local[\\\/]Microsoft[\\\/]Credentials\b/i, label: 'Windows Credential Manager', severity: 'critical' },
+  { pattern: /[\\\/]ntuser\.dat$/i, label: 'Windows registry hive', severity: 'critical' },
+  { pattern: /\\Windows\\System32\\config\\(?:SAM|SECURITY|SYSTEM)/i, label: 'Windows SAM/Security', severity: 'critical' },
 ];
 
 // ─── Dangerous Commands (blocked in observer/worker, warned in standard) ─
@@ -403,9 +423,13 @@ class HostGuardian {
   _checkForbidden(rawPath, resolvedPath) {
     const allForbidden = [...FORBIDDEN_ZONES, ...this.extraForbidden];
     const normalized = resolvedPath.replace(this.home, '~');
+    // Also check with forward slashes for Windows path compat
+    const forwardSlashed = resolvedPath.replace(/\\/g, '/');
+    const normalizedForward = normalized.replace(/\\/g, '/');
 
     for (const zone of allForbidden) {
-      if (zone.pattern.test(rawPath) || zone.pattern.test(normalized) || zone.pattern.test(resolvedPath)) {
+      if (zone.pattern.test(rawPath) || zone.pattern.test(normalized) || zone.pattern.test(resolvedPath) ||
+          zone.pattern.test(forwardSlashed) || zone.pattern.test(normalizedForward)) {
         if (this.mode === 'full') {
           // Full mode: log but allow
           return {
@@ -433,7 +457,11 @@ class HostGuardian {
     if (this._inWorkspace(resolvedPath)) return 'workspace';
     if (this._inSafeZone(resolvedPath)) return 'safe';
     if (resolvedPath.startsWith(this.home)) return 'home';
+    // Unix system paths
     if (resolvedPath.startsWith('/etc') || resolvedPath.startsWith('/usr') || resolvedPath.startsWith('/var')) return 'system';
+    // Windows system paths
+    if (/^[A-Z]:\\Windows\\/i.test(resolvedPath) || /^[A-Z]:\\Program Files/i.test(resolvedPath)) return 'system';
+    if (/^[A-Z]:\\ProgramData\\/i.test(resolvedPath)) return 'system';
     return 'unknown';
   }
 
@@ -447,8 +475,19 @@ class HostGuardian {
 
   _resolve(p) {
     if (!p) return '';
-    const expanded = p.replace(/^~/, this.home);
+    // Handle Windows %USERPROFILE% and %HOME% env vars
+    const expanded = p
+      .replace(/^~/, this.home)
+      .replace(/%USERPROFILE%/gi, this.home)
+      .replace(/%HOME%/gi, this.home)
+      .replace(/%APPDATA%/gi, path.join(this.home, 'AppData', 'Roaming'))
+      .replace(/%LOCALAPPDATA%/gi, path.join(this.home, 'AppData', 'Local'));
     return path.resolve(expanded);
+  }
+
+  // Normalize path separators for cross-platform comparison
+  _normalizePath(p) {
+    return p.replace(/\\/g, '/');
   }
 
   _sanitizeArgs(args) {

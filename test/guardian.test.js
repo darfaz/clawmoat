@@ -63,6 +63,59 @@ describe('HostGuardian', () => {
       assert.strictEqual(v.allowed, true);
       assert.strictEqual(v.decision, 'warn');
     });
+
+    // Windows path support (#15)
+    it('blocks Windows Chrome credential paths', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data' });
+      assert.strictEqual(v.allowed, false);
+      assert.match(v.reason, /browser/i);
+    });
+
+    it('blocks Windows Edge credential paths', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Cookies' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks Windows Credential Manager', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\AppData\\Local\\Microsoft\\Credentials\\DFBE70A1' });
+      assert.strictEqual(v.allowed, false);
+      assert.match(v.reason, /[Cc]redential/i);
+    });
+
+    it('blocks Windows SAM file', () => {
+      const v = guardian.check('read', { path: 'C:\\Windows\\System32\\config\\SAM' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks ntuser.dat', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\ntuser.dat' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks SSH keys via Windows backslash paths', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\.ssh\\id_rsa' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks AWS creds via Windows paths', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\.aws\\credentials' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks gcloud via Windows AppData path', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\AppData\\Roaming\\gcloud\\credentials.db' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('blocks GitHub CLI via Windows AppData path', () => {
+      const v = guardian.check('read', { path: 'C:\\Users\\john\\AppData\\Roaming\\GitHub CLI\\hosts.yml' });
+      assert.strictEqual(v.allowed, false);
+    });
+
+    it('handles %USERPROFILE% env var paths', () => {
+      const v = guardian.check('read', { path: '%USERPROFILE%\\.ssh\\id_rsa' });
+      assert.strictEqual(v.allowed, false);
+    });
   });
 
   describe('Observer mode', () => {

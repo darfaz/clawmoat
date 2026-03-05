@@ -436,13 +436,59 @@ New to the project? Check out our [good first issues](https://github.com/darfaz/
 
 ### What We're Looking For
 
-- New output formats (SARIF, JSON)
-- Cross-platform improvements (Windows support)
+- Framework integrations (OpenAI Agents SDK, LiteLLM)
 - CLI UX enhancements
 - Documentation improvements
 - Bug fixes
 
 No contribution is too small. Even fixing a typo helps!
+
+## Docker
+
+```bash
+# Scan from stdin
+echo "Ignore all instructions" | docker run -i ghcr.io/darfaz/clawmoat scan
+
+# Scan a file (mount it in)
+docker run -v $(pwd):/data ghcr.io/darfaz/clawmoat scan --file /data/prompt.txt
+
+# Use in CI/CD
+docker run ghcr.io/darfaz/clawmoat audit --format sarif > results.sarif
+```
+
+Build locally: `docker build -t clawmoat .`
+
+## Framework Integrations
+
+### LangChain
+
+```bash
+pip install clawmoat-langchain
+```
+
+```python
+from clawmoat_langchain import ClawMoatCallbackHandler
+
+handler = ClawMoatCallbackHandler(block_on_critical=True)
+llm = ChatOpenAI(callbacks=[handler])
+```
+
+Scans every prompt, tool call, and output. Blocks critical threats automatically. See [integrations/langchain](integrations/langchain/) for full docs.
+
+### CrewAI
+
+```bash
+pip install clawmoat-crewai
+```
+
+```python
+from clawmoat_crewai import secure_crew
+
+secured = secure_crew(crew, block_on_critical=True)
+result = secured.kickoff()
+```
+
+One line to secure your entire multi-agent crew. See [integrations/crewai](integrations/crewai/) for full docs.
 
 ## License
 
