@@ -355,3 +355,11 @@ module.exports.GatewayMonitor = require('./guardian/gateway-monitor').GatewayMon
 module.exports.FinanceGuard = require('./finance').FinanceGuard;
 module.exports.McpFirewall = require('./finance/mcp-firewall').McpFirewall;
 module.exports.LiveMonitor = require('./watch/live-monitor').LiveMonitor;
+
+// Interactive Approval Workflow
+const { ApprovalWorkflow, NotificationChannel, ConsoleChannel, WebhookChannel, CallbackChannel } = require('./approval');
+module.exports.ApprovalWorkflow = ApprovalWorkflow;
+module.exports.NotificationChannel = NotificationChannel;
+module.exports.ConsoleChannel = ConsoleChannel;
+module.exports.WebhookChannel = WebhookChannel;
+module.exports.CallbackChannel = CallbackChannel;
