@@ -363,3 +363,9 @@ module.exports.NotificationChannel = NotificationChannel;
 module.exports.ConsoleChannel = ConsoleChannel;
 module.exports.WebhookChannel = WebhookChannel;
 module.exports.CallbackChannel = CallbackChannel;
+
+// Multimodal Input Scanning
+const { scanMultimodalInput, scanImageDataUrl, scanFileMetadata } = require('./multimodal');
+module.exports.scanMultimodalInput = scanMultimodalInput;
+module.exports.scanImageDataUrl = scanImageDataUrl;
+module.exports.scanFileMetadata = scanFileMetadata;
