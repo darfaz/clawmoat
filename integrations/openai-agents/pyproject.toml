@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "clawmoat-openai-agents"
+dynamic = ["version"]
+description = "ClawMoat security integration for OpenAI Agents SDK"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = ["ai", "security", "openai", "agents", "guardrails", "prompt-injection"]
+authors = [
+  { name = "ClawMoat Team", email = "security@clawmoat.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Security",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+openai-agents = [
+  "openai-agents-sdk>=1.0.0",
+]
+dev = [
+  "pytest>=6.0",
+  "pytest-asyncio",
+  "black",
+  "isort",
+  "flake8",
+]
+
+[project.urls]
+Documentation = "https://github.com/darfaz/clawmoat/tree/main/integrations/openai-agents"
+Issues = "https://github.com/darfaz/clawmoat/issues"
+Source = "https://github.com/darfaz/clawmoat/tree/main/integrations/openai-agents"
+Homepage = "https://github.com/darfaz/clawmoat"
+
+[tool.hatch.version]
+path = "clawmoat_openai_agents/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/clawmoat_openai_agents",
+  "/README.md",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["clawmoat_openai_agents"]
+
+[tool.black]
+line-length = 120
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
