@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent Coordination Security — ClawMoat</title>
+<meta name="description" content="Running AI agents across Slack, Teams, email, and CRM? ClawMoat secures multi-agent coordination with credential vaults, trust boundaries, task deduplication, and audit trails.">
+<link rel="canonical" href="https://clawmoat.com/services/multi-agent-security.html">
+<meta property="og:title" content="Multi-Agent Coordination Security — ClawMoat">
+<meta property="og:description" content="The security layer for enterprises running AI agents across multiple platforms. Credential vaults, trust boundaries, and audit trails.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#334155;--blue:#3B82F6;--emerald:#10B981;--white:#F8FAFC;--gray:#94A3B8;--red:#EF4444;--amber:#F59E0B}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.6;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(59,130,246,.15);padding:16px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--white)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--gray);font-size:.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--white);text-decoration:none}
+.nav-links .btn-sm{color:var(--navy);background:var(--emerald);padding:6px 28px;border-radius:20px;font-weight:600;font-size:.85rem}
+
+.hero{padding:160px 0 80px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.15;margin-bottom:24px;letter-spacing:-.03em}
+.hero h1 .hl{background:linear-gradient(135deg,var(--blue),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.15rem;color:var(--gray);max-width:660px;margin:0 auto 40px}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;transition:all .2s;border:none;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563EB;text-decoration:none}
+.btn-outline{border:2px solid var(--blue);color:var(--blue);background:transparent}
+.btn-outline:hover{background:rgba(59,130,246,.1);text-decoration:none}
+
+section{padding:80px 0}
+.section-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--emerald);margin-bottom:12px}
+.section-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
+.section-sub{color:var(--gray);font-size:1.05rem;max-width:620px;margin-bottom:48px}
+
+.grid{display:grid;gap:24px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+.card{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:16px;padding:32px}
+.card-icon{font-size:2rem;margin-bottom:16px}
+.card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+.card p{color:var(--gray);font-size:.95rem}
+
+.problem-stat{text-align:center;padding:32px}
+.problem-stat .num{font-size:2.5rem;font-weight:800;margin-bottom:4px}
+.problem-stat .label{font-size:.85rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em}
+
+.arch-diagram{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:16px;padding:40px;font-family:'Courier New',monospace;font-size:.85rem;color:var(--gray);white-space:pre;overflow-x:auto;line-height:1.6;margin:40px 0}
+.arch-diagram .hl-blue{color:var(--blue)}
+.arch-diagram .hl-green{color:var(--emerald)}
+.arch-diagram .hl-red{color:var(--red)}
+.arch-diagram .hl-white{color:var(--white);font-weight:700}
+
+.use-case{background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:16px;padding:32px;margin-bottom:20px}
+.use-case h3{color:var(--emerald);font-size:1.1rem;margin-bottom:8px}
+.use-case .scenario{color:var(--gray);font-size:.95rem;margin-bottom:12px}
+.use-case .solution{font-size:.95rem}
+
+.cta-section{text-align:center;padding:100px 0;position:relative}
+.cta-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(circle,rgba(16,185,129,.08) 0%,transparent 70%);pointer-events:none}
+
+.footer{border-top:1px solid var(--navy-mid);padding:40px 0;text-align:center;color:var(--gray);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/mark.svg" alt="" style="height:28px"> ClawMoat
+    </a>
+    <div class="nav-links">
+      <a href="/services/">Services</a>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a>
+      <a href="/services/one-pager.html" class="btn-sm">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="section-label">Multi-Agent Security</div>
+    <h1>Your AI Agents Talk to Everyone.<br><span class="hl">Who's Making Sure They Don't Say Too Much?</span></h1>
+    <p>Enterprises are deploying AI agents across Slack, Teams, email, CRM, and internal tools. Each agent has credentials. Each surface has different trust levels. Nobody's securing the coordination layer. Until now.</p>
+    <div class="hero-btns">
+      <a href="/services/one-pager.html" class="btn btn-primary">See the Solution →</a>
+      <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">View on GitHub</a>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div class="section-label">The Problem</div>
+    <div class="section-title">Multi-Agent Deployments Are a Security Nightmare</div>
+    <div class="section-sub">Every platform your AI agent touches is a potential credential leak, context bleed, or compliance violation.</div>
+    
+    <div class="grid grid-3">
+      <div class="card problem-stat">
+        <div class="num" style="color:var(--red)">73%</div>
+        <div class="label">of enterprises have AI agents<br>accessing multiple platforms</div>
+      </div>
+      <div class="card problem-stat">
+        <div class="num" style="color:var(--amber)">63%</div>
+        <div class="label">of employees paste sensitive data<br>into AI chatbots</div>
+      </div>
+      <div class="card problem-stat">
+        <div class="num" style="color:var(--red)">$1M+</div>
+        <div class="label">average loss from AI-related<br>security failures at large companies</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:rgba(30,41,59,.5)">
+  <div class="container">
+    <div class="section-label">What Goes Wrong</div>
+    <div class="section-title">Real Scenarios We've Seen</div>
+    
+    <div class="use-case">
+      <h3>🔑 Credential Scatter</h3>
+      <div class="scenario">AI agent on Slack needs API keys. Someone pastes them in a channel message. Now 200 employees can see your production credentials in the message history forever.</div>
+      <div class="solution"><strong>ClawMoat fix:</strong> Secure credential vault (chmod 600, file-level permissions). Agents read credentials locally. Never exposed in chat, logs, or API endpoints.</div>
+    </div>
+    
+    <div class="use-case">
+      <h3>🔀 Context Bleed</h3>
+      <div class="scenario">AI agent in a public Slack channel references a private conversation from a DM. Client financials, M&A details, or HR discussions leak into group chat.</div>
+      <div class="solution"><strong>ClawMoat fix:</strong> Trust-level boundaries. Private channels = full context. Public channels = project context only. Automatic filtering based on surface trust level.</div>
+    </div>
+    
+    <div class="use-case">
+      <h3>👯 Duplicate Actions</h3>
+      <div class="scenario">Agent on email and agent on Slack both see a customer request. Both reply. Customer gets two conflicting responses. Or worse — both execute a financial transaction.</div>
+      <div class="solution"><strong>ClawMoat fix:</strong> Task queue with claim semantics. First agent claims the task, others see it's handled. No duplicates, complete audit trail.</div>
+    </div>
+    
+    <div class="use-case">
+      <h3>👻 Ghost Actions</h3>
+      <div class="scenario">AI agent autonomously sends emails, posts on social media, or modifies data. Nobody knows what it did until something goes wrong. No audit trail.</div>
+      <div class="solution"><strong>ClawMoat fix:</strong> Action log with public/private classification. Every agent action recorded. Tamper-evident. Exportable for compliance review.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">The Solution</div>
+    <div class="section-title">ClawMoat Multi-Agent Security Architecture</div>
+    <div class="section-sub">One security layer across all your AI agent deployments. Same brain, different trust levels, complete governance.</div>
+    
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>Credential Vault</h3>
+        <p>Centralized, encrypted credential storage. Agents read keys locally — never via API, never in chat. File-level permissions (owner-only). One source of truth across all platforms.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h3>Trust Boundaries</h3>
+        <p>Define trust levels per surface: Private (full access), Semi-Private (project context), Public (restricted). AI automatically filters what it can reference based on where it's speaking.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h3>Task Deduplication</h3>
+        <p>Claim-based task queue prevents multiple agents from acting on the same request. First to claim it owns it. Others see it's handled. Zero duplicate actions.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Action Audit Trail</h3>
+        <p>Every agent action logged with timestamp, surface, and public/private classification. Tamper-evident logs exportable for SOC2, HIPAA, and financial compliance.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚫</div>
+        <h3>Forbidden Zones</h3>
+        <p>Define data categories agents can never access or transmit. PII, credentials, export-controlled data — configurable per agent, per surface, per compliance requirement.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>Insider Threat Detection</h3>
+        <p>Based on Anthropic's misalignment research. Monitors agent behavior for self-preservation, deception, unauthorized data exfiltration, and goal conflict patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:rgba(30,41,59,.5)">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <div class="section-title">How It Works</div>
+    
+    <div class="arch-diagram"><span class="hl-white">                    YOUR TEAM (Humans)</span>
+         Slack  │  Teams  │  Email  │  CRM  │  Internal Tools
+           │        │        │        │          │
+           ▼        ▼        ▼        ▼          ▼
+    ┌──────────────────────────────────────────────────┐
+    │          <span class="hl-blue">AI AGENT INSTANCES</span>                       │
+    │   Agent@Slack  Agent@Email  Agent@CRM  ...       │
+    └───────────────────┬──────────────────────────────┘
+                        │
+    ┌───────────────────▼──────────────────────────────┐
+    │          <span class="hl-green">CLAWMOAT SECURITY LAYER</span>                   │
+    │                                                   │
+    │  ┌─────────────┐  ┌──────────┐  ┌────────────┐  │
+    │  │ <span class="hl-white">Credential</span>  │  │ <span class="hl-white">Trust</span>    │  │ <span class="hl-white">Task</span>       │  │
+    │  │ <span class="hl-white">Vault</span>       │  │ <span class="hl-white">Boundary</span> │  │ <span class="hl-white">Queue</span>      │  │
+    │  │ chmod 600   │  │ Engine   │  │ + Claims   │  │
+    │  └─────────────┘  └──────────┘  └────────────┘  │
+    │                                                   │
+    │  ┌─────────────┐  ┌──────────┐  ┌────────────┐  │
+    │  │ <span class="hl-white">Action</span>      │  │ <span class="hl-white">Forbidden</span>│  │ <span class="hl-white">Insider</span>    │  │
+    │  │ <span class="hl-white">Audit Log</span>  │  │ <span class="hl-white">Zones</span>    │  │ <span class="hl-white">Threat</span>     │  │
+    │  │ pub/private │  │ per-agent │  │ <span class="hl-white">Detection</span>  │  │
+    │  └─────────────┘  └──────────┘  └────────────┘  │
+    │                                                   │
+    │  <span class="hl-red">Zero dependencies │ 336+ tests │ Open source</span>       │
+    └──────────────────────────────────────────────────┘</div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">Who Needs This</div>
+    <div class="section-title">Built for Regulated Industries</div>
+    
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🏦</div>
+        <h3>Financial Services</h3>
+        <p>AI agents handling client data across email, CRM, and trading platforms. SEC compliance, PII protection, and audit trails are non-negotiable. ClawMoat enforces them automatically.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h3>Law Firms</h3>
+        <p>Attorney-client privilege meets AI automation. Agents processing case files, drafting documents, and managing client communication need strict information barriers. Trust boundaries enforce them.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏥</div>
+        <h3>Healthcare</h3>
+        <p>HIPAA requires audit trails for every data access. AI agents across EHR, scheduling, and patient communication need verifiable compliance. ClawMoat's action log provides it.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛩️</div>
+        <h3>Aerospace & Defense</h3>
+        <p>ITAR/EAR compliance for AI agents touching engineering data, military contracts, and export-controlled information. Forbidden zones prevent unauthorized access by design.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="container" style="position:relative;z-index:1">
+    <div class="section-title">Your AI Agents Need a Security Layer.<br>We Built It.</div>
+    <p style="color:var(--gray);font-size:1.1rem;max-width:600px;margin:16px auto 32px">Open source. Zero dependencies. 336+ tests. Deploy in minutes, not months.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ Star on GitHub</a>
+      <a href="mailto:dar@iqvaluations.com?subject=Multi-Agent%20Security%20Consultation" class="btn btn-outline">Book a Consultation</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 ClawMoat — Open Source AI Agent Security &nbsp;|&nbsp; <a href="https://github.com/darfaz/clawmoat">GitHub</a> &nbsp;|&nbsp; <a href="/">Home</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
