@@ -82,7 +82,7 @@ const server = http.createServer(async (req, res) => {
       const sessionParams = {
         mode: isOneTime ? 'payment' : 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${SITE_URL}/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `https://app.clawmoat.com/dashboard?welcome=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${SITE_URL}/#pricing`,
         allow_promotion_codes: true,
         customer_email: body.email || undefined,
