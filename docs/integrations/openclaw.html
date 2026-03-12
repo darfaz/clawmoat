@@ -293,12 +293,52 @@ done</code></pre>
   </div>
 </div>
 
+<h2>Official Sanitizer Plugin</h2>
+
+<div class="callout">
+  <strong>🔌 NEW:</strong> ClawMoat is now the <strong>reference implementation</strong> for OpenClaw's pluggable sanitizer pipeline. Every piece of content — transcripts, MCP tool results, agent messages — can pass through ClawMoat before reaching the AI agent.
+</div>
+
+<pre><code><span class="lang-label">Shell</span>npm install @openclaw/plugin-clawmoat</code></pre>
+
+<pre><code><span class="lang-label">JSON</span>// openclaw.json
+{
+  "sanitizers": [{
+    "module": "@openclaw/plugin-clawmoat",
+    "threshold": "medium",
+    "scanSecrets": true
+  }]
+}</code></pre>
+
+<p>The plugin provides:</p>
+<ul>
+  <li><strong>Configurable block thresholds</strong> — low, medium, high, critical</li>
+  <li><strong>Clean threat mapping</strong> — ClawMoat threat types → OpenClaw ruleIds</li>
+  <li><strong>Full audit logging</strong> — every scan result recorded</li>
+  <li><strong>10 test cases</strong> covering injection, credentials, thresholds, and edge cases</li>
+</ul>
+
+<p>See the <a href="https://github.com/darfaz/clawmoat/tree/main/plugins/openclaw-adapter">full spec and implementation guide</a> on GitHub.</p>
+
+<h2>ClawMoat Dashboard</h2>
+
+<p>Pro subscribers get access to the <a href="https://app.clawmoat.com"><strong>ClawMoat Dashboard</strong></a> — a hosted security console where you can:</p>
+
+<ul>
+  <li><strong>Scan text in your browser</strong> — paste any content and get instant threat analysis</li>
+  <li><strong>Generate API keys</strong> — integrate ClawMoat scanning into your own tools via REST API</li>
+  <li><strong>View scan history</strong> — full audit trail of every scan with threat level badges</li>
+  <li><strong>Monitor stats</strong> — total scans, threats detected, last scan time</li>
+</ul>
+
+<p>No terminal required. Log in with your email and start scanning.</p>
+
 <h2>Next Steps</h2>
 <ul>
+  <li><a href="https://app.clawmoat.com">ClawMoat Dashboard</a> — scan, monitor, and manage API keys</li>
   <li><a href="/integrations/langchain.html">LangChain Integration</a> — use ClawMoat with LangChain agents</li>
   <li><a href="/integrations/openai.html">OpenAI Integration</a> — secure function calling</li>
   <li><a href="https://github.com/darfaz/clawmoat">GitHub</a> — contribute, report issues, star the repo</li>
-  <li><a href="/#waitlist">Join the waitlist</a> — get early access to ClawMoat Pro with cloud dashboards</li>
 </ul>
 
 </div>
