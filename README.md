@@ -19,7 +19,11 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+</p>
+
+<p align="center">
+  <strong>🔌 Official <a href="https://github.com/openclaw/openclaw">OpenClaw</a> sanitizer plugin available</strong> — ClawMoat is the reference implementation for OpenClaw's pluggable security pipeline.
 </p>
 
 ---
@@ -489,6 +493,27 @@ result = secured.kickoff()
 ```
 
 One line to secure your entire multi-agent crew. See [integrations/crewai](integrations/crewai/) for full docs.
+
+### OpenClaw
+
+ClawMoat is the **reference implementation** for OpenClaw's pluggable sanitizer pipeline. Every piece of content — transcripts, MCP tool results, agent messages — passes through ClawMoat before reaching the AI agent.
+
+```bash
+npm install @openclaw/plugin-clawmoat
+```
+
+```jsonc
+// openclaw.json
+{
+  "sanitizers": [{
+    "module": "@openclaw/plugin-clawmoat",
+    "threshold": "medium",  // block medium+ threats
+    "scanSecrets": true
+  }]
+}
+```
+
+Configurable block thresholds (low/medium/high/critical), clean mapping from ClawMoat threat types to OpenClaw ruleIds, and full audit logging. See [plugins/openclaw-adapter](plugins/openclaw-adapter/) for the full spec and implementation guide.
 
 ## License
 
