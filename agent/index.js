@@ -114,12 +114,14 @@ async function reportToCloud(scanResult, meta) {
   }
 
   const dashboardUrl = config.dashboardUrl || 'https://app.clawmoat.com';
+  const textPreview = meta?.text ? meta.text.slice(0, 500) : '[agent scan]';
   const payload = JSON.stringify({
+    text: textPreview,
     source: 'local-agent',
     agentVersion: '1.0.0',
     hostname: os.hostname(),
     meta,
-    result: scanResult,
+    results: scanResult,
   });
 
   for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
@@ -207,7 +209,7 @@ async function scanAndReport(text, meta) {
   }
 
   if (!result.safe) {
-    await reportToCloud(result, meta);
+    await reportToCloud(result, { ...meta, text });
   }
 }
 
