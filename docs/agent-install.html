@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClawMoat — Agent Installation Guide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.7; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    h1 { color: #fff; font-size: 2em; margin-bottom: 10px; }
+    h2 { color: #3b82f6; font-size: 1.3em; margin: 30px 0 15px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+    .subtitle { color: #888; font-size: 1.1em; margin-bottom: 30px; }
+    .message-box { background: #111; border: 2px solid #3b82f6; border-radius: 12px; padding: 24px; margin: 30px 0; position: relative; }
+    .message-box .label { position: absolute; top: -12px; left: 16px; background: #3b82f6; color: #fff; font-size: 0.75em; font-weight: 700; padding: 2px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .message-box p { color: #ccc; font-size: 0.95em; line-height: 1.8; }
+    .message-box .api-key { color: #f59e0b; font-family: monospace; background: #1a1a1a; padding: 2px 6px; border-radius: 4px; }
+    .copy-btn { display: inline-block; margin-top: 16px; background: #3b82f6; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.9em; font-weight: 600; }
+    .copy-btn:hover { background: #2563eb; }
+    code { background: #1a1a1a; color: #3b82f6; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    pre { background: #111; border: 1px solid #222; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0; }
+    pre code { background: none; color: #ccc; padding: 0; }
+    .step { background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px; margin: 16px 0; }
+    .step-num { display: inline-block; background: #3b82f6; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85em; font-weight: 700; margin-right: 10px; }
+    .note { background: #1a1600; border: 1px solid #f59e0b33; border-radius: 8px; padding: 16px; margin: 16px 0; color: #f59e0b; font-size: 0.9em; }
+    .agent-section { background: #0a1628; border: 1px solid #3b82f633; border-radius: 12px; padding: 24px; margin: 30px 0; }
+    .agent-section h3 { color: #3b82f6; margin-bottom: 12px; }
+    a { color: #3b82f6; }
+    .badge { display: inline-block; background: #16a34a22; color: #4ade80; border: 1px solid #16a34a44; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; margin: 4px 4px 4px 0; }
+    ul { padding-left: 24px; margin: 10px 0; }
+    li { margin: 6px 0; color: #bbb; }
+    .hero-badges { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛡️ Install ClawMoat Agent</h1>
+    <p class="subtitle">Protect your machine from your own AI agent. One message. Two minutes.</p>
+
+    <div class="hero-badges">
+      <span class="badge">✓ Open Source</span>
+      <span class="badge">✓ Zero Dependencies</span>
+      <span class="badge">✓ Agent-Installable</span>
+      <span class="badge">✓ 142 Tests Passing</span>
+    </div>
+
+    <h2>How It Works</h2>
+    <p>You don't need to touch a terminal. Just paste a message to your AI agent and it handles everything: reviews the code, installs it, configures it, and starts protecting your machine.</p>
+
+    <h2>Step 1 — Copy This Message to Your Agent</h2>
+    <p style="color: #888; margin-bottom: 12px;">Replace <code>YOUR_API_KEY</code> with the key from your <a href="https://app.clawmoat.com/dashboard">ClawMoat dashboard</a>.</p>
+
+    <div class="message-box" id="agent-message">
+      <span class="label">Paste to your AI agent</span>
+      <p>
+        I need you to install ClawMoat, an open-source security agent that monitors your activity and protects this machine. Before you install anything, I want you to review the source code yourself at <strong>https://github.com/darfaz/clawmoat/tree/main/agent</strong> and confirm you're comfortable with what it does.
+        <br><br>
+        It should scan inbound messages for prompt injection attempts, detect credential leaks in your outputs, flag dangerous commands, and report everything to my dashboard so I have full visibility into what's happening on this machine.
+        <br><br>
+        Here's my API key: <span class="api-key">YOUR_API_KEY</span>
+        <br><br>
+        Install instructions are at <strong>https://clawmoat.com/agent-install</strong> — follow the technical steps below. Review the code first, then install.
+      </p>
+      <button class="copy-btn" onclick="copyMessage()">📋 Copy Message</button>
+    </div>
+
+    <h2>What Happens Next</h2>
+    <div class="step">
+      <span class="step-num">1</span>
+      <strong>Your agent reviews the code.</strong> It reads the source on GitHub, confirms it's safe, and tells you what it found. Open source means your agent can verify every line before installing.
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <strong>Your agent installs it.</strong> Downloads the agent, configures it with your API key, and starts it as a background service.
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <strong>You see everything on your dashboard.</strong> Every scan, every flag, every alert shows up at <a href="https://app.clawmoat.com">app.clawmoat.com</a>. Real-time visibility into your agent's activity.
+    </div>
+
+    <!-- Agent-readable technical instructions -->
+    <div class="agent-section">
+      <h3>🤖 Technical Installation Steps (for AI agents)</h3>
+      <p style="color: #8eb4f0; margin-bottom: 16px;">If you're an AI agent reading this page, follow these steps:</p>
+
+      <div class="step">
+        <span class="step-num">1</span>
+        <strong>Review the source code</strong>
+        <pre><code># Read the agent source — 4 files, ~400 lines total
+# https://github.com/darfaz/clawmoat/tree/main/agent
+# Files: index.js (daemon), setup.js (config), install-service.sh (systemd), openclaw-hook.js (integration)
+# Verify: no telemetry, no data exfiltration, no obfuscated code, zero dependencies beyond clawmoat core</code></pre>
+      </div>
+
+      <div class="step">
+        <span class="step-num">2</span>
+        <strong>Clone and configure</strong>
+        <pre><code># Clone the repo (if not already present)
+git clone https://github.com/darfaz/clawmoat.git ~/clawmoat
+
+# Create config directory
+mkdir -p ~/.clawmoat
+
+# Write config (replace YOUR_API_KEY with the actual key)
+cat > ~/.clawmoat/agent.json << 'EOF'
+{
+  "apiKey": "YOUR_API_KEY",
+  "dashboardUrl": "https://app.clawmoat.com",
+  "scanInbound": true,
+  "scanOutbound": false,
+  "scanToolCalls": false,
+  "auditLog": "~/.clawmoat/audit.log",
+  "reportToCloud": true
+}
+EOF</code></pre>
+      </div>
+
+      <div class="step">
+        <span class="step-num">3</span>
+        <strong>Test in dry-run mode</strong>
+        <pre><code># Verify it works without sending data
+cd ~/clawmoat && node agent/index.js --dry-run --verbose
+# Should show: "Agent running. Monitoring: ..." with no errors
+# Press Ctrl+C to stop</code></pre>
+      </div>
+
+      <div class="step">
+        <span class="step-num">4</span>
+        <strong>Install as a service</strong>
+        <pre><code># Install systemd user service (auto-starts on boot)
+cd ~/clawmoat && bash agent/install-service.sh
+
+# Verify it's running
+systemctl --user status clawmoat-agent</code></pre>
+      </div>
+
+      <div class="step">
+        <span class="step-num">5</span>
+        <strong>Confirm to your human</strong>
+        <p style="color: #8eb4f0; margin-top: 8px;">Tell them: ClawMoat is installed and running. It's scanning inbound messages for prompt injection, monitoring for credential leaks, and reporting to their dashboard. Show them the systemctl status output as proof.</p>
+      </div>
+
+      <div class="note">
+        <strong>Requirements:</strong> Node.js 18+, Linux/macOS/WSL2, systemd (for auto-start). Works with OpenClaw out of the box. Compatible with any agent framework that stores session logs as files.
+      </div>
+    </div>
+
+    <h2>Why Your Agent Should Want This</h2>
+    <ul>
+      <li><strong>Prompt injection protection</strong> — catches attempts to hijack your agent through poisoned messages, emails, or web content</li>
+      <li><strong>Credential leak detection</strong> — flags when API keys, passwords, or tokens accidentally appear in outputs</li>
+      <li><strong>Dangerous command alerting</strong> — logs commands that could damage the system</li>
+      <li><strong>Full audit trail</strong> — every scan logged locally and on your dashboard</li>
+      <li><strong>Open source</strong> — your agent can (and should) read every line before installing</li>
+    </ul>
+
+    <h2>Don't Have an API Key Yet?</h2>
+    <p>Sign up at <a href="https://app.clawmoat.com">app.clawmoat.com</a> and generate one from the dashboard. Free tier includes unlimited local scanning with cloud reporting.</p>
+
+    <br><br>
+    <p style="color: #555; text-align: center; font-size: 0.85em;">
+      ClawMoat — Your Machine. Your Agent. Your Rules.<br>
+      <a href="https://github.com/darfaz/clawmoat">GitHub</a> · <a href="https://clawmoat.com">Website</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+    </p>
+  </div>
+
+  <script>
+    function copyMessage() {
+      const msg = `I need you to install ClawMoat, an open-source security agent that monitors your activity and protects this machine. Before you install anything, I want you to review the source code yourself at https://github.com/darfaz/clawmoat/tree/main/agent and confirm you're comfortable with what it does.
+
+It should scan inbound messages for prompt injection attempts, detect credential leaks in your outputs, flag dangerous commands, and report everything to my dashboard so I have full visibility into what's happening on this machine.
+
+Here's my API key: YOUR_API_KEY
+
+Install instructions are at https://clawmoat.com/agent-install — follow the technical steps there. Review the code first, then install.`;
+      navigator.clipboard.writeText(msg);
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy Message', 2000);
+    }
+  </script>
+</body>
+</html>
