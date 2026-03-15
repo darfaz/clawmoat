@@ -56,30 +56,29 @@ pre:hover::after{content:'📋 Click to copy';position:absolute;top:8px;right:12
     
     <div class="step">
       <h3><span class="num">1</span> Get Claude Max</h3>
-      <p>If you haven't already, sign up for Claude Max ($100/mo) at <a href="https://claude.ai/upgrade" style="color:var(--blue)">claude.ai/upgrade</a>. This is the AI brain your agent uses.</p>
+      <p>If you haven't already, sign up for Claude Max ($100/mo). This is the AI brain your agent uses.</p>
+      <a href="https://claude.ai/upgrade" class="btn btn-outline" style="margin-top:12px" target="_blank">Sign Up for Claude Max →</a>
     </div>
 
     <div class="step">
-      <h3><span class="num">2</span> Open Terminal and run the setup script</h3>
-      <p><strong>macOS:</strong></p>
-      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">curl -fsSL https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-macos.sh | bash</pre>
-      <p><strong>Linux:</strong></p>
-      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">curl -fsSL https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-linux.sh | bash</pre>
-      <p><strong>Windows</strong> (PowerShell as Admin):</p>
-      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">irm https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-windows.ps1 | iex</pre>
+      <h3><span class="num">2</span> Download the installer for your computer</h3>
+      <p>Click the button for your operating system. A file will download — just double-click it and it does everything automatically.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+        <a href="/services/downloads/install-openclaw.command" download class="btn btn-green" style="flex:1;justify-content:center;min-width:160px">🍎 Mac Installer</a>
+        <a href="/services/downloads/install-openclaw.bat" download class="btn btn-green" style="flex:1;justify-content:center;min-width:160px;background:var(--blue)">🪟 Windows Installer</a>
+        <a href="/services/downloads/install-openclaw.sh" download class="btn btn-green" style="flex:1;justify-content:center;min-width:160px;background:#7c3aed">🐧 Linux Installer</a>
+      </div>
+      <p style="color:var(--gray);font-size:.85rem;margin-top:12px"><strong>Mac users:</strong> If macOS says "can't be opened," right-click the file → Open → Open anyway.<br><strong>Windows users:</strong> Right-click the file → "Run as Administrator."</p>
     </div>
 
     <div class="step">
-      <h3><span class="num">3</span> Authenticate Claude</h3>
-      <p>After the script finishes, run:</p>
-      <pre onclick="navigator.clipboard.writeText('claude login')">claude login</pre>
-      <p>Pick "Claude account with subscription" and sign in with your Claude Max account in the browser.</p>
+      <h3><span class="num">3</span> Sign in to Claude</h3>
+      <p>At the end of the install, it will ask you to sign in. A browser window opens — log in with your Claude Max account. That's it.</p>
     </div>
 
     <div class="step">
-      <h3><span class="num">4</span> Start your agent</h3>
-      <pre onclick="navigator.clipboard.writeText('openclaw gateway restart')">openclaw gateway restart</pre>
-      <p>Then open Slack, Telegram, or Discord and message your bot. You're live! 🎉</p>
+      <h3><span class="num">4</span> Message your bot!</h3>
+      <p>Open Slack, Telegram, or Discord and say hello to your new AI agent. It's running on your machine, secured by ClawMoat, ready to work. 🎉</p>
     </div>
 
     <div class="step">
