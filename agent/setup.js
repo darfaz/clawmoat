@@ -134,6 +134,20 @@ async function installService(agentDir) {
   });
 }
 
+// Simple Y/N using a fresh readline (for use after main rl is closed)
+function askYNSimple(question, defaultYes = true) {
+  const rlTemp = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const suffix = defaultYes ? '[Y/n]' : '[y/N]';
+  return new Promise(resolve => {
+    rlTemp.question(`${question} ${suffix}: `, answer => {
+      rlTemp.close();
+      const a = answer.trim().toLowerCase();
+      if (!a) resolve(defaultYes);
+      else resolve(a === 'y' || a === 'yes');
+    });
+  });
+}
+
 async function main() {
   console.log('\n╔════════════════════════════════════╗');
   console.log('║   ClawMoat Local Agent — Setup    ║');
@@ -231,13 +245,26 @@ async function main() {
     }
   }
 
+  // AI Provider setup
+  rl.close(); // close current rl before handing off
+  const setupProviders = await askYNSimple('\nConfigure AI providers (Claude / ChatGPT / Kimi)?', true);
+  if (setupProviders) {
+    try {
+      const { cmdSetup } = require('./provider-setup');
+      await cmdSetup();
+    } catch (e) {
+      console.log(`\nProvider setup skipped: ${e.message}`);
+      console.log('Run later with: clawmoat providers setup');
+    }
+  }
+
   console.log('\n✓ Setup complete!\n');
   console.log('To start the agent:');
   console.log(`  node ${path.join(path.dirname(__filename), 'index.js')}`);
   console.log('\nTo run in verbose mode:');
   console.log(`  node ${path.join(path.dirname(__filename), 'index.js')} --verbose`);
-
-  rl.close();
+  console.log('\nTo reconfigure providers:');
+  console.log('  clawmoat providers setup');
 }
 
 main().catch(e => {

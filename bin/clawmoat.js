@@ -7,6 +7,7 @@
  *   clawmoat scan <text>           Scan text for threats
  *   clawmoat scan --file <path>    Scan file contents
  *   clawmoat audit <session-dir>   Audit OpenClaw session logs
+ *   clawmoat providers [cmd]       Configure AI provider connections (Claude/ChatGPT/Kimi)
  *   clawmoat test                  Run built-in test suite against detection engines
  *   clawmoat version               Show version
  */
@@ -73,6 +74,10 @@ switch (command) {
   case 'pro':
     printUpgrade();
     break;
+  case 'providers':
+  case 'provider':
+    cmdProviders(args.slice(1));
+    break;
   case 'version':
   case '--version':
   case '-v':
@@ -84,6 +89,23 @@ switch (command) {
   default:
     printHelp();
     break;
+}
+
+async function cmdProviders(args) {
+  const { cmdSetup, cmdList, cmdTest, cmdOpenClaw } = require('../agent/provider-setup');
+  const sub = args[0] || 'setup';
+  switch (sub) {
+    case 'setup': return cmdSetup();
+    case 'list': return cmdList();
+    case 'test': return cmdTest();
+    case 'openclaw': return cmdOpenClaw();
+    default:
+      console.log('Usage: clawmoat providers [setup|list|test|openclaw]');
+      console.log('  setup    Configure AI providers (Claude, ChatGPT, Kimi)');
+      console.log('  list     Show configured providers');
+      console.log('  test     Test all connections');
+      console.log('  openclaw Generate OpenClaw config snippet');
+  }
 }
 
 async function cmdVerifyCve(args) {
@@ -1062,6 +1084,10 @@ ${BOLD}USAGE${RESET}
   clawmoat report --format json   Generate JSON report for programmatic use
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
+  clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
+  clawmoat providers list         Show configured providers
+  clawmoat providers test         Test all provider connections
+  clawmoat providers openclaw     Generate OpenClaw config snippet
   clawmoat activate <KEY>         Activate a Pro/Team license key
   clawmoat upgrade                Show upgrade options & pricing
   clawmoat version                Show version
