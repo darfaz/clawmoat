@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're In! — ClawMoat Setup</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0F172A;--navy-light:#1E293B;--emerald:#10B981;--blue:#3B82F6;--white:#F8FAFC;--gray:#94A3B8}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--navy);color:var(--white);line-height:1.7;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{max-width:720px;margin:0 auto;padding:40px 24px}
+h1{font-size:2.2rem;font-weight:800;margin-bottom:8px}
+h2{font-size:1.4rem;font-weight:700;margin:32px 0 16px;color:var(--emerald)}
+.check{font-size:3rem;margin-bottom:16px}
+.subtitle{color:var(--gray);font-size:1.1rem;margin-bottom:40px}
+.step{background:var(--navy-light);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;margin-bottom:16px}
+.step h3{font-size:1.05rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.step p{color:var(--gray);font-size:.95rem}
+.num{background:var(--blue);color:#fff;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
+code{background:rgba(59,130,246,.15);color:var(--blue);padding:3px 8px;border-radius:4px;font-size:.9rem}
+pre{background:var(--navy-light);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:16px;margin:12px 0;overflow-x:auto;font-size:.9rem;color:var(--emerald);cursor:pointer;position:relative}
+pre:hover::after{content:'📋 Click to copy';position:absolute;top:8px;right:12px;font-size:.75rem;color:var(--gray)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:1rem;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.btn-green{background:var(--emerald);color:#fff}
+.btn-green:hover{background:#059669;text-decoration:none}
+.btn-outline{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,.15)}
+.btn-outline:hover{border-color:var(--blue);text-decoration:none}
+.plan-tabs{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.plan-tab{padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);color:var(--gray);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s}
+.plan-tab.active{background:var(--emerald);color:#fff;border-color:var(--emerald)}
+.plan-tab:hover{border-color:var(--emerald)}
+.plan-content{display:none}
+.plan-content.active{display:block}
+.support-box{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(16,185,129,.1));border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:24px;margin-top:32px;text-align:center}
+.support-box p{color:var(--gray);font-size:.95rem}
+.support-box a{color:var(--emerald)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="check">✅</div>
+  <h1>You're in!</h1>
+  <p class="subtitle">Your payment went through. Here's exactly what to do next.</p>
+
+  <div class="plan-tabs">
+    <div class="plan-tab active" onclick="showPlan('diy')">DIY Kit</div>
+    <div class="plan-tab" onclick="showPlan('dfy')">Done-For-You</div>
+    <div class="plan-tab" onclick="showPlan('managed')">Managed</div>
+  </div>
+
+  <!-- DIY Kit -->
+  <div class="plan-content active" id="plan-diy">
+    <h2>DIY Install Kit — Get Running</h2>
+    
+    <div class="step">
+      <h3><span class="num">1</span> Get Claude Max</h3>
+      <p>If you haven't already, sign up for Claude Max ($100/mo) at <a href="https://claude.ai/upgrade" style="color:var(--blue)">claude.ai/upgrade</a>. This is the AI brain your agent uses.</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">2</span> Open Terminal and run the setup script</h3>
+      <p><strong>macOS:</strong></p>
+      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">curl -fsSL https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-macos.sh | bash</pre>
+      <p><strong>Linux:</strong></p>
+      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">curl -fsSL https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-linux.sh | bash</pre>
+      <p><strong>Windows</strong> (PowerShell as Admin):</p>
+      <pre onclick="navigator.clipboard.writeText(this.textContent.trim())">irm https://raw.githubusercontent.com/darfaz/openclaw-deploy/main/setup-windows.ps1 | iex</pre>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">3</span> Authenticate Claude</h3>
+      <p>After the script finishes, run:</p>
+      <pre onclick="navigator.clipboard.writeText('claude login')">claude login</pre>
+      <p>Pick "Claude account with subscription" and sign in with your Claude Max account in the browser.</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">4</span> Start your agent</h3>
+      <pre onclick="navigator.clipboard.writeText('openclaw gateway restart')">openclaw gateway restart</pre>
+      <p>Then open Slack, Telegram, or Discord and message your bot. You're live! 🎉</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">5</span> Need help?</h3>
+      <p>You have 7 days of support. Email <a href="mailto:hello@clawmoat.com" style="color:var(--blue)">hello@clawmoat.com</a> with any questions — we respond within a few hours.</p>
+    </div>
+  </div>
+
+  <!-- Done-For-You -->
+  <div class="plan-content" id="plan-dfy">
+    <h2>Done-For-You — We Handle Everything</h2>
+    
+    <div class="step">
+      <h3><span class="num">1</span> Check your email</h3>
+      <p>We just sent you a welcome email at the address you used for checkout. It has a link to schedule your 30-minute setup session.</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">2</span> Before the call, prepare these</h3>
+      <p>
+        • <strong>Claude Max</strong> — sign up at <a href="https://claude.ai/upgrade" style="color:var(--blue)">claude.ai/upgrade</a> ($100/mo)<br>
+        • <strong>Messaging bot</strong> — create a Slack, Telegram, or Discord bot (<a href="/services/pre-setup.html" style="color:var(--blue)">step-by-step guide</a>)<br>
+        • <strong>Machine ready</strong> — Mac, Windows PC, or Linux machine plugged in and connected to internet<br>
+        • <strong>Remote access</strong> — enable Remote Login (Mac) or SSH (Linux) so we can connect
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">3</span> We do the rest</h3>
+      <p>We connect remotely, install everything, configure your agent's personality, set up security, and test it live with you. Takes about 30 minutes.</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">4</span> 30 days of support</h3>
+      <p>After setup, you have 30 days of priority support. Email <a href="mailto:hello@clawmoat.com" style="color:var(--blue)">hello@clawmoat.com</a> anytime.</p>
+    </div>
+  </div>
+
+  <!-- Managed -->
+  <div class="plan-content" id="plan-managed">
+    <h2>Managed Service — We Keep It Running</h2>
+    
+    <div class="step">
+      <h3><span class="num">1</span> Check your email</h3>
+      <p>We sent you a welcome email with onboarding instructions and a link to schedule your initial setup call.</p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">2</span> What happens next</h3>
+      <p>
+        • We set up monitoring on your agent (uptime, health, errors)<br>
+        • We handle OpenClaw and ClawMoat updates automatically<br>
+        • Monthly optimization — we review and tune your agent's performance<br>
+        • Unlimited support via <a href="mailto:hello@clawmoat.com" style="color:var(--blue)">hello@clawmoat.com</a>
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="num">3</span> If something breaks</h3>
+      <p>We'll usually know before you do. If your agent goes offline, we get notified and fix it. For urgent issues, email us — priority response for managed customers.</p>
+    </div>
+  </div>
+
+  <div class="support-box">
+    <p>Questions? <a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a> · We respond within a few hours.</p>
+    <p style="margin-top:8px"><a href="/services/" class="btn-outline" style="padding:8px 20px;border-radius:8px;font-size:.9rem">← Back to Services</a></p>
+  </div>
+</div>
+
+<script>
+function showPlan(id){
+  document.querySelectorAll('.plan-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.plan-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('plan-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Auto-select plan based on URL hash
+const hash = window.location.hash.replace('#','');
+if(['diy','dfy','managed'].includes(hash)) showPlan(hash);
+</script>
+
+</body>
+</html>
