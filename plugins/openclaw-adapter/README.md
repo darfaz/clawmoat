@@ -79,6 +79,19 @@ defense in depth. ClawMoat maintains its own pattern library which may
 catch things the built-in set misses, and vice versa. Duplicate findings
 are deduplicated by ruleId in the final merge.
 
+## Session-Aware Pipeline (Drawbridge)
+
+This adapter provides single-scan integration. For production deployments that need session tracking, frequency-based escalation, content redaction, and compliance audit trails, see [clawmoat-drawbridge](https://github.com/ziomancer/clawmoat-drawbridge) — a session-aware pipeline that wraps ClawMoat with:
+
+- Exponential-decay frequency tracking with 3 escalation tiers
+- 16-rule syntactic pre-filter
+- Context profiles (general, medical, financial, code, MCP)
+- Structured audit events with typed payloads
+- Cross-session alert rules with aggregation
+- Content sanitization/redaction
+
+The adapter and Drawbridge are complementary: the adapter handles OpenClaw plugin interface compliance, Drawbridge handles session-level orchestration.
+
 ## Development
 
 ```bash

@@ -515,6 +515,33 @@ npm install @openclaw/plugin-clawmoat
 
 Configurable block thresholds (low/medium/high/critical), clean mapping from ClawMoat threat types to OpenClaw ruleIds, and full audit logging. See [plugins/openclaw-adapter](plugins/openclaw-adapter/) for the full spec and implementation guide.
 
+## Ecosystem
+
+### Drawbridge — Session-Aware Pipeline
+
+[clawmoat-drawbridge](https://github.com/ziomancer/clawmoat-drawbridge) wraps ClawMoat in a production-grade session-aware pipeline: threshold-based blocking, syntactic pre-filtering, exponential-decay frequency tracking with escalation tiers, content redaction, context profiles, structured audit trails, and alert rules. 295 tests.
+
+```bash
+npm install @vigilharbor/clawmoat-drawbridge-sanitizer clawmoat
+```
+
+```typescript
+import { DrawbridgePipeline } from "@vigilharbor/clawmoat-drawbridge-sanitizer";
+
+const pipeline = new DrawbridgePipeline({
+  scanner: { blockThreshold: "medium" },
+  profile: { id: "financial" },
+});
+
+const result = await pipeline.inspect({
+  sessionId: "session-123",
+  content: userMessage,
+  source: "transcript",
+});
+```
+
+Built by [Devin Matthews / Vigil Harbor](https://github.com/ziomancer). For enterprise deployments that need session tracking, frequency-based escalation, and compliance audit trails on top of ClawMoat's core scanning.
+
 ## License
 
 [MIT](LICENSE) — free forever.
