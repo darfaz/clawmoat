@@ -30,6 +30,7 @@ const { scanMemoryPoison } = require('./scanners/memory-poison');
 const { scanExfiltration } = require('./scanners/exfiltration');
 const { scanExcessiveAgency } = require('./scanners/excessive-agency');
 const { scanSkill, scanSkillContent } = require('./scanners/supply-chain');
+const { scanDependencyAttacks } = require('./scanners/dependency-attacks');
 const { evaluateToolCall } = require('./policies/engine');
 const { HostGuardian, TIERS } = require('./guardian');
 const { SecurityLogger } = require('./utils/logger');
@@ -161,6 +162,15 @@ class ClawMoat {
       const mp = scanMemoryPoison(text, opts);
       if (!mp.clean) {
         results.findings.push(...mp.findings);
+        results.safe = false;
+      }
+    }
+
+    // Dependency attack patterns (prototype pollution, ReDoS, decompression bombs, JWT manipulation)
+    if (this.config.detection?.dependency_attacks !== false) {
+      const da = scanDependencyAttacks(text);
+      if (!da.clean) {
+        results.findings.push(...da.findings);
         results.safe = false;
       }
     }
@@ -348,6 +358,7 @@ module.exports.scanExfiltration = scanExfiltration;
 module.exports.scanExcessiveAgency = scanExcessiveAgency;
 module.exports.scanSkill = scanSkill;
 module.exports.scanSkillContent = scanSkillContent;
+module.exports.scanDependencyAttacks = scanDependencyAttacks;
 module.exports.evaluateToolCall = evaluateToolCall;
 module.exports.HostGuardian = HostGuardian;
 module.exports.TIERS = TIERS;
