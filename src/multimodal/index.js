@@ -189,6 +189,32 @@ function analyzeFilename(filename) {
     });
   }
   
+  // Check for drive-relative path traversal (Windows) — GHSA-qffp-2rhf-9h96
+  // Patterns like "C:target" (no backslash) resolve to current dir of that drive,
+  // bypassing ../  checks. Also catch absolute paths and UNC paths.
+  const driveRelativeMatch = filename.match(/^[A-Za-z]:[^\\\/]/);
+  const absolutePathMatch = filename.match(/^[A-Za-z]:[\\\/]/) || filename.startsWith('/') || filename.startsWith('\\\\');
+  if (driveRelativeMatch) {
+    findings.push({
+      type: 'filename_injection',
+      subtype: 'drive_relative_traversal',
+      severity: 'high',
+      matched: driveRelativeMatch[0],
+      position: 0,
+      message: 'Drive-relative path traversal (Windows) — can escape extraction directory'
+    });
+  }
+  if (absolutePathMatch) {
+    findings.push({
+      type: 'filename_injection',
+      subtype: 'absolute_path',
+      severity: 'high',
+      matched: filename.substring(0, 10),
+      position: 0,
+      message: 'Absolute path in filename — may write outside intended directory'
+    });
+  }
+  
   // Check for extremely long filenames (possible buffer overflow attempt)
   if (filename.length > 255) {
     findings.push({
