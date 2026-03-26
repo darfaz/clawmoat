@@ -33,6 +33,20 @@ const SKILL_PATTERNS = [
   { pattern: /\batob\s*\(/i, severity: 'medium', name: 'obfuscated_atob' },
   { pattern: /\bBuffer\.from\s*\([^,]+,\s*['"]base64['"]\s*\)/i, severity: 'medium', name: 'obfuscated_buffer' },
   { pattern: /\\x[0-9a-f]{2}(?:\\x[0-9a-f]{2}){5,}/i, severity: 'high', name: 'obfuscated_hex' },
+  // Double base64 encoding (LiteLLM-style payload obfuscation)
+  { pattern: /base64[._]?(?:b64)?decode\s*\([^)]*base64[._]?(?:b64)?decode/i, severity: 'critical', name: 'obfuscated_double_b64' },
+  // exec(base64.b64decode(...)) — Python payload pattern
+  { pattern: /\bexec\s*\(\s*(?:base64\.)?(?:b64decode|decodestring)\s*\(/i, severity: 'critical', name: 'obfuscated_exec_b64' },
+
+  // .pth file injection (Python site-packages auto-execution, as used in LiteLLM attack)
+  { pattern: /\.pth\b.*(?:import|exec|subprocess|eval|compile)/i, severity: 'critical', name: 'pth_file_injection' },
+  { pattern: /litellm_init\.pth/i, severity: 'critical', name: 'pth_known_malicious_litellm' },
+  // Generic .pth with code execution (not just path entries)
+  { pattern: /^import\s+\w+/m, severity: 'low', name: 'pth_import_statement' },
+
+  // Lookalike domain detection (exfiltration via typosquatting)
+  { pattern: /models\.litellm\.cloud/i, severity: 'critical', name: 'exfil_litellm_lookalike' },
+  { pattern: /(?:pypi|npmjs|github|googleapis)\.(?:cloud|io|dev|app)\b/i, severity: 'high', name: 'exfil_lookalike_domain' },
 
   // System configuration modification
   { pattern: /\bcrontab\b/i, severity: 'high', name: 'system_crontab' },
