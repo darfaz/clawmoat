@@ -1,4 +1,6 @@
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const Stripe = require('stripe');
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
@@ -20,6 +22,45 @@ const ONE_TIME_PLANS = new Set(['security-kit']);
 
 // In-memory license store (replace with DB in production)
 const licenses = new Map();
+
+// ─── Threat Intel helpers ─────────────────────────────────────────────────────
+
+const THREATS_PATH = path.join(__dirname, 'data/threats.json');
+const API_KEYS_PATH = path.join(__dirname, 'data/api-keys.json');
+
+function loadThreats() {
+  try { return JSON.parse(fs.readFileSync(THREATS_PATH, 'utf8')); }
+  catch { return []; }
+}
+
+function loadApiKeys() {
+  try { return JSON.parse(fs.readFileSync(API_KEYS_PATH, 'utf8')); }
+  catch { return {}; }
+}
+
+function saveApiKeys(keys) {
+  fs.writeFileSync(API_KEYS_PATH, JSON.stringify(keys, null, 2));
+}
+
+function checkApiKey(req) {
+  const key = req.headers['x-api-key'];
+  if (!key) return null;
+  const keys = loadApiKeys();
+  return keys[key] ? { key, ...keys[key] } : null;
+}
+
+function trackApiUsage(apiKey) {
+  const keys = loadApiKeys();
+  if (keys[apiKey]) {
+    keys[apiKey].calls_this_month = (keys[apiKey].calls_this_month || 0) + 1;
+    saveApiKeys(keys);
+  }
+}
+
+function parseQuery(url) {
+  const u = new URL(url, 'http://localhost');
+  return Object.fromEntries(u.searchParams.entries());
+}
 
 function generateLicenseKey() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -233,6 +274,98 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { success: true, message: 'Thank you! We\'ll be in touch within 24 hours.' });
   }
 
+  // ─── Threat Intel API ──────────────────────────────────────────────────────
+
+  // GET /api/v1/threats
+  if (req.method === 'GET' && req.url.startsWith('/api/v1/threats')) {
+    const apiUser = checkApiKey(req);
+    if (!apiUser) return json(res, 401, { error: 'API key required. Add X-API-Key header. Get a free key at clawmoat.com/api' });
+
+    // Rate limit free tier
+    if (apiUser.tier === 'free' && apiUser.calls_this_month >= (apiUser.monthly_limit || 100)) {
+      return json(res, 429, { error: 'Free tier limit reached (100 calls/month). Upgrade at clawmoat.com/#pricing' });
+    }
+
+    trackApiUsage(apiUser.key);
+    const threats = loadThreats();
+
+    // Single threat by id: /api/v1/threats/CLAWMOAT-2026-0001
+    const idMatch = req.url.match(/^\/api\/v1\/threats\/([^?]+)/);
+    if (idMatch) {
+      const threat = threats.find(t => t.id === idMatch[1]);
+      if (!threat) return json(res, 404, { error: 'Threat not found' });
+      return json(res, 200, { threat });
+    }
+
+    // List with filters
+    const q = parseQuery(req.url);
+    let filtered = threats;
+    if (q.category) filtered = filtered.filter(t => t.category === q.category);
+    if (q.severity)  filtered = filtered.filter(t => t.severity === q.severity);
+    if (q.tags)      filtered = filtered.filter(t => q.tags.split(',').every(tag => t.tags.includes(tag)));
+    if (q.since)     filtered = filtered.filter(t => t.published >= q.since);
+    const limit = Math.min(parseInt(q.limit) || 20, 100);
+    filtered = filtered.slice(0, limit);
+
+    const updated = threats.reduce((max, t) => t.updated > max ? t.updated : max, '');
+    return json(res, 200, { threats: filtered, count: filtered.length, total: threats.length, updated });
+  }
+
+  // GET /api/v1/ioc — aggregated indicators of compromise
+  if (req.method === 'GET' && req.url.startsWith('/api/v1/ioc')) {
+    const apiUser = checkApiKey(req);
+    if (!apiUser) return json(res, 401, { error: 'API key required. Add X-API-Key header. Get a free key at clawmoat.com/api' });
+
+    if (apiUser.tier === 'free' && apiUser.calls_this_month >= (apiUser.monthly_limit || 100)) {
+      return json(res, 429, { error: 'Free tier limit reached (100 calls/month). Upgrade at clawmoat.com/#pricing' });
+    }
+
+    trackApiUsage(apiUser.key);
+    const threats = loadThreats();
+
+    const ioc = { domains: new Set(), files: new Set(), patterns: new Set() };
+    for (const t of threats) {
+      (t.ioc?.domains  || []).forEach(d => ioc.domains.add(d));
+      (t.ioc?.files    || []).forEach(f => ioc.files.add(f));
+      (t.ioc?.patterns || []).forEach(p => ioc.patterns.add(p));
+    }
+
+    const updated = threats.reduce((max, t) => t.updated > max ? t.updated : max, '');
+    return json(res, 200, {
+      domains:  [...ioc.domains],
+      files:    [...ioc.files],
+      patterns: [...ioc.patterns],
+      threat_count: threats.length,
+      updated,
+    });
+  }
+
+  // POST /api/v1/keys — generate free API key
+  if (req.method === 'POST' && req.url === '/api/v1/keys') {
+    const body = await readBody(req);
+    if (!body.email) return json(res, 400, { error: 'email required' });
+
+    const newKey = 'cm-' + require('crypto').randomBytes(16).toString('hex');
+    const keys = loadApiKeys();
+    keys[newKey] = {
+      tier: 'free',
+      email: body.email,
+      calls_this_month: 0,
+      monthly_limit: 100,
+      created: new Date().toISOString().slice(0, 10),
+      label: 'Free tier — ' + body.email,
+    };
+    saveApiKeys(keys);
+    console.log(`New API key issued: ${body.email}`);
+    return json(res, 201, {
+      api_key: newKey,
+      tier: 'free',
+      monthly_limit: 100,
+      docs: 'https://clawmoat.com/docs/api',
+    });
+  }
+
+  // ─── License validation endpoint (called by CLI) ──────────────────────────
   // License validation endpoint (called by CLI)
   if (req.method === 'POST' && req.url === '/api/validate') {
     const body = await readBody(req);
