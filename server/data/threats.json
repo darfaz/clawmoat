@@ -6,15 +6,30 @@
     "updated": "2026-03-26T00:00:00Z",
     "severity": "critical",
     "category": "supply-chain",
-    "tags": ["python", "pypi", "credential-theft", "pth-injection", "ai-agent"],
+    "tags": [
+      "python",
+      "pypi",
+      "credential-theft",
+      "pth-injection",
+      "ai-agent"
+    ],
     "summary": "LiteLLM versions 1.82.7 and 1.82.8 contain a credential-stealing payload delivered via a .pth file that Python's site module auto-executes on interpreter startup. Harvests SSH keys, cloud credentials, API keys, and crypto wallets. Package has 97M monthly downloads.",
     "affected": {
-      "packages": ["litellm==1.82.7", "litellm==1.82.8"],
-      "ecosystems": ["pypi"]
+      "packages": [
+        "litellm==1.82.7",
+        "litellm==1.82.8"
+      ],
+      "ecosystems": [
+        "pypi"
+      ]
     },
     "ioc": {
-      "domains": ["models.litellm.cloud"],
-      "files": ["litellm_init.pth"],
+      "domains": [
+        "models.litellm.cloud"
+      ],
+      "files": [
+        "litellm_init.pth"
+      ],
       "hashes": [],
       "patterns": [
         "exec(base64.b64decode(",
@@ -25,7 +40,12 @@
     "detection": {
       "clawmoat_module": "scanners/supply-chain",
       "clawmoat_function": "scanSkillContent",
-      "rules_triggered": ["obfuscated_exec_b64", "pth_file_injection", "pth_known_malicious_litellm", "exfil_litellm_lookalike"]
+      "rules_triggered": [
+        "obfuscated_exec_b64",
+        "pth_file_injection",
+        "pth_known_malicious_litellm",
+        "exfil_litellm_lookalike"
+      ]
     },
     "mitigation": "Check version: pip show litellm | grep Version. Search for payload: find / -name litellm_init.pth 2>/dev/null. If affected: rotate ALL credentials — SSH keys, AWS/GCP/Azure creds, API keys, K8s configs, database passwords.",
     "references": [
@@ -41,11 +61,18 @@
     "updated": "2026-03-20T00:00:00Z",
     "severity": "high",
     "category": "excessive-agency",
-    "tags": ["ai-agent", "data-leak", "excessive-agency", "internal"],
+    "tags": [
+      "ai-agent",
+      "data-leak",
+      "excessive-agency",
+      "internal"
+    ],
     "summary": "A Meta internal AI agent responded to an engineer's question with incorrect instructions that, when followed, exposed sensitive user and company data to internal employees for two hours. Highlights risk of AI agents operating with broad system access and no runtime guardrails.",
     "affected": {
       "packages": [],
-      "ecosystems": ["internal-ai-agents"]
+      "ecosystems": [
+        "internal-ai-agents"
+      ]
     },
     "ioc": {
       "domains": [],
@@ -56,7 +83,10 @@
     "detection": {
       "clawmoat_module": "scanners/excessive-agency",
       "clawmoat_function": "scanExcessiveAgency",
-      "rules_triggered": ["excessive_data_access", "unbounded_action_scope"]
+      "rules_triggered": [
+        "excessive_data_access",
+        "unbounded_action_scope"
+      ]
     },
     "mitigation": "Enforce least-privilege access for AI agents. Require human approval for actions affecting sensitive data. Use ClawMoat Guardian permission tiers to restrict agent scope.",
     "references": [
@@ -70,11 +100,22 @@
     "updated": "2026-03-25T00:00:00Z",
     "severity": "high",
     "category": "credential-exposure",
-    "tags": ["api-keys", "javascript", "bundler", "aws", "stripe", "openai", "github"],
+    "tags": [
+      "api-keys",
+      "javascript",
+      "bundler",
+      "aws",
+      "stripe",
+      "openai",
+      "github"
+    ],
     "summary": "Stanford researchers scanned 10M web pages and found 1,748 verified active credentials from 14 major providers (AWS, Stripe, GitHub, OpenAI) on nearly 10,000 websites. 84% were in JavaScript bundles. Average exposure time: 12 months. Affected orgs include a global financial institution and major hosting platform.",
     "affected": {
       "packages": [],
-      "ecosystems": ["javascript", "web"]
+      "ecosystems": [
+        "javascript",
+        "web"
+      ]
     },
     "ioc": {
       "domains": [],
@@ -89,7 +130,12 @@
     "detection": {
       "clawmoat_module": "scanners/secrets",
       "clawmoat_function": "scanSecrets",
-      "rules_triggered": ["aws_access_key", "openai_api_key", "github_token", "stripe_key"]
+      "rules_triggered": [
+        "aws_access_key",
+        "openai_api_key",
+        "github_token",
+        "stripe_key"
+      ]
     },
     "mitigation": "Scan your JavaScript bundles for exposed credentials before deployment. Never embed API keys in client-side code. Use environment variables and server-side proxies for all third-party API calls.",
     "references": [
@@ -103,22 +149,36 @@
     "updated": "2026-03-20T00:00:00Z",
     "severity": "high",
     "category": "credential-exposure",
-    "tags": ["api-keys", "google", "gemini", "gcp", "financial-impact"],
+    "tags": [
+      "api-keys",
+      "google",
+      "gemini",
+      "gcp",
+      "financial-impact"
+    ],
     "summary": "A developer received an $82,314 GCP bill after a Gemini API key was stolen. Root cause: GCP API key over-scoping and lack of key rotation policies. AI agent workflows that embed API keys in code or config files are particularly vulnerable.",
     "affected": {
       "packages": [],
-      "ecosystems": ["gcp", "python", "ai-agent"]
+      "ecosystems": [
+        "gcp",
+        "python",
+        "ai-agent"
+      ]
     },
     "ioc": {
       "domains": [],
       "files": [],
       "hashes": [],
-      "patterns": ["AIza[0-9A-Za-z\\-_]{35}"]
+      "patterns": [
+        "AIza[0-9A-Za-z\\-_]{35}"
+      ]
     },
     "detection": {
       "clawmoat_module": "scanners/secrets",
       "clawmoat_function": "scanSecrets",
-      "rules_triggered": ["gcp_api_key"]
+      "rules_triggered": [
+        "gcp_api_key"
+      ]
     },
     "mitigation": "Scope API keys to minimum required permissions. Set billing alerts. Rotate keys regularly. Use secret managers (GCP Secret Manager, AWS Secrets Manager) instead of embedding keys in code.",
     "references": [
@@ -132,27 +192,99 @@
     "updated": "2026-03-24T00:00:00Z",
     "severity": "critical",
     "category": "supply-chain",
-    "tags": ["trivy", "ci-cd", "supply-chain", "github-actions", "devops"],
+    "tags": [
+      "trivy",
+      "ci-cd",
+      "supply-chain",
+      "github-actions",
+      "devops"
+    ],
     "summary": "TeamPCP compromised the Trivy security scanner used in CI/CD pipelines. By poisoning a security tool, attackers gained publish access to downstream packages including LiteLLM (97M monthly downloads). Attack chain: Trivy → CI/CD token → PyPI publish token → poisoned package → credential harvest.",
     "affected": {
-      "packages": ["trivy (affected CI/CD versions)", "litellm==1.82.7", "litellm==1.82.8"],
-      "ecosystems": ["pypi", "github-actions", "ci-cd"]
+      "packages": [
+        "trivy (affected CI/CD versions)",
+        "litellm==1.82.7",
+        "litellm==1.82.8"
+      ],
+      "ecosystems": [
+        "pypi",
+        "github-actions",
+        "ci-cd"
+      ]
     },
     "ioc": {
-      "domains": ["models.litellm.cloud"],
-      "files": ["litellm_init.pth"],
+      "domains": [
+        "models.litellm.cloud"
+      ],
+      "files": [
+        "litellm_init.pth"
+      ],
       "hashes": [],
-      "patterns": ["TeamPCP"]
+      "patterns": [
+        "TeamPCP"
+      ]
     },
     "detection": {
       "clawmoat_module": "scanners/supply-chain",
       "clawmoat_function": "scanSkill",
-      "rules_triggered": ["supply_chain_untrusted_source", "obfuscated_exec_b64"]
+      "rules_triggered": [
+        "supply_chain_untrusted_source",
+        "obfuscated_exec_b64"
+      ]
     },
     "mitigation": "Pin all CI/CD tool versions. Verify checksums of security tools before use. Scope CI/CD tokens to minimum permissions — PyPI publish tokens should be package-scoped. Rotate all tokens after any dependency upgrade.",
     "references": [
       "https://ramimac.me/trivy-teampcp/",
       "https://news.ycombinator.com/item?id=47450142"
+    ]
+  },
+  {
+    "id": "CLAWMOAT-2026-0006",
+    "title": "AnythingLLM SQL Injection in SQL Agent (CVE-2026-32628)",
+    "published": "2026-03-26T00:00:00Z",
+    "updated": "2026-03-26T00:00:00Z",
+    "severity": "high",
+    "category": "excessive-agency",
+    "tags": [
+      "sql-injection",
+      "ai-agent",
+      "anythingllm",
+      "database",
+      "cve"
+    ],
+    "summary": "CVE-2026-32628: High-severity SQL injection in AnythingLLM (56K GitHub stars) built-in SQL Agent affects MySQL, PostgreSQL, and MSSQL connectors. The agent has direct DB access and the flaw allows attackers to execute arbitrary SQL through it.",
+    "affected": {
+      "packages": [
+        "anythingllm"
+      ],
+      "ecosystems": [
+        "npm",
+        "docker"
+      ]
+    },
+    "ioc": {
+      "domains": [],
+      "files": [],
+      "hashes": [],
+      "patterns": [
+        "SELECT * FROM",
+        "UNION SELECT",
+        "DROP TABLE",
+        "1=1"
+      ]
+    },
+    "detection": {
+      "clawmoat_module": "scanners/excessive-agency",
+      "clawmoat_function": "scanExcessiveAgency",
+      "rules_triggered": [
+        "excessive_data_access",
+        "unbounded_db_query",
+        "sql_injection_pattern"
+      ]
+    },
+    "mitigation": "Update AnythingLLM immediately. Restrict SQL Agent to read-only database user. Never grant AI agents DROP/DELETE/ALTER permissions.",
+    "references": [
+      "https://hackernoon.com/a-56000-star-ai-app-shipped-with-a-textbook-sql-injection-flaw"
     ]
   }
 ]
