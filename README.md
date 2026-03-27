@@ -43,6 +43,22 @@ Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your
 
 **Works with any agent framework.** ClawMoat scans text — it doesn't care if it came from LangChain, CrewAI, AutoGen, or your custom agent.
 
+
+## 🛡️ Badge — Show Your Project is Secured
+
+If your project uses ClawMoat, add this badge to your README:
+
+```markdown
+[![Secured by ClawMoat](https://img.shields.io/badge/🛡️_ClawMoat-secured-4c1?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAxTDMgNXY2YzAgNS41NSAzLjg0IDEwLjc0IDkgMTIgNS4xNi0xLjI2IDktNi40NSA5LTEyVjVsMC05LTEgMHoiLz48L3N2Zz4=)](https://github.com/darfaz/clawmoat)
+```
+
+Or the shorter version:
+
+```markdown
+[![ClawMoat](https://img.shields.io/badge/ClawMoat-secured-brightgreen)](https://github.com/darfaz/clawmoat)
+```
+
+
 ## The Problem
 
 AI agents have shell access, browser control, email, and file system access. A single prompt injection in an email or webpage can hijack your agent into exfiltrating data, running malicious commands, or impersonating you.

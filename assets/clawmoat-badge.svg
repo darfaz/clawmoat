@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="174" height="20" role="img" aria-label="ClawMoat: secured">
+  <title>ClawMoat: secured</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="174" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="95" height="20" fill="#555"/>
+    <rect x="95" width="79" height="20" fill="#4c1"/>
+    <rect width="174" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="110">
+    <text aria-hidden="true" x="485" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="850" lengthAdjust="spacing">🛡️ ClawMoat</text>
+    <text x="485" y="140" transform="scale(.1)" fill="#fff" textLength="850" lengthAdjust="spacing">🛡️ ClawMoat</text>
+    <text aria-hidden="true" x="1335" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="690" lengthAdjust="spacing">secured</text>
+    <text x="1335" y="140" transform="scale(.1)" fill="#fff" textLength="690" lengthAdjust="spacing">secured</text>
+  </g>
+</svg>
