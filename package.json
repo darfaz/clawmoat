@@ -1,7 +1,7 @@
 {
   "name": "clawmoat",
   "version": "0.9.0",
-  "description": "Security moat for AI agents. Runtime protection against prompt injection, tool misuse, and data exfiltration.",
+  "description": "The open-source agent firewall. Prevent AI agents from leaking data, using dangerous tools, and importing poisoned dependencies.",
   "main": "src/index.js",
   "bin": {
     "clawmoat": "bin/clawmoat.js"
