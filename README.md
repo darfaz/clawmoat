@@ -3,8 +3,8 @@
 </p>
 
 <h1 align="center">ClawMoat</h1>
-<p align="center"><strong>Security moat for AI agents</strong></p>
-<p align="center">Runtime protection against prompt injection, tool misuse, and data exfiltration.</p>
+<p align="center"><strong>The open-source agent firewall</strong></p>
+<p align="center">Prevent AI agents from leaking data, using dangerous tools, and importing poisoned dependencies.</p>
 
 <p align="center">
   <a href="https://clawmoat.com/scan/"><img src="https://clawmoat.com/badge/score-Aplus.svg" alt="ClawMoat Security: A+"></a>
