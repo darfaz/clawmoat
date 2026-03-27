@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat vs Snyk agent-scan — AI Agent Security Comparison</title>
+<meta name="description" content="Compare ClawMoat and Snyk agent-scan for AI agent and MCP security. Zero-auth vs API token, Node.js vs Python, transparent pricing vs enterprise licensing.">
+<style>:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--blue:#3B82F6;--red:#ff4444}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7}.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem}nav{padding:1rem 0;border-bottom:1px solid #2a2a3a;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center}nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}nav a:hover{color:var(--accent)}.logo span{color:var(--accent)}h1{font-size:2.2rem;margin-bottom:1rem}h2{color:var(--accent);margin:2rem 0 .75rem;font-size:1.3rem}p,li{color:var(--muted)}ul{margin:0 0 1rem 1.5rem}.highlight-box{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:1.5rem;margin:1.5rem 0}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:.6rem;text-align:left;border-bottom:1px solid #2a2a3a;font-size:.9rem}th{color:var(--accent);font-size:.8rem;text-transform:uppercase}.yes{color:var(--accent)}.no{color:var(--red)}.btn{background:var(--accent);color:#000;padding:.75rem 2rem;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:inline-block;text-decoration:none;margin:.5rem}footer{text-align:center;color:var(--muted);font-size:.8rem;padding:2rem 0;border-top:1px solid #2a2a3a;margin-top:3rem}</style>
+</head><body><div class="container">
+<nav><a href="/" class="logo">🏰 Claw<span>Moat</span></a><div><a href="/compare/">All Comparisons</a><a href="/scan/">Scanner</a><a href="https://github.com/darfaz/clawmoat">GitHub ↗</a></div></nav>
+
+<h1>ClawMoat vs Snyk agent-scan</h1>
+<p style="font-size:1.1rem;color:var(--fg)">Snyk agent-scan launched at RSAC 2026 with MCP server scanning. ClawMoat has been shipping agent security since February 2026. Different approaches, different trade-offs.</p>
+
+<div class="highlight-box">
+<p style="color:var(--fg);margin:0"><strong>TL;DR:</strong> Snyk agent-scan is great for MCP server governance in enterprise environments. ClawMoat is better for developers who want zero-friction security with host protection, supply chain detection, and no account required.</p>
+</div>
+
+<h2>Philosophy</h2>
+<p><strong>Snyk</strong> is an enterprise security platform. agent-scan is one product in their suite. It requires a Snyk account and API token. It feeds into Snyk Evo for centralized management. Enterprise-first, developer-useful.</p>
+<p><strong>ClawMoat</strong> is developer-first. npm install. No account. No API key. No network calls. Start scanning in 30 seconds. Upgrade to paid plans when you need dashboards and alerts.</p>
+
+<h2>What Snyk Does Better</h2>
+<ul>
+<li><strong>MCP server scanning</strong> — protocol-level inspection of tool definitions, prompts, resources</li>
+<li><strong>Agent discovery</strong> — auto-discovers Claude, Cursor, Windsurf, VS Code, Gemini CLI configs</li>
+<li><strong>Background daemon</strong> — runs continuously, reports to central Snyk Evo dashboard</li>
+<li><strong>Enterprise integration</strong> — MDM deployment, CrowdStrike integration, centralized reporting</li>
+<li><strong>Red teaming</strong> — built-in attack profiles (fast, security, safety)</li>
+<li><strong>Brand trust</strong> — Snyk has 4,800 enterprise customers</li>
+</ul>
+
+<h2>What ClawMoat Does Better</h2>
+<ul>
+<li><strong>Zero friction</strong> — no account, no API token, no Python/uv dependency chain</li>
+<li><strong>Supply chain detection</strong> — real-time TeamPCP indicators, compromised package versions, C2 domains</li>
+<li><strong>Host protection</strong> — forbidden zones, permission tiers, dangerous command blocking</li>
+<li><strong>Insider threat detection</strong> — 6 behavioral detectors for agentic misalignment</li>
+<li><strong>Network egress logging</strong> — tracks and blocks agent outbound connections</li>
+<li><strong>Node.js native</strong> — Snyk is Python-only; ClawMoat serves the JS agent ecosystem</li>
+<li><strong>Transparent pricing</strong> — $0 / $29 / $149 vs Snyk enterprise licensing</li>
+<li><strong>Privacy</strong> — everything runs locally, nothing phones home (Snyk requires API calls)</li>
+</ul>
+
+<h2>Can You Use Both?</h2>
+<p style="color:var(--fg)"><strong>Yes.</strong> They're complementary. Snyk agent-scan for MCP governance and enterprise reporting. ClawMoat for runtime protection, supply chain scanning, and host security. Different layers, different strengths.</p>
+
+<table>
+<tr><th>Dimension</th><th>ClawMoat</th><th>Snyk agent-scan</th></tr>
+<tr><td>Account required</td><td class="yes">No</td><td class="no">Yes (Snyk token)</td></tr>
+<tr><td>Language</td><td>Node.js</td><td>Python</td></tr>
+<tr><td>Install</td><td class="yes">npm i -g clawmoat</td><td>uvx snyk-agent-scan</td></tr>
+<tr><td>MCP scanning</td><td>Coming soon</td><td class="yes">✓</td></tr>
+<tr><td>Supply chain</td><td class="yes">✓ 15+ patterns</td><td class="no">✗</td></tr>
+<tr><td>Host protection</td><td class="yes">✓</td><td class="no">✗</td></tr>
+<tr><td>Runtime scanning</td><td class="yes">✓</td><td>CLI-based</td></tr>
+<tr><td>Pricing</td><td class="yes">Free → $29 → $149</td><td>Via Snyk plans</td></tr>
+<tr><td>Privacy</td><td class="yes">100% local</td><td class="no">Sends to Snyk API</td></tr>
+</table>
+
+<div style="text-align:center;margin:2rem 0">
+<a href="https://github.com/darfaz/clawmoat" class="btn">Try ClawMoat Free →</a>
+<a href="/compare/" class="btn" style="background:transparent;border:2px solid var(--accent);color:var(--accent)">All Comparisons</a>
+</div>
+<footer><p>🏰 ClawMoat — The Open-Source Agent Firewall</p></footer>
+</div></body></html>

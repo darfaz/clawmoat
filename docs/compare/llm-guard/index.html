@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat vs LLM Guard — AI Agent Security Comparison</title>
+<meta name="description" content="Compare ClawMoat and LLM Guard (Protect AI) for AI agent security. Node.js vs Python, zero deps vs heavy deps, host protection vs input/output scanning.">
+<style>:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--blue:#3B82F6;--red:#ff4444}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7}.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem}nav{padding:1rem 0;border-bottom:1px solid #2a2a3a;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center}nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}nav a:hover{color:var(--accent)}.logo span{color:var(--accent)}h1{font-size:2.2rem;margin-bottom:1rem}h2{color:var(--accent);margin:2rem 0 .75rem;font-size:1.3rem}p,li{color:var(--muted)}ul{margin:0 0 1rem 1.5rem}.highlight-box{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:1.5rem;margin:1.5rem 0}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:.6rem;text-align:left;border-bottom:1px solid #2a2a3a;font-size:.9rem}th{color:var(--accent);font-size:.8rem;text-transform:uppercase}.yes{color:var(--accent)}.no{color:var(--red)}.btn{background:var(--accent);color:#000;padding:.75rem 2rem;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:inline-block;text-decoration:none;margin:.5rem}footer{text-align:center;color:var(--muted);font-size:.8rem;padding:2rem 0;border-top:1px solid #2a2a3a;margin-top:3rem}</style>
+</head><body><div class="container">
+<nav><a href="/" class="logo">🏰 Claw<span>Moat</span></a><div><a href="/compare/">All Comparisons</a><a href="/scan/">Scanner</a><a href="https://github.com/darfaz/clawmoat">GitHub ↗</a></div></nav>
+
+<h1>ClawMoat vs LLM Guard</h1>
+<p style="font-size:1.1rem;color:var(--fg)">LLM Guard (by Protect AI) is a Python security toolkit with 35 scanners. ClawMoat is a Node.js agent firewall with host protection, supply chain detection, and insider threat analysis.</p>
+
+<div class="highlight-box">
+<p style="color:var(--fg);margin:0"><strong>TL;DR:</strong> Building in Python? LLM Guard is solid. Building in Node.js/TypeScript, or need host-level protection and supply chain scanning? ClawMoat.</p>
+</div>
+
+<h2>Ecosystem</h2>
+<p><strong>LLM Guard</strong> is Python-only. 2,500 GitHub stars, 15 input scanners, 20 output scanners. Heavy dependencies (transformers, torch, spacy). Backed by Protect AI ($60M+ raised).</p>
+<p><strong>ClawMoat</strong> is Node.js/TypeScript native. Zero dependencies. Built for the JavaScript agent ecosystem (OpenClaw, Claude Code, MCP SDK). 142 tests, MIT licensed.</p>
+
+<h2>Scope Difference</h2>
+<p>LLM Guard focuses on <strong>input/output scanning</strong> — it inspects what goes into and comes out of an LLM. That's one layer.</p>
+<p>ClawMoat covers <strong>three layers</strong>: input/output scanning, host-level protection (forbidden zones, command blocking, permission tiers), and supply chain detection (compromised packages, C2 indicators). Plus insider threat detection based on Anthropic's research.</p>
+
+<table>
+<tr><th>Capability</th><th>ClawMoat</th><th>LLM Guard</th></tr>
+<tr><td>Language</td><td class="yes">Node.js/TypeScript</td><td>Python</td></tr>
+<tr><td>Dependencies</td><td class="yes">Zero</td><td class="no">Heavy (torch, transformers)</td></tr>
+<tr><td>Prompt injection</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+<tr><td>Jailbreak detection</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+<tr><td>Secret scanning</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+<tr><td>PII detection</td><td>Basic patterns</td><td class="yes">✓ NER-based</td></tr>
+<tr><td>Toxicity detection</td><td class="no">✗</td><td class="yes">✓</td></tr>
+<tr><td>Host protection</td><td class="yes">✓ 4 tiers, forbidden zones</td><td class="no">✗</td></tr>
+<tr><td>Supply chain detection</td><td class="yes">✓ 15+ patterns</td><td class="no">✗</td></tr>
+<tr><td>Insider threat detection</td><td class="yes">✓ 6 detectors</td><td class="no">✗</td></tr>
+<tr><td>Network egress logging</td><td class="yes">✓</td><td class="no">✗</td></tr>
+<tr><td>Install size</td><td class="yes">~50KB</td><td class="no">~2GB+ (with models)</td></tr>
+</table>
+
+<h2>When to Use Each</h2>
+<p><strong>LLM Guard</strong> is the right choice if you're building Python LLM applications and need deep NLP-based detection (toxicity, bias, language models). It's a mature, well-backed project.</p>
+<p><strong>ClawMoat</strong> is the right choice if you're building JS/TS agents, need host-level protection beyond just prompt scanning, want zero dependencies, or need supply chain attack detection.</p>
+
+<div style="text-align:center;margin:2rem 0">
+<a href="https://github.com/darfaz/clawmoat" class="btn">Try ClawMoat Free →</a>
+<a href="/compare/" class="btn" style="background:transparent;border:2px solid var(--accent);color:var(--accent)">All Comparisons</a>
+</div>
+<footer><p>🏰 ClawMoat — The Open-Source Agent Firewall</p></footer>
+</div></body></html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat vs Competitors — AI Agent Security Comparison</title>
+<meta name="description" content="Compare ClawMoat to Lakera, LLM Guard, Snyk agent-scan, and other AI agent security tools. Feature, pricing, and architecture comparison.">
+<style>
+:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--blue:#3B82F6;--red:#ff4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1rem 0;border-bottom:1px solid #2a2a3a;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center}
+nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}
+nav a:hover{color:var(--accent)}
+.logo span{color:var(--accent)}
+h1{font-size:2.5rem;margin-bottom:1rem;letter-spacing:-.02em}
+h2{color:var(--accent);margin:2rem 0 1rem;font-size:1.4rem}
+p{color:var(--muted);margin-bottom:1rem}
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin:2rem 0}
+.compare-card{background:var(--card);border:2px solid #2a2a3a;border-radius:12px;padding:1.5rem;transition:border-color .2s}
+.compare-card:hover{border-color:var(--accent)}
+.compare-card h3{margin-bottom:.5rem}
+.compare-card .vs{color:var(--accent);font-size:.85rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.compare-card p{font-size:.9rem}
+.compare-card a{color:var(--accent);text-decoration:none;font-weight:700;font-size:.9rem}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+th,td{padding:.75rem;text-align:left;border-bottom:1px solid #2a2a3a;font-size:.9rem}
+th{color:var(--accent);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.yes{color:var(--accent)}
+.no{color:var(--red)}
+.partial{color:#f5c542}
+.btn{background:var(--accent);color:#000;padding:.75rem 2rem;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:inline-block;text-decoration:none;margin:.5rem}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:2rem 0;border-top:1px solid #2a2a3a;margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav>
+  <a href="/" class="logo">🏰 Claw<span>Moat</span></a>
+  <div>
+    <a href="/scan/">Scanner</a>
+    <a href="/affiliates/">Affiliates</a>
+    <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
+  </div>
+</nav>
+
+<h1>How ClawMoat Compares</h1>
+<p style="font-size:1.1rem;color:var(--fg);max-width:700px">There are many AI security tools now. Here's how we're different: open source, self-hosted, zero dependencies, transparent pricing, and focused on runtime protection for developers — not enterprise sales cycles.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="vs">Agent Firewall vs API Guard</div>
+    <h3>ClawMoat vs Lakera</h3>
+    <p>Lakera is a hosted API ($0 → enterprise). ClawMoat runs locally with zero deps. No API calls, no vendor lock-in, no token limits.</p>
+    <a href="/compare/lakera/">Full comparison →</a>
+  </div>
+  <div class="compare-card">
+    <div class="vs">Node.js vs Python</div>
+    <h3>ClawMoat vs LLM Guard</h3>
+    <p>LLM Guard is Python-only with heavy deps. ClawMoat is JS-native for the OpenClaw/Claude Code ecosystem. Plus host protection and supply chain detection.</p>
+    <a href="/compare/llm-guard/">Full comparison →</a>
+  </div>
+  <div class="compare-card">
+    <div class="vs">Independent vs Platform Lock-in</div>
+    <h3>ClawMoat vs Snyk agent-scan</h3>
+    <p>Snyk requires an API token and account. ClawMoat needs nothing — npm install and go. Different philosophy: developer-first vs enterprise-first.</p>
+    <a href="/compare/snyk-agent-scan/">Full comparison →</a>
+  </div>
+</div>
+
+<h2>Feature Comparison Matrix</h2>
+<table>
+<thead>
+<tr><th>Feature</th><th>ClawMoat</th><th>Lakera Guard</th><th>LLM Guard</th><th>Snyk agent-scan</th><th>NeMo Guardrails</th></tr>
+</thead>
+<tbody>
+<tr><td>Open Source</td><td class="yes">✓ MIT</td><td class="no">✗ Proprietary</td><td class="yes">✓ MIT</td><td class="yes">✓ Apache 2.0</td><td class="yes">✓ Apache 2.0</td></tr>
+<tr><td>Self-Hosted</td><td class="yes">✓ Local only</td><td class="partial">Enterprise only</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+<tr><td>Zero Dependencies</td><td class="yes">✓</td><td class="no">N/A (API)</td><td class="no">✗ Heavy</td><td class="no">✗ Python</td><td class="no">✗ Heavy</td></tr>
+<tr><td>Prompt Injection</td><td class="yes">✓ 13 patterns</td><td class="yes">✓ ML-based</td><td class="yes">✓</td><td class="yes">✓</td><td class="partial">Via config</td></tr>
+<tr><td>Supply Chain Detection</td><td class="yes">✓ TeamPCP + more</td><td class="no">✗</td><td class="no">✗</td><td class="partial">MCP focus</td><td class="no">✗</td></tr>
+<tr><td>Host Protection</td><td class="yes">✓ 4 tiers</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+<tr><td>MCP Server Scanning</td><td class="partial">🔜 Coming</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="no">✗</td></tr>
+<tr><td>Secret Scanning</td><td class="yes">✓</td><td class="partial">PII only</td><td class="yes">✓</td><td class="partial">Skills only</td><td class="no">✗</td></tr>
+<tr><td>Insider Threat Detection</td><td class="yes">✓ 6 detectors</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+<tr><td>Node.js Native</td><td class="yes">✓</td><td class="partial">API client</td><td class="no">✗ Python</td><td class="no">✗ Python</td><td class="no">✗ Python</td></tr>
+<tr><td>Auth Required</td><td class="yes">None</td><td class="no">API key</td><td class="yes">None</td><td class="no">Snyk token</td><td class="yes">None</td></tr>
+<tr><td>Transparent Pricing</td><td class="yes">✓ On website</td><td class="no">"Let's chat"</td><td class="yes">Free</td><td class="partial">Via Snyk plans</td><td class="yes">Free</td></tr>
+<tr><td>Free Tier</td><td class="yes">✓ Unlimited</td><td class="yes">10K req/mo</td><td class="yes">✓ Unlimited</td><td class="yes">Open preview</td><td class="yes">✓ Unlimited</td></tr>
+</tbody>
+</table>
+
+<h2>Pricing Comparison</h2>
+<table>
+<thead>
+<tr><th>Tool</th><th>Free</th><th>Developer</th><th>Team</th><th>Enterprise</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>ClawMoat</strong></td><td>$0 (unlimited)</td><td>$29/mo</td><td>$149/mo</td><td>Custom</td></tr>
+<tr><td>Lakera</td><td>$0 (10K req)</td><td>—</td><td>—</td><td>"Let's chat"</td></tr>
+<tr><td>LLM Guard</td><td>Free (MIT)</td><td>—</td><td>—</td><td>Coming soon</td></tr>
+<tr><td>Snyk</td><td>Free tier</td><td>~$45/dev/mo</td><td>—</td><td>Custom</td></tr>
+<tr><td>Zenity</td><td>—</td><td>—</td><td>—</td><td>Quote only</td></tr>
+<tr><td>Noma</td><td>—</td><td>—</td><td>—</td><td>Quote only ($139M raised)</td></tr>
+</tbody>
+</table>
+
+<p style="margin-top:2rem;text-align:center;font-size:1rem;color:var(--fg)"><strong>ClawMoat is the only tool that combines host-level protection, supply chain detection, insider threat analysis, AND transparent pricing in a zero-dependency Node.js package.</strong></p>
+
+<div style="text-align:center;margin:2rem 0">
+  <a href="https://github.com/darfaz/clawmoat" class="btn">⭐ Star on GitHub</a>
+  <a href="/scan/" class="btn" style="background:transparent;border:2px solid var(--accent);color:var(--accent)">Try the Scanner</a>
+</div>
+
+<footer>
+  <p>🏰 ClawMoat — The Open-Source Agent Firewall</p>
+  <p><a href="/" style="color:var(--muted)">Home</a> · <a href="/scan/" style="color:var(--muted)">Scanner</a> · <a href="/affiliates/" style="color:var(--muted)">Affiliates</a> · <a href="https://github.com/darfaz/clawmoat" style="color:var(--muted)">GitHub</a></p>
+</footer>
+</div>
+</body>
+</html>

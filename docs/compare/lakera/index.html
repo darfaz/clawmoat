@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat vs Lakera Guard — AI Agent Security Comparison</title>
+<meta name="description" content="Compare ClawMoat and Lakera Guard for AI agent security. Self-hosted vs API, transparent pricing vs sales calls, zero dependencies vs vendor lock-in.">
+<style>:root{--bg:#0a0a0f;--fg:#e0e0e8;--accent:#00d4aa;--muted:#888;--card:#14141f;--blue:#3B82F6;--red:#ff4444}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.7}.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem}nav{padding:1rem 0;border-bottom:1px solid #2a2a3a;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center}nav a{color:var(--fg);text-decoration:none;margin-right:1.5rem}nav a:hover{color:var(--accent)}.logo span{color:var(--accent)}h1{font-size:2.2rem;margin-bottom:1rem}h2{color:var(--accent);margin:2rem 0 .75rem;font-size:1.3rem}p,li{color:var(--muted)}ul{margin:0 0 1rem 1.5rem}.highlight-box{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:1.5rem;margin:1.5rem 0}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:.6rem;text-align:left;border-bottom:1px solid #2a2a3a;font-size:.9rem}th{color:var(--accent);font-size:.8rem;text-transform:uppercase}.yes{color:var(--accent)}.no{color:var(--red)}.btn{background:var(--accent);color:#000;padding:.75rem 2rem;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:inline-block;text-decoration:none;margin:.5rem}footer{text-align:center;color:var(--muted);font-size:.8rem;padding:2rem 0;border-top:1px solid #2a2a3a;margin-top:3rem}</style>
+</head><body><div class="container">
+<nav><a href="/" class="logo">🏰 Claw<span>Moat</span></a><div><a href="/compare/">All Comparisons</a><a href="/scan/">Scanner</a><a href="https://github.com/darfaz/clawmoat">GitHub ↗</a></div></nav>
+
+<h1>ClawMoat vs Lakera Guard</h1>
+<p style="font-size:1.1rem;color:var(--fg)">Lakera Guard is a hosted API for LLM runtime security. ClawMoat is a self-hosted, zero-dependency agent firewall. Different architectures, different trade-offs.</p>
+
+<div class="highlight-box">
+<p style="color:var(--fg);margin:0"><strong>TL;DR:</strong> Choose Lakera if you want ML-powered detection via an API and have budget for enterprise sales. Choose ClawMoat if you want self-hosted, transparent pricing, supply chain protection, and zero vendor lock-in.</p>
+</div>
+
+<h2>Architecture</h2>
+<p><strong>Lakera</strong> is a cloud API. You send prompts to their endpoint, they return a risk score. Your data leaves your machine. Latency depends on network. Requires an API key and account.</p>
+<p><strong>ClawMoat</strong> runs entirely local. npm install, import, done. Nothing leaves your machine. Zero network calls. Zero auth. Zero dependencies.</p>
+
+<h2>Detection Approach</h2>
+<p>Lakera uses ML models trained on their proprietary dataset. This means better generalization for novel attacks, but it's a black box — you can't inspect or customize the detection logic.</p>
+<p>ClawMoat uses pattern-based detection with 13 prompt injection patterns, 15+ supply chain indicators, and 6 insider threat detectors. It's transparent — you can read every pattern, add your own, and understand exactly why something was flagged.</p>
+
+<h2>What ClawMoat Has That Lakera Doesn't</h2>
+<ul>
+<li><strong>Host-level protection</strong> — forbidden zones, dangerous command blocking, 4 permission tiers</li>
+<li><strong>Supply chain detection</strong> — real-time indicators for TeamPCP, CanisterWorm, compromised packages</li>
+<li><strong>Insider threat detection</strong> — 6 behavioral detectors based on Anthropic's agentic misalignment research</li>
+<li><strong>Network egress logging</strong> — tracks outbound connections from agents</li>
+<li><strong>Inter-agent message scanning</strong> — detects attacks between cooperating agents</li>
+<li><strong>Zero dependencies</strong> — no supply chain risk from the security tool itself</li>
+<li><strong>Transparent pricing</strong> — $0 / $29 / $149 on the website vs "Let's chat"</li>
+</ul>
+
+<h2>What Lakera Has That ClawMoat Doesn't</h2>
+<ul>
+<li><strong>ML-powered detection</strong> — better at catching novel/creative prompt injections</li>
+<li><strong>PII detection and redaction</strong> — dedicated PII scanner with entity recognition</li>
+<li><strong>Enterprise SSO/RBAC</strong> — built for large orgs</li>
+<li><strong>Managed infrastructure</strong> — no self-hosting needed</li>
+<li><strong>Proven at scale</strong> — used by Dropbox and other large companies</li>
+</ul>
+
+<h2>Pricing</h2>
+<table>
+<tr><th></th><th>ClawMoat</th><th>Lakera</th></tr>
+<tr><td>Free</td><td class="yes">Unlimited, self-hosted</td><td>10,000 req/month</td></tr>
+<tr><td>Developer</td><td>$29/mo</td><td class="no">—</td></tr>
+<tr><td>Team</td><td>$149/mo</td><td class="no">—</td></tr>
+<tr><td>Enterprise</td><td>Custom</td><td>"Let's chat" (sales call required)</td></tr>
+</table>
+
+<h2>Who Should Use What</h2>
+<p><strong>Use Lakera if:</strong> You're an enterprise with budget, need ML-powered detection, want managed infrastructure, and can wait for a sales process.</p>
+<p><strong>Use ClawMoat if:</strong> You're a developer or small team, want self-hosted security, need supply chain protection, care about transparent pricing, and want to be running in 5 minutes.</p>
+
+<div style="text-align:center;margin:2rem 0">
+<a href="https://github.com/darfaz/clawmoat" class="btn">Try ClawMoat Free →</a>
+<a href="/compare/" class="btn" style="background:transparent;border:2px solid var(--accent);color:var(--accent)">All Comparisons</a>
+</div>
+<footer><p>🏰 ClawMoat — The Open-Source Agent Firewall</p></footer>
+</div></body></html>
