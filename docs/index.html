@@ -910,81 +910,81 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 <section id="pricing">
 <div class="container">
   <div class="section-label">Pricing</div>
-  <h2 class="section-title">Free to start. Upgrade when the stakes get real.</h2>
-  <p class="section-sub">Running agents on your laptop? Free tier has you covered. Managing a fleet for your company? That's when Pro and Team earn their keep. All paid plans include a <strong>30-day free trial</strong> and <strong>14-day money-back guarantee</strong>.</p>
+  <h2 class="section-title">Free to scan. Upgrade to enforce.</h2>
+  <p class="section-sub">The agent firewall is open source and free forever. Paid plans add enforcement, compliance, and fleet control. All paid plans include a <strong>30-day free trial</strong>.</p>
   <div class="pricing-grid">
     <div class="price-card">
       <h3>Free</h3>
       <div class="price">$0</div>
-      <div class="desc">Stop worrying about your agent leaking keys or getting hijacked</div>
+      <div class="desc">Scan and detect. The core agent firewall, forever free.</div>
       <ul>
-        <li>Host Guardian (all 4 tiers)</li>
-        <li>20+ forbidden zone patterns</li>
-        <li>Prompt injection scanning</li>
+        <li>Prompt injection detection (13 patterns)</li>
         <li>Jailbreak detection</li>
-        <li>Secret scanning</li>
-        <li>Policy engine (YAML)</li>
-        <li>Audit trail (in-memory)</li>
+        <li>Secret/credential scanning</li>
+        <li>Supply chain scanner</li>
+        <li>Host Guardian (all tiers)</li>
+        <li>Network egress logging</li>
+        <li>CLI + local audit trail</li>
         <li>Community support</li>
       </ul>
       <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">Install Free</a>
     </div>
-    <div class="price-card">
-      <h3>Security Kit</h3>
-      <div class="price">$29</div>
-      <div class="desc">Ship agent features without security liability — own it forever</div>
+    <div class="price-card popular">
+      <h3>Developer</h3>
+      <div class="price">$29<span>/mo</span></div>
+      <div class="desc">Ship agents safely. Real-time alerts, persistent logs, threat intel.</div>
       <ul>
         <li>Everything in Free</li>
-        <li>OpenClaw security skill</li>
-        <li>Real-time scanning</li>
-        <li>Custom policy rules</li>
-        <li>Scan history &amp; audit log</li>
-        <li>1 year of pattern updates</li>
-      </ul>
-      <a href="#" onclick="checkout('security-kit');return false" class="btn btn-primary">Buy — $29 one-time</a>
-      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">14-day money-back guarantee</p>
-    </div>
-    <div class="price-card popular">
-      <h3>Pro</h3>
-      <div class="price">$14.99<span>/mo</span></div>
-      <div class="desc">Prove your agents are secure — dashboard, audit logs, and real-time alerts</div>
-      <ul>
-        <li>Everything in Security Kit</li>
-        <li>Threat intelligence feed</li>
+        <li>Real-time alerts (Slack/Telegram/email)</li>
         <li>Persistent audit logs (queryable)</li>
-        <li>Real-time alerts (Telegram/Slack/Discord/email)</li>
-        <li>Security dashboard</li>
-        <li>Custom forbidden zones (YAML)</li>
+        <li>Threat intelligence feed</li>
+        <li>Custom policy rules (YAML)</li>
         <li>Priority pattern updates</li>
+        <li>Security dashboard</li>
         <li>Email support</li>
       </ul>
       <div style="display:flex;gap:8px;flex-direction:column">
-        <a href="#" onclick="checkout('shield-monthly');return false" class="btn btn-primary">Start free trial</a>
-        <a href="#" onclick="checkout('shield-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$149/year — save 17%</a>
+        <a href="#" onclick="checkout('dev-monthly');return false" class="btn btn-primary">Start free trial</a>
+        <a href="#" onclick="checkout('dev-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$290/year — save 17%</a>
       </div>
-      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">30 days free · 14-day refund guarantee</p>
     </div>
     <div class="price-card">
       <h3>Team</h3>
-      <div class="price">$49<span>/mo</span></div>
-      <div class="desc">Pass SOC2 with AI agents in production — compliance reports, fleet control, centralized policy</div>
+      <div class="price">$149<span>/mo</span></div>
+      <div class="desc">Shared policy, fleet visibility, compliance exports. Up to 10 seats.</div>
       <ul>
-        <li>Everything in Pro</li>
-        <li>Fleet dashboard (all machines)</li>
+        <li>Everything in Developer</li>
+        <li>Fleet dashboard (all agents)</li>
         <li>Centralized policy management</li>
-        <li>Compliance reports (SOC2-style)</li>
+        <li>Compliance reports (SOC2-ready)</li>
         <li>Shared threat intelligence</li>
-        <li>Role-based policies</li>
-        <li>Up to 10 machines</li>
+        <li>Role-based access control</li>
+        <li>Up to 10 seats</li>
         <li>Priority support</li>
       </ul>
       <div style="display:flex;gap:8px;flex-direction:column">
         <a href="#" onclick="checkout('team-monthly');return false" class="btn btn-primary">Start free trial</a>
-        <a href="#" onclick="checkout('team-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$499/year — save 15%</a>
+        <a href="#" onclick="checkout('team-yearly');return false" class="btn btn-outline" style="font-size:.9rem">$1,490/year — save 17%</a>
       </div>
-      <p style="font-size:.75rem;color:var(--gray);margin-top:8px;text-align:center">30 days free · 14-day refund guarantee</p>
+    </div>
+    <div class="price-card">
+      <h3>Business</h3>
+      <div class="price">Custom</div>
+      <div class="desc">SSO, approval workflows, SIEM integration, SLA. For security teams.</div>
+      <ul>
+        <li>Everything in Team</li>
+        <li>SSO / SAML authentication</li>
+        <li>Approval workflows (human-in-loop)</li>
+        <li>SIEM &amp; webhook integrations</li>
+        <li>Session forensics &amp; replay</li>
+        <li>Custom agent DLP rules</li>
+        <li>Unlimited seats</li>
+        <li>Dedicated support + SLA</li>
+      </ul>
+      <a href="mailto:hello@clawmoat.com?subject=ClawMoat%20Business%20Plan" class="btn btn-primary">Contact Sales</a>
     </div>
   </div>
+  <p style="text-align:center;margin-top:1.5rem"><a href="/affiliates/" style="color:var(--emerald)">💰 Earn 50% USDT on every referral → Join the Affiliate Program</a></p>
 </div>
 </section>
 
