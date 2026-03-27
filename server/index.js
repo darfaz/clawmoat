@@ -9,13 +9,15 @@ const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 
 const PRICES = {
   // Security Kit (one-time purchase)
-  'security-kit':   process.env.PRICE_SECURITY_KIT   || 'price_1T5F3LAUiOw2ZIorTAPB0Q76',  // $29 one-time
+  'security-kit':   process.env.PRICE_SECURITY_KIT   || 'price_1T5F3LAUiOw2ZIorTAPB0Q76',  // $29 one-time (legacy)
+  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1TFj1sAUiOw2ZIorjxxxbB0U',  // $29/mo
+  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1TFj1tAUiOw2ZIorfpofSCZQ',  // $290/yr
   // Pro subscriptions
-  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo
-  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr
+  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (legacy)
+  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (legacy)
   // Team subscriptions
-  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1T5F2aAUiOw2ZIorodyK4wwQ',  // $49/mo
-  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1T5F2vAUiOw2ZIor5Jcga7kB',  // $499/yr
+  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1TFj1tAUiOw2ZIor58bUq4iN',  // $149/mo (new)
+  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1TFj1tAUiOw2ZIori94Rmnpg',  // $1,490/yr (new)
 };
 
 const ONE_TIME_PLANS = new Set(['security-kit']);
@@ -115,7 +117,7 @@ const server = http.createServer(async (req, res) => {
     const priceId = PRICES[body.plan];
 
     if (!priceId) {
-      return json(res, 400, { error: 'Invalid plan. Use: shield-monthly, shield-yearly, team-monthly, team-yearly' });
+      return json(res, 400, { error: 'Invalid plan. Use: dev-monthly, dev-yearly, team-monthly, team-yearly' });
     }
 
     try {
