@@ -408,3 +408,19 @@ const { PolicyEngine, DATA_PATTERNS, TOOL_RISK_DEFAULTS } = require('./policy-en
 module.exports.PolicyEngine = PolicyEngine;
 module.exports.DATA_PATTERNS = DATA_PATTERNS;
 module.exports.TOOL_RISK_DEFAULTS = TOOL_RISK_DEFAULTS;
+
+// Obfuscation Scanner
+const obfuscation = require('./obfuscation-scanner');
+module.exports.scanObfuscation = obfuscation.scanObfuscation;
+module.exports.stripObfuscation = obfuscation.stripObfuscation;
+
+// Code Scanner
+const codeScanner = require('./code-scanner');
+module.exports.scanCode = codeScanner.scanCode;
+module.exports.quickToolCheck = codeScanner.quickToolCheck;
+
+// Boundary Scanner (Agent Pipeline)
+const boundary = require('./boundary-scanner');
+module.exports.createPipeline = boundary.createPipeline;
+module.exports.createDefaultPipeline = boundary.createDefaultPipeline;
+module.exports.BOUNDARY_STAGES = boundary.STAGES;
