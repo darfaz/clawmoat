@@ -387,3 +387,18 @@ module.exports.AgentMeshBridge = AgentMeshBridge;
 module.exports.OWASP_AGENTIC_MAPPING = OWASP_AGENTIC_MAPPING;
 module.exports.DEFAULT_POLICIES = DEFAULT_POLICIES;
 module.exports.GOVERNANCE_ACTIONS = GOVERNANCE_ACTIONS;
+
+// MCP Scanner
+const mcpScanner = require('./mcp-scanner');
+module.exports.scanMCP = mcpScanner.scanMCP;
+module.exports.discoverMCPConfigs = mcpScanner.discoverMCPConfigs;
+module.exports.parseMCPConfig = mcpScanner.parseMCPConfig;
+module.exports.scanMCPServer = mcpScanner.scanMCPServer;
+
+// Enforcement mode
+const enforce = require('./enforce');
+module.exports.enforceInbound = enforce.enforceInbound;
+module.exports.enforceOutbound = enforce.enforceOutbound;
+module.exports.firewall = enforce.middleware;
+module.exports.wrapAgent = enforce.wrap;
+module.exports.ClawMoatBlocked = enforce.ClawMoatBlocked;

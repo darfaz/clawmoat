@@ -10,14 +10,14 @@ const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 const PRICES = {
   // Security Kit (one-time purchase)
   'security-kit':   process.env.PRICE_SECURITY_KIT   || 'price_1T5F3LAUiOw2ZIorTAPB0Q76',  // $29 one-time (legacy)
-  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1TFj1sAUiOw2ZIorjxxxbB0U',  // $29/mo
-  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1TFj1tAUiOw2ZIorfpofSCZQ',  // $290/yr
+  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1TFnOIAUiOw2ZIor6V5PdXBx',  // $9/mo
+  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1TFnOIAUiOw2ZIorJhG9KYZX',  // $90/yr
   // Pro subscriptions
   'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (legacy)
   'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (legacy)
   // Team subscriptions
-  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1TFj1tAUiOw2ZIor58bUq4iN',  // $149/mo (new)
-  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1TFj1tAUiOw2ZIori94Rmnpg',  // $1,490/yr (new)
+  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1TFnOJAUiOw2ZIorunRX8OKm',  // $49/mo
+  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1TFnOJAUiOw2ZIorlOfiCnNk',  // $490/yr
 };
 
 const ONE_TIME_PLANS = new Set(['security-kit']);

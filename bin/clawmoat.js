@@ -78,6 +78,9 @@ switch (command) {
   case 'provider':
     cmdProviders(args.slice(1));
     break;
+  case 'scan-mcp':
+    cmdScanMCP(args.slice(1));
+    break;
   case 'version':
   case '--version':
   case '-v':
@@ -1017,6 +1020,68 @@ function cmdActivate(args) {
   });
   req.write(postData);
   req.end();
+}
+
+function cmdScanMCP(args) {
+  const { scanMCP, discoverMCPConfigs } = require('../src/mcp-scanner');
+  const extraPaths = args.filter(a => !a.startsWith('-'));
+  const verbose = args.includes('--verbose') || args.includes('-v');
+  const jsonOut = args.includes('--json');
+
+  console.log('\n🏰 ClawMoat MCP Scanner\n');
+
+  // Run scan
+  const report = scanMCP({ extraPaths, verbose });
+
+  if (jsonOut) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  // Discovery
+  console.log(`📁 Configs discovered: ${report.configsFound.length}`);
+  for (const c of report.configsFound) {
+    console.log(`   ✓ ${c.name}: ${c.path}`);
+  }
+
+  if (report.configsFound.length === 0) {
+    // Show what we looked for
+    console.log('\n   No MCP configs found. Searched:');
+    const all = discoverMCPConfigs();
+    for (const c of all.slice(0, 6)) {
+      console.log(`   · ${c.name}: ${c.path}`);
+    }
+    console.log(`   ... and ${all.length - 6} more locations`);
+    console.log('\n   Tip: pass a config path directly: clawmoat scan-mcp ~/.cursor/mcp.json\n');
+    return;
+  }
+
+  // Servers
+  console.log(`\n🔌 MCP servers found: ${report.servers.length}`);
+  for (const s of report.servers) {
+    console.log(`   · ${s.name} (${s.config})`);
+  }
+
+  // Findings
+  if (report.findings.length === 0) {
+    console.log('\n✅ No security issues found.\n');
+    return;
+  }
+
+  console.log(`\n⚠️  Findings: ${report.summary.total}`);
+  if (report.summary.critical) console.log(`   🔴 ${report.summary.critical} CRITICAL`);
+  if (report.summary.high) console.log(`   🟠 ${report.summary.high} HIGH`);
+  if (report.summary.medium) console.log(`   🟡 ${report.summary.medium} MEDIUM`);
+  if (report.summary.low) console.log(`   🔵 ${report.summary.low} LOW`);
+
+  console.log('');
+  for (const f of report.findings) {
+    const icon = f.severity === 'critical' ? '🔴' : f.severity === 'high' ? '🟠' : f.severity === 'medium' ? '🟡' : '🔵';
+    console.log(`${icon} [${f.severity.toUpperCase()}] ${f.label}`);
+    console.log(`   Server: ${f.server} (${f.configName})`);
+    console.log(`   Fix: ${f.fix}`);
+    console.log('');
+  }
 }
 
 function cmdInit(args) {
