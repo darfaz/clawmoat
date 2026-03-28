@@ -255,14 +255,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="logo"><a href="/"><img src="/logo.svg" alt="ClawMoat" style="height:44px"></a></div>
   <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
   <div class="nav-links">
-    <a href="/">Security</a>
-    <a href="/services/">AI Agents</a>
-    <a href="/scan/">Scanner</a>
-    <a href="/playground/">Playground</a>
-    <a href="https://app.clawmoat.com">Dashboard</a>
-    <a href="/blog/">Blog</a>
+    <a href="/scan/">Free Scanner</a>
     <a href="https://github.com/darfaz/clawmoat">GitHub ↗</a>
-    <a href="/agent-install" class="btn-sm">Install</a>
+    <a href="#pricing" class="btn-sm">Get Started</a>
   </div>
 </div>
 </nav>
@@ -281,8 +276,8 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <p style="font-size:1.05rem;color:var(--gray);max-width:560px;margin:0 auto 40px">5 supply chain attacks in 8 days. Your agents need a firewall. One npm install. Zero dependencies. Free.</p>
   <div class="install-cmd" style="margin:0 auto 32px"><span class="dollar">$</span> npm install -g clawmoat</div>
   <div class="hero-btns">
-    <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ Star on GitHub</a>
-    <a href="#pricing" class="btn btn-outline">See Plans</a>
+    <a href="/scan/" class="btn btn-primary">Scan Your Agent Free →</a>
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">View on GitHub</a>
   </div>
   <div class="hero-badges">
     <span><a href="https://www.npmjs.com/package/clawmoat"><img src="https://img.shields.io/npm/v/clawmoat?style=flat-square&color=3B82F6" alt="npm" style="height:18px;vertical-align:middle"></a></span>
@@ -427,7 +422,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Deployment Models -->
-<section id="deploy">
+<section id="deploy" style="display:none">
 <div class="container">
   <div class="section-label">Where You Run Agents</div>
   <h2 class="section-title">Your laptop. A dedicated box. The cloud. All protected.</h2>
@@ -474,7 +469,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Host Guardian — THE LEAD STORY -->
-<section id="guardian">
+<section id="guardian" style="display:none">
 <div class="container">
   <div class="section-label">Host Guardian — The Mechanism</div>
   <h2 class="section-title">Four permission tiers. Like hiring a new employee.</h2>
@@ -575,7 +570,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- What We Protect — Forbidden Zones -->
-<section class="problem" id="protect">
+<section class="problem" id="protect" style="display:none">
 <div class="container">
   <div class="section-label">Forbidden Zones</div>
   <h2 class="section-title">These directories are off-limits. Period.</h2>
@@ -745,49 +740,52 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 <section class="demo" id="demo">
 <div class="container">
   <div class="section-label">See It In Action</div>
-  <h2 class="section-title">Try ClawMoat v0.5.0</h2>
-  <p class="section-sub">Scan skills, audit agents, and monitor in daemon mode.</p>
+  <h2 class="section-title">30 seconds to your first scan</h2>
+  <p class="section-sub">Install. Scan. Block. No account, no API key, no config file.</p>
   <div class="terminal">
     <div class="terminal-bar">
       <span class="terminal-dot"></span>
       <span class="terminal-dot"></span>
       <span class="terminal-dot"></span>
-      <span class="terminal-title">clawmoat v0.5.0 — bash</span>
+      <span class="terminal-title">terminal</span>
     </div>
     <div class="terminal-body">
-<span class="prompt">$</span> <span class="cmd">clawmoat skill-audit ~/.openclaw/skills/</span>
+<span class="prompt">$</span> <span class="cmd">npm install clawmoat</span>
 
-<span class="output">🏰 ClawMoat Skill Audit</span>
-<span class="output">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="output">added 1 package (0 dependencies) in 1.2s</span>
 
-<span class="safe">✓ weather-skill</span><span class="output">     hash: a3f2...c891  integrity: OK</span>
-<span class="danger">✗ helper-tool</span><span class="output">       hash: MODIFIED since install</span>
-<span class="output">   <span class="danger">⛔ Suspicious: credential file access pattern</span></span>
-<span class="output">   <span class="danger">⛔ Suspicious: base64-encoded outbound URL</span></span>
+<span class="prompt">$</span> <span class="cmd">clawmoat scan-mcp</span>
 
-<span class="safe">✓ calendar-sync</span><span class="output">    hash: 7b1e...d4a0  integrity: OK</span>
-<span class="output">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="output">3 skills scanned · <span class="danger">1 flagged</span> · 26 blocked domains active</span>
+<span class="output">🏰 ClawMoat MCP Scanner</span>
+<span class="output">📁 Configs discovered: 3</span>
+<span class="output">   ✓ Claude Code: ~/.claude/mcp.json</span>
+<span class="output">   ✓ Cursor: ~/.cursor/mcp.json</span>
+<span class="output">   ✓ VS Code: ~/.vscode/mcp.json</span>
+<span class="output">🔌 MCP servers found: 5</span>
+<span class="output"></span>
+<span class="danger">🔴 [CRITICAL] Arbitrary command execution</span>
+<span class="output">   Server: dev-tools (Cursor)</span>
+<span class="output">   Fix: Use a purpose-built MCP server, not bash.</span>
+<span class="output"></span>
+<span class="danger">🟠 [HIGH] Credentials in MCP server environment</span>
+<span class="output">   Server: github-mcp (Claude Code)</span>
+<span class="output">   Fix: Use scoped tokens with minimal permissions.</span>
+<span class="output"></span>
+<span class="safe">✅ 3 servers clean · <span class="danger">2 issues found</span></span>
 
-<span class="prompt">$</span> <span class="cmd">clawmoat report</span>
+<span class="prompt">$</span> <span class="cmd">node -e "const {firewall}=require('clawmoat'); app.use(firewall())"</span>
 
-<span class="output">🏰 ClawMoat Security Report</span>
-<span class="output">   Credential monitors:  <span class="safe">4 active</span></span>
-<span class="output">   Network egress:       <span class="safe">142 requests logged, 3 blocked</span></span>
-<span class="output">   Agent messages:       <span class="safe">89 scanned, 0 threats</span></span>
-<span class="output">   Skill integrity:      <span class="danger">1 of 12 modified</span></span>
-
-<span class="prompt">$</span> <span class="cmd">clawmoat --daemon --alert-webhook https://hooks.slack.com/...</span>
-
-<span class="output">🏰 ClawMoat daemon started — monitoring credentials, network, skills</span>
-<span class="output">   Alerts → webhook + console</span>
+<span class="output">🏰 ClawMoat firewall active — blocking critical/high threats</span>
     </div>
+  </div>
+  <div style="text-align:center;margin-top:24px">
+    <a href="/scan/" class="btn btn-primary">Try the Free Scanner →</a>
   </div>
 </div>
 </section>
 
 <!-- Badge -->
-<section id="badge">
+<section id="badge" style="display:none">
 <div class="container">
   <div class="section-label">Security Badge</div>
   <h2 class="section-title">Show your security score</h2>
@@ -834,7 +832,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Compare -->
-<section id="compare">
+<section id="compare" style="display:none">
 <div class="container">
   <div class="section-label">How We're Different</div>
   <h2 class="section-title">The only tool protecting the host, not just the prompt</h2>
@@ -1008,13 +1006,23 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
       <a href="mailto:hello@clawmoat.com?subject=ClawMoat%20Business%20Plan" class="btn btn-primary">Contact Sales</a>
     </div>
   </div>
-  <p style="text-align:center;margin-top:1.5rem"><a href="/affiliates/" style="color:var(--emerald)">💰 Earn 50% USDT on every referral → Join the Affiliate Program</a></p>
-  <p style="text-align:center;margin-top:.5rem;font-size:.9rem"><a href="/compare/" style="color:var(--gray)">Compare ClawMoat vs Lakera, LLM Guard, Snyk agent-scan →</a></p>
+  <p style="text-align:center;margin-top:1.5rem;font-size:.9rem"><a href="/compare/" style="color:var(--gray)">Compare ClawMoat vs Lakera, LLM Guard, Snyk →</a></p>
+</div>
+</section>
+
+<!-- Final CTA -->
+<section style="padding:80px 0;text-align:center;background:linear-gradient(180deg,var(--navy) 0%,var(--navy-light) 100%)">
+<div class="container">
+  <h2 style="font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:16px">5 supply chain attacks in 8 days.<br>Is your agent exposed?</h2>
+  <p style="color:var(--gray);font-size:1.1rem;max-width:500px;margin:0 auto 32px">Scan your MCP servers and agent config for free. Takes 30 seconds. Nothing leaves your machine.</p>
+  <a href="/scan/" class="btn btn-primary" style="font-size:1.2rem;padding:16px 40px">Scan Your Agent Free →</a>
+  <p style="color:var(--gray);font-size:.85rem;margin-top:16px">No account required · Zero dependencies · MIT licensed</p>
+</div>
 </div>
 </section>
 
 <!-- Open Source -->
-<section class="oss" id="oss">
+<section class="oss" id="oss" style="display:none">
 <div class="container">
   <div class="oss-box">
     <div class="section-label">Open Source</div>
@@ -1031,7 +1039,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Waitlist CTA -->
-<section class="cta" id="waitlist">
+<section class="cta" id="waitlist" style="display:none">
 <div class="container">
   <div class="section-label">Early Access</div>
   <h2 class="section-title">Get ClawMoat Pro before launch</h2>
@@ -1057,7 +1065,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Beyond Security — AI Agents Transition -->
-<section style="padding:100px 0;text-align:center;position:relative;overflow:hidden">
+<section style="display:none;padding:100px 0;text-align:center;position:relative;overflow:hidden">
 <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--emerald),var(--blue),transparent)"></div>
 <div class="container">
   <p style="font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--emerald);margin-bottom:16px">Beyond Security</p>
