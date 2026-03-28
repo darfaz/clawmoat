@@ -424,3 +424,18 @@ const boundary = require('./boundary-scanner');
 module.exports.createPipeline = boundary.createPipeline;
 module.exports.createDefaultPipeline = boundary.createDefaultPipeline;
 module.exports.BOUNDARY_STAGES = boundary.STAGES;
+
+// Language Detection
+const lang = require('./language-detector');
+module.exports.scanLanguage = lang.scanLanguage;
+module.exports.detectScripts = lang.detectScripts;
+
+// Ban Scanner
+const ban = require('./ban-scanner');
+module.exports.createBanScanner = ban.createBanScanner;
+module.exports.BAN_PRESETS = ban.PRESETS;
+
+// Framework Adapters (also available via require('clawmoat/adapters'))
+const adapters = require('./adapters');
+module.exports.createGuard = adapters.createGuard;
+module.exports.ClawMoatCallbackHandler = adapters.ClawMoatCallbackHandler;
