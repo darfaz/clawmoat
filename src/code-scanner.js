@@ -67,6 +67,7 @@ const EXFIL_PATTERNS = [
   { re: /curl\s+.*-d\s+.*@/, name: 'curl POST with file data', severity: 'high' },
   { re: /curl\s+.*--data-binary\s+@/, name: 'curl binary upload', severity: 'high' },
   { re: /curl\s+.*-T\s/, name: 'curl file upload', severity: 'high' },
+  { re: /wget\s+--post-(?:data|file)/, name: 'wget data upload', severity: 'high' },
   { re: /scp\s+.*@.*:/, name: 'SCP file transfer', severity: 'high' },
   { re: /rsync\s+.*@.*:/, name: 'rsync to remote', severity: 'high' },
   { re: /base64\s+.*\|\s*curl/, name: 'base64 encode and exfiltrate', severity: 'critical' },
@@ -104,6 +105,15 @@ const EXEC_PATTERNS = [
   { re: /System\.Diagnostics\.Process/, name: '.NET Process.Start', severity: 'high' },
   { re: /\bimport\s+ctypes\b/, name: 'Python ctypes (FFI)', severity: 'medium' },
   { re: /require\s*\(\s*['"]child_process['"]/, name: 'require child_process', severity: 'high' },
+];
+
+// Supply chain / CI patterns
+const SUPPLY_CHAIN_PATTERNS = [
+  { re: /npm\s+install\s+[\w@/-]*(?:telnyx@4\.87\.[12]|event-stream@3\.3\.6|ua-parser-js@0\.7\.29|coa@2\.0\.3|rc@1\.2\.9)/, name: 'known compromised package', severity: 'critical' },
+  { re: /pip\s+install\s+[\w-]*(?:telnyx==4\.87\.[12])/, name: 'known compromised PyPI package', severity: 'critical' },
+  { re: /\$\{\{\s*github\.event\./, name: 'GitHub Actions expression injection', severity: 'high' },
+  { re: /\$\{\{\s*(?:inputs|secrets|env)\./, name: 'CI variable injection', severity: 'high' },
+  { re: /"postinstall"\s*:\s*"[^"]*(?:curl|wget|bash|sh|nc|python)/, name: 'suspicious postinstall script', severity: 'critical' },
 ];
 
 // Path traversal patterns
@@ -146,6 +156,7 @@ function scanCode(text, opts = {}) {
     ...SQL_PATTERNS.map(p => ({ ...p, category: 'sql_injection' })),
     ...EXEC_PATTERNS.map(p => ({ ...p, category: 'code_execution' })),
     ...TRAVERSAL_PATTERNS.map(p => ({ ...p, category: 'path_traversal' })),
+    ...SUPPLY_CHAIN_PATTERNS.map(p => ({ ...p, category: 'supply_chain' })),
   ];
 
   for (const pattern of allPatterns) {

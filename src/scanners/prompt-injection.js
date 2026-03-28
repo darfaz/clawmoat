@@ -26,6 +26,17 @@ const INJECTION_PATTERNS = [
   { pattern: /(?:show|reveal|display|print|output|repeat|echo)\s+(?:me\s+)?(?:your|the)\s+(?:system\s+)?(?:prompt|instructions?|rules?|guidelines?)/i, severity: 'high', name: 'system_prompt_extraction' },
   { pattern: /what\s+(?:are|is)\s+your\s+(?:system\s+)?(?:prompt|instructions?|rules?|initial\s+message)/i, severity: 'medium', name: 'system_prompt_extraction' },
   { pattern: /(?:beginning|start)\s+of\s+(?:the\s+)?(?:system|initial)\s+(?:prompt|message|instruction)/i, severity: 'high', name: 'system_prompt_extraction' },
+  { pattern: /repeat\s+(?:everything|all|the\s+text)\s+(?:above|before)\s+(?:this|here)/i, severity: 'high', name: 'system_prompt_extraction' },
+  { pattern: /(?:complete|finish)\s+(?:the|this)\s+(?:following\s+)?sentence\s*:?\s*.*(?:system\s+prompt|my\s+instructions)/i, severity: 'medium', name: 'system_prompt_extraction' },
+  { pattern: /(?:verbatim|word.for.word|exactly)\s*,?\s*(?:including|with)\s+(?:any|all|the)\s+(?:instructions?|rules?|prompts?)/i, severity: 'high', name: 'system_prompt_extraction' },
+
+  // Indirect injection (instructions embedded in data/tool results)
+  { pattern: /(?:IMPORTANT|URGENT|NOTE|SYSTEM)\s*:\s*(?:The\s+)?(?:user|admin|system)\s+(?:has\s+)?(?:requested|wants|requires|asked)/i, severity: 'critical', name: 'indirect_injection' },
+  { pattern: /(?:to\s+complete\s+the\s+task|to\s+continue)\s*[,:]\s*(?:run|execute|curl|wget|send|post)/i, severity: 'critical', name: 'indirect_injection' },
+
+  // CI/CD injection
+  { pattern: /\$\{\{\s*github\.event\./i, severity: 'high', name: 'ci_injection' },
+  { pattern: /\$\{\{\s*(?:inputs|secrets|env)\./i, severity: 'high', name: 'ci_injection' },
 
   // Data exfiltration attempts
   { pattern: /(?:send|post|upload|transmit|exfiltrate|forward)\s+(?:all|the|my|this|your)\s+(?:data|files?|info|content|messages?|history|conversation)/i, severity: 'critical', name: 'data_exfiltration' },
