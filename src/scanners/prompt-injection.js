@@ -55,6 +55,13 @@ const INJECTION_PATTERNS = [
   // Tool abuse instructions
   { pattern: /(?:run|execute|call|use)\s+(?:the\s+)?(?:exec|shell|terminal|command|bash)\s+(?:tool|function)/i, severity: 'medium', name: 'tool_abuse' },
   { pattern: /(?:read|access|open)\s+(?:the\s+)?(?:file|path)\s+(?:\/etc|~\/\.ssh|~\/\.aws|\.env)/i, severity: 'high', name: 'tool_abuse' },
+  { pattern: /(?:cat|read|get|show|display|print)\s+~\/\.ssh\//i, severity: 'critical', name: 'credential_access' },
+  { pattern: /(?:cat|read|get|show|display|print)\s+~\/\.aws\//i, severity: 'critical', name: 'credential_access' },
+  { pattern: /(?:cat|read|get|show|display|print)\s+\.env\b/i, severity: 'high', name: 'credential_access' },
+
+  // Credential/key content in text
+  { pattern: /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/i, severity: 'critical', name: 'private_key_content' },
+  { pattern: /-----BEGIN\s+OPENSSH\s+PRIVATE\s+KEY-----/i, severity: 'critical', name: 'private_key_content' },
 ];
 
 // Heuristic signals that text contains instruction-like content (in a data context)
