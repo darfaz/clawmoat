@@ -402,3 +402,9 @@ module.exports.enforceOutbound = enforce.enforceOutbound;
 module.exports.firewall = enforce.middleware;
 module.exports.wrapAgent = enforce.wrap;
 module.exports.ClawMoatBlocked = enforce.ClawMoatBlocked;
+
+// Policy Engine
+const { PolicyEngine, DATA_PATTERNS, TOOL_RISK_DEFAULTS } = require('./policy-engine');
+module.exports.PolicyEngine = PolicyEngine;
+module.exports.DATA_PATTERNS = DATA_PATTERNS;
+module.exports.TOOL_RISK_DEFAULTS = TOOL_RISK_DEFAULTS;
