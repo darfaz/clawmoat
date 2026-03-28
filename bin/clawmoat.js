@@ -64,6 +64,9 @@ switch (command) {
   case 'init':
     cmdInit(args.slice(1));
     break;
+  case 'ci':
+    cmdCI(args.slice(1));
+    break;
   case 'test':
     cmdTest();
     break;
@@ -1117,6 +1120,65 @@ function cmdInit(args) {
   }
 }
 
+function cmdCI(args) {
+  const { scanRepo } = require('../src/ci-scanner');
+  const jsonOut = args.includes('--json');
+  const dir = args.find(a => !a.startsWith('-')) || '.';
+  const failOn = (args.find(a => a.startsWith('--fail-on=')) || '--fail-on=high').split('=')[1];
+
+  if (!jsonOut) {
+    console.log(`\n${BOLD}🏰 ClawMoat CI Scanner${RESET}`);
+    console.log(`${DIM}Scanning: ${require('path').resolve(dir)}${RESET}\n`);
+  }
+
+  const result = scanRepo({ rootDir: dir, failOn });
+
+  if (jsonOut) {
+    console.log(JSON.stringify(result, null, 2));
+    process.exit(result.passed ? 0 : 1);
+    return;
+  }
+
+  if (result.findings.length === 0) {
+    console.log(`${GREEN}✅ No security issues found.${RESET}\n`);
+    process.exit(0);
+    return;
+  }
+
+  // Group by type
+  const byType = {};
+  for (const f of result.findings) {
+    if (!byType[f.type]) byType[f.type] = [];
+    byType[f.type].push(f);
+  }
+
+  for (const [type, findings] of Object.entries(byType)) {
+    const label = type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    console.log(`${BOLD}${label}${RESET}`);
+    for (const f of findings) {
+      const icon = f.severity === 'critical' ? `${RED}🔴` : f.severity === 'high' ? `${YELLOW}🟠` : '🟡';
+      console.log(`  ${icon} [${f.severity.toUpperCase()}] ${f.evidence}${RESET}`);
+      console.log(`${DIM}       File: ${f.file}${RESET}`);
+      console.log(`${DIM}       Fix: ${f.fix}${RESET}`);
+    }
+    console.log('');
+  }
+
+  console.log(`${BOLD}Summary:${RESET} ${result.summary.total} issue(s) found`);
+  if (result.summary.critical) console.log(`  ${RED}${result.summary.critical} critical${RESET}`);
+  if (result.summary.high)     console.log(`  ${YELLOW}${result.summary.high} high${RESET}`);
+  if (result.summary.medium)   console.log(`  ${DIM}${result.summary.medium} medium${RESET}`);
+  console.log('');
+
+  if (!result.passed) {
+    console.log(`${RED}❌ CI check FAILED (found ${failOn}+ severity issues)${RESET}\n`);
+    process.exit(1);
+  } else {
+    console.log(`${YELLOW}⚠️  Issues found but none at fail-on severity (${failOn})${RESET}\n`);
+    process.exit(0);
+  }
+}
+
 function getLicense() {
   try {
     const licPath = path.join(process.env.HOME, '.clawmoat', 'license.json');
@@ -1132,6 +1194,9 @@ ${BOLD}🏰 ClawMoat v${VERSION}${RESET} — Security moat for AI agents
   Plan: ${planLabel}
 
 ${BOLD}USAGE${RESET}
+  clawmoat ci [dir]               Scan repo for secrets, compromised deps, CI risks, MCP issues
+  clawmoat ci --json              Output JSON for CI/CD integration
+  clawmoat ci --fail-on=critical  Only fail on critical severity (default: high)
   clawmoat init                   Generate a starter config file (clawmoat.yml)
   clawmoat scan <text>            Scan text for threats
   clawmoat scan --file <path>     Scan file contents
