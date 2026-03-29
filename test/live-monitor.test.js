@@ -3,7 +3,7 @@
  * Real-time terminal dashboard for AI agent security monitoring
  */
 
-const { test, describe, beforeEach, afterEach } = require('node:test');
+
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');

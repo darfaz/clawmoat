@@ -2,7 +2,7 @@
  * Tests for Multimodal Input Scanning
  */
 
-const { test, describe } = require('node:test');
+
 const assert = require('node:assert');
 const { 
   scanMultimodalInput,

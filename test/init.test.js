@@ -2,7 +2,7 @@
  * Tests for clawmoat init command
  */
 
-const { describe, it, beforeEach, afterEach } = require('node:test');
+
 const { strictEqual, ok } = require('node:assert');
 const fs = require('fs');
 const path = require('path');

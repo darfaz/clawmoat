@@ -2,7 +2,7 @@
  * Tests for AgentMesh Governance Integration
  */
 
-const { test, describe } = require('node:test');
+
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');

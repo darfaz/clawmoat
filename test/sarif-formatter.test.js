@@ -2,7 +2,7 @@
  * Tests for SARIF formatter
  */
 
-const { describe, it } = require('node:test');
+
 const { strictEqual, ok, deepStrictEqual } = require('node:assert');
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
 
