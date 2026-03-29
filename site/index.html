@@ -167,7 +167,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
     <a href="#demo">Demo</a>
     <a href="#pricing">Pricing</a>
     <a href="https://github.com/darfaz/clawmoat">GitHub</a>
-    <a href="#waitlist" class="btn-sm">Get Early Access</a>
+    <a href="https://www.npmjs.com/package/clawmoat" class="btn-sm">npm install clawmoat</a>
   </div>
 </div>
 </nav>
@@ -181,16 +181,16 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="hero-video-overlay"></div>
 </div>
 <div class="container">
-  <h1>Build a <span class="highlight">moat</span> around<br>your AI agents</h1>
-  <p>Runtime protection against prompt injection, tool misuse, and data exfiltration — for OpenClaw and every agentic AI system.</p>
+  <h1>The open-source <span class="highlight">security layer</span><br>for AI agents</h1>
+  <p>Prompt injection, secret leakage, and unsafe tool calls — caught before they execute. Zero dependencies. 40/40 eval suite. 5 lines to integrate.</p>
   <div class="hero-btns">
-    <a href="#waitlist" class="btn btn-primary">Get Early Access</a>
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ View on GitHub</a>
     <a href="https://github.com/darfaz/clawmoat" class="btn btn-outline">⭐ Star on GitHub</a>
   </div>
   <div class="hero-badges">
     <span>🛡️ OWASP Top 10 Coverage</span>
     <span>⚡ Zero Dependencies</span>
-    <span>✅ 37/37 Tests Passing</span>
+    <span>✅ 40/40 Eval Suite (100% detection, 0% FP)</span>
     <span>📦 MIT License</span>
   </div>
 </div>
@@ -227,6 +227,65 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </div>
 </section>
 
+<!-- Benchmark -->
+<section id="benchmark" style="background:var(--navy-light)">
+<div class="container">
+  <div class="section-label">Benchmark</div>
+  <h2 class="section-title">40/40 eval suite — run it yourself</h2>
+  <p class="section-sub">Every case is in the repo. <code style="background:var(--navy-mid);padding:2px 8px;border-radius:4px;font-size:.85rem">node evals/run.js</code></p>
+  <div style="overflow-x:auto;margin-top:32px">
+    <table style="width:100%;border-collapse:collapse;font-size:.95rem">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1)">
+          <th style="text-align:left;padding:12px 16px;color:var(--gray);font-weight:500">Attack Category</th>
+          <th style="text-align:center;padding:12px 16px;color:var(--gray);font-weight:500">Cases</th>
+          <th style="text-align:center;padding:12px 16px;color:var(--gray);font-weight:500">Detected</th>
+          <th style="text-align:center;padding:12px 16px;color:var(--gray);font-weight:500">False Positives</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+          <td style="padding:12px 16px">Prompt Injection</td>
+          <td style="text-align:center;padding:12px 16px">10</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:600">10/10</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald)">0</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+          <td style="padding:12px 16px">Secret Exfiltration (curl, DNS, base64)</td>
+          <td style="text-align:center;padding:12px 16px">10</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:600">10/10</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald)">0</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+          <td style="padding:12px 16px">Dangerous Commands (rm -rf, fork bombs)</td>
+          <td style="text-align:center;padding:12px 16px">8</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:600">8/8</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald)">0</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+          <td style="padding:12px 16px">Supply Chain (compromised packages)</td>
+          <td style="text-align:center;padding:12px 16px">5</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:600">5/5</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald)">0</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+          <td style="padding:12px 16px">Safe Tasks (normal dev workflow)</td>
+          <td style="text-align:center;padding:12px 16px">7</td>
+          <td style="text-align:center;padding:12px 16px">—</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:600">0</td>
+        </tr>
+        <tr style="background:rgba(16,185,129,.05);border-top:2px solid rgba(16,185,129,.3)">
+          <td style="padding:12px 16px;font-weight:700">Overall</td>
+          <td style="text-align:center;padding:12px 16px;font-weight:700">40</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:700">100%</td>
+          <td style="text-align:center;padding:12px 16px;color:var(--emerald);font-weight:700">0%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
 <!-- How It Works -->
 <section id="how">
 <div class="container">
@@ -236,35 +295,23 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
   <div class="pipeline">
     <div class="pipe-step">
       <div class="num">1</div>
-      <h4>Pattern Match</h4>
-      <p>Fast regex + heuristic filters catch known injection patterns in &lt;1ms</p>
+      <h4>Inbound Scan</h4>
+      <p>Multi-pattern detection catches prompt injection, jailbreaks, and obfuscated payloads in tool results before they reach your agent</p>
     </div>
     <div class="pipe-arrow">→</div>
     <div class="pipe-step">
       <div class="num">2</div>
-      <h4>ML Classifier</h4>
-      <p>Lightweight model scores semantic intent — catches obfuscated attacks</p>
+      <h4>Policy Engine</h4>
+      <p>YAML-configured rules enforce tool call boundaries — shell, file, network, and MCP server access</p>
     </div>
     <div class="pipe-arrow">→</div>
     <div class="pipe-step">
       <div class="num">3</div>
-      <h4>LLM Judge</h4>
-      <p>High-confidence LLM review for ambiguous cases — maximum accuracy</p>
+      <h4>Outbound Scan</h4>
+      <p>Secret and PII detection on model outputs — stops credential leakage before it leaves your stack</p>
     </div>
   </div>
-  <div class="pipeline" style="margin-top:24px">
-    <div class="pipe-step" style="border-color:rgba(16,185,129,.3)">
-      <div class="num" style="background:var(--emerald)">✓</div>
-      <h4>Policy Engine</h4>
-      <p>YAML-configured rules for tool calls, file access, shell commands, and network requests</p>
-    </div>
-    <div class="pipe-arrow">→</div>
-    <div class="pipe-step" style="border-color:rgba(16,185,129,.3)">
-      <div class="num" style="background:var(--emerald)">✓</div>
-      <h4>Audit & Alert</h4>
-      <p>Every event logged. Real-time alerts via webhook, email, or Telegram</p>
-    </div>
-  </div>
+
 </div>
 </section>
 
@@ -459,15 +506,31 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0 32px;color:var(
 </section>
 
 <!-- Waitlist CTA -->
-<section class="cta" id="waitlist">
+<section class="cta" id="try">
 <div class="container">
-  <div class="section-label">Early Access</div>
-  <h2 class="section-title">Get ClawMoat Pro before launch</h2>
-  <p class="section-sub" style="margin:16px auto 0">Join the waitlist for early access to the cloud dashboard, ML classifier, and team features.</p>
-  <form class="cta-form" onsubmit="event.preventDefault();this.innerHTML='<p style=\'color:var(--emerald);font-size:1.1rem;padding:14px\'>🏰 You\'re on the list! We\'ll be in touch.</p>'">
-    <input type="email" placeholder="you@company.com" required aria-label="Email">
-    <button type="submit" class="btn btn-primary">Join Waitlist</button>
-  </form>
+  <div class="section-label">Get Started</div>
+  <h2 class="section-title">Add it to your agent in 5 minutes</h2>
+  <p class="section-sub" style="margin:16px auto 0">Open source, zero dependencies, MIT license. Run the eval suite yourself — 40/40, 100% detection, 0% false positives.</p>
+  <div class="hero-btns" style="margin-top:32px">
+    <a href="https://github.com/darfaz/clawmoat" class="btn btn-primary">⭐ View on GitHub</a>
+    <a href="https://www.npmjs.com/package/clawmoat" class="btn btn-outline">npm install clawmoat</a>
+  </div>
+  <div style="margin-top:32px;background:var(--navy-light);border-radius:12px;padding:24px;max-width:600px;margin-left:auto;margin-right:auto;text-align:left;border:1px solid rgba(255,255,255,.06)">
+    <p style="color:var(--gray);font-size:.8rem;margin-bottom:12px">QUICK START</p>
+    <code style="color:var(--emerald);font-size:.9rem;display:block;line-height:1.8">
+      npm install clawmoat<br>
+      <br>
+      const ClawMoat = require('clawmoat');<br>
+      const moat = new ClawMoat();<br>
+      <br>
+      const result = moat.scanInbound(toolOutput);<br>
+      if (!result.safe) throw new Error(result.findings[0].evidence);
+    </code>
+  </div>
+  <p style="margin-top:24px;color:var(--gray);font-size:.9rem">
+    Questions? Want a free attack surface review of your stack?<br>
+    <a href="mailto:hello@clawmoat.com" style="color:var(--blue)">hello@clawmoat.com</a>
+  </p>
 </div>
 </section>
 
