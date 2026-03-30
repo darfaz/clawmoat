@@ -1,5 +1,7 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 const { GatewayMonitor } = require('../src/guardian/gateway-monitor');
 
 describe('GatewayMonitor', () => {

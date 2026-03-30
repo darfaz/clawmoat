@@ -1,3 +1,5 @@
+const assert = require('node:assert/strict');
+const { describe, test } = require('node:test');
 const { scanMCPServer, parseMCPConfig, discoverMCPConfigs, scanMCP } = require('../src/mcp-scanner');
 const fs = require('fs');
 const path = require('path');
@@ -69,8 +71,8 @@ describe('MCP Scanner', () => {
       }
     }));
     const servers = parseMCPConfig(tmp);
-    expect(servers.length).toBe(1);
-    expect(servers[0].name).toBe('test-server');
+    assert.strictEqual(servers.length, 1);
+    assert.strictEqual(servers[0].name, 'test-server');
     fs.unlinkSync(tmp);
   });
 
@@ -80,14 +82,14 @@ describe('MCP Scanner', () => {
       mcp: { servers: { 'vscode-server': { command: 'node', args: ['server.js'] } } }
     }));
     const servers = parseMCPConfig(tmp);
-    expect(servers.length).toBe(1);
-    expect(servers[0].name).toBe('vscode-server');
+    assert.strictEqual(servers.length, 1);
+    assert.strictEqual(servers[0].name, 'vscode-server');
     fs.unlinkSync(tmp);
   });
 
   test('discoverMCPConfigs returns expected paths', () => {
     const configs = discoverMCPConfigs();
-    expect(configs.length).toBeGreaterThan(5);
+    assert.ok(configs.length > 5);
     expect(configs.some(c => c.name.includes('Claude'))).toBe(true);
     expect(configs.some(c => c.name.includes('Cursor'))).toBe(true);
   });
@@ -101,9 +103,9 @@ describe('MCP Scanner', () => {
       }
     }));
     const report = scanMCP({ extraPaths: [tmp] });
-    expect(report.servers.length).toBeGreaterThanOrEqual(2);
-    expect(report.findings.length).toBeGreaterThan(0);
-    expect(report.summary.critical + report.summary.high).toBeGreaterThan(0);
+    assert.ok(report.servers.length >= 2);
+    assert.ok(report.findings.length > 0);
+    assert.ok(report.summary.critical + report.summary.high > 0);
     fs.unlinkSync(tmp);
   });
 });

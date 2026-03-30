@@ -1,5 +1,7 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 
 const ClawMoat = require('../src/index');
 const { scanPromptInjection } = require('../src/scanners/prompt-injection');

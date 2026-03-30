@@ -1,5 +1,6 @@
 
 const assert = require('node:assert');
+const { describe, it } = require('node:test');
 const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 
 const detector = new InsiderThreatDetector();

@@ -4,6 +4,7 @@
 
 
 const assert = require('node:assert');
+const { describe, test } = require('node:test');
 const { 
   scanMultimodalInput,
   scanImageDataUrl,

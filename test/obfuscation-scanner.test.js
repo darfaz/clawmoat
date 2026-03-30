@@ -1,11 +1,12 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 const {
   scanObfuscation,
   stripObfuscation,
 } = require('../src/obfuscation-scanner');
 
-console.log('=== Obfuscation Scanner Tests ===\n');
 
 describe('scanObfuscation', () => {
   it('detects zero-width characters', () => {

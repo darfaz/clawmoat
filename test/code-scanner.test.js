@@ -1,8 +1,9 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 const { scanCode, quickToolCheck } = require('../src/code-scanner');
 
-console.log('=== Code Scanner Tests ===\n');
 
 describe('scanCode', () => {
   it('detects rm -rf /', () => {

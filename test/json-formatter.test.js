@@ -3,6 +3,7 @@
  */
 
 
+const { describe, it } = require('node:test');
 const { strictEqual, ok, deepStrictEqual } = require('node:assert');
 const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
 

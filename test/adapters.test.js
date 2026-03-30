@@ -1,7 +1,8 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
 
-console.log('=== Adapter Tests ===\n');
+
 
 describe('createGuard', () => {
   const { createGuard } = require('../src/adapters');

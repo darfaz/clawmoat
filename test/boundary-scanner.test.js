@@ -1,8 +1,9 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 const { createPipeline, STAGES } = require('../src/boundary-scanner');
 
-console.log('=== Boundary Scanner Tests ===\n');
 
 describe('createPipeline', () => {
   it('registers and runs scanners', () => {

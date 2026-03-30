@@ -1,5 +1,7 @@
 
 const assert = require('node:assert/strict');
+const { describe, it } = require('node:test');
+
 const { McpFirewall } = require('../src/finance/mcp-firewall');
 
 describe('McpFirewall', () => {
