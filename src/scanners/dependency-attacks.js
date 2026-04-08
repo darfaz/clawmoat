@@ -27,15 +27,15 @@ const PROTOTYPE_POLLUTION_PATTERNS = [
 
 // ─── ReDoS Patterns ──────────────────────────────────────────────────────────
 // Detect when AI agent is being instructed to use or process catastrophically
-// backtracking regex patterns (minimatch CVE family: nested *(), multiple **)
+// backtracking regex patterns (minimatch/picomatch CVE family: nested *(), repeated extglobs, multiple **)
 
 const REDOS_PATTERNS = [
   // Nested quantifiers — classic ReDoS
   { pattern: /(\(\S+\+\)\+|\(\S+\*\)\*|\(\S+\?\)\+)/, severity: 'high', name: 'redos_nested_quantifier' },
   // Multiple adjacent GLOBSTAR patterns (minimatch specific)
   { pattern: /\*\*[^\s/]*\*\*[^\s/]*\*\*/, severity: 'high', name: 'redos_globstar_chain' },
-  // Nested *() extglob (minimatch CVE: GHSA-952p-6rrq-rcjv)
-  { pattern: /\*\([^)]*\*\([^)]*\)/, severity: 'high', name: 'redos_nested_extglob' },
+  // Nested or repeated *() extglob quantifiers (minimatch/picomatch ReDoS families)
+  { pattern: /(?:\*\([^)]*\*\([^)]*\)|(?:\*\([^)]*\)){2,})/, severity: 'high', name: 'redos_nested_extglob' },
   // Evil regex known patterns
   { pattern: /\(\.\*\)\+|\(\.\+\)\*|\(\.\*\)\{/, severity: 'medium', name: 'redos_evil_regex' },
 ];
