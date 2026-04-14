@@ -31,6 +31,7 @@ const { scanExfiltration } = require('./scanners/exfiltration');
 const { scanExcessiveAgency } = require('./scanners/excessive-agency');
 const { scanSkill, scanSkillContent } = require('./scanners/supply-chain');
 const { scanDependencyAttacks } = require('./scanners/dependency-attacks');
+const { scoreExploitability } = require('./vuln-ops/exploitability');
 const { evaluateToolCall } = require('./policies/engine');
 const { HostGuardian, TIERS } = require('./guardian');
 const { SecurityLogger } = require('./utils/logger');
@@ -300,6 +301,21 @@ class ClawMoat {
   }
 
   /**
+   * Analyze findings with exploitability-oriented scoring.
+   * @param {string} text - Text to scan
+   * @param {Object} [context] - Reachability/exposure context
+   * @returns {{ safe: boolean, findings: ScanFinding[], exploitability: { score: number, priority: string, reasons: string[] } }}
+   */
+  analyzeFindings(text, context = {}) {
+    const result = this.scan(text, context);
+    return {
+      safe: result.safe,
+      findings: result.findings,
+      exploitability: scoreExploitability(result.findings, context),
+    };
+  }
+
+  /**
    * Get security event log
    */
   getEvents(filter) {
@@ -359,6 +375,7 @@ module.exports.scanExcessiveAgency = scanExcessiveAgency;
 module.exports.scanSkill = scanSkill;
 module.exports.scanSkillContent = scanSkillContent;
 module.exports.scanDependencyAttacks = scanDependencyAttacks;
+module.exports.scoreExploitability = scoreExploitability;
 module.exports.evaluateToolCall = evaluateToolCall;
 module.exports.HostGuardian = HostGuardian;
 module.exports.TIERS = TIERS;
