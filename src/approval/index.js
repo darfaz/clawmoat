@@ -113,6 +113,11 @@ class ConsoleChannel extends NotificationChannel {
 
   async cleanup(requestId) {
     this.pendingRequests.delete(requestId);
+
+    if (this.pendingRequests.size === 0 && this._stdinListener) {
+      this._stdinListener.close();
+      this._stdinListener = null;
+    }
   }
 
   _startStdinListener() {
@@ -285,13 +290,8 @@ class ApprovalWorkflow {
   constructor(options = {}) {
     this.defaultTimeout = options.defaultTimeout || 30000;
     this.defaultAction = options.defaultAction || 'deny'; // 'approve' | 'deny'
-    this.channels = options.channels || [];
+    this.channels = Array.isArray(options.channels) ? options.channels : [new ConsoleChannel()];
     this.auditLog = options.auditLog || null; // Path to audit log file
-    
-    if (this.channels.length === 0) {
-      // Default to console channel if none provided
-      this.channels = [new ConsoleChannel()];
-    }
   }
 
   /**

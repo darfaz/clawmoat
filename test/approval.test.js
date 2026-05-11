@@ -142,6 +142,8 @@ describe('ConsoleChannel', () => {
     const pending = channel.pendingRequests.get('test-456');
     assert.strictEqual(pending.active, true);
     assert.strictEqual(pending.response, null);
+
+    await channel.cleanup('test-456');
   });
 
   test('should cleanup pending requests', async (t) => {

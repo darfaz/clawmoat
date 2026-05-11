@@ -106,11 +106,11 @@ describe('Policy Engine', () => {
   });
 
   test('scores tool risk correctly', () => {
-    expect(engine.getToolRisk('file.read')).toBe('low');
-    expect(engine.getToolRisk('slack.send')).toBe('high');
-    expect(engine.getToolRisk('shell.exec')).toBe('critical');
-    expect(engine.getToolRisk('db.delete')).toBe('critical');
-    expect(engine.getToolRisk('unknown.custom')).toBe('medium');
+    assert.strictEqual(engine.getToolRisk('file.read'), 'low');
+    assert.strictEqual(engine.getToolRisk('slack.send'), 'high');
+    assert.strictEqual(engine.getToolRisk('shell.exec'), 'critical');
+    assert.strictEqual(engine.getToolRisk('db.delete'), 'critical');
+    assert.strictEqual(engine.getToolRisk('unknown.custom'), 'medium');
   });
 
   test('monitor mode logs instead of blocking', () => {
