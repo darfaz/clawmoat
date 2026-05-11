@@ -40,7 +40,7 @@ describe('SARIF Formatter', () => {
 
       const run = result.runs[0];
       strictEqual(run.tool.driver.name, 'ClawMoat');
-      strictEqual(run.tool.driver.version, '0.9.0');
+      strictEqual(run.tool.driver.version, '1.0.0');
       ok(run.tool.driver.informationUri);
       
       // Check rules

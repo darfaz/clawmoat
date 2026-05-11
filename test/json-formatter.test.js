@@ -32,7 +32,7 @@ describe('JSON Formatter', () => {
 
       const result = formatReport(reportData);
 
-      strictEqual(result.version, '0.9.0');
+      strictEqual(result.version, '1.0.0');
       strictEqual(result.period, '24h');
       ok(result.timestamp);
       ok(result.period_start);
@@ -90,7 +90,7 @@ describe('JSON Formatter', () => {
 
       const result = formatScanResult(scanResult);
 
-      strictEqual(result.version, '0.9.0');
+      strictEqual(result.version, '1.0.0');
       strictEqual(result.safe, false);
       strictEqual(result.total_findings, 2);
       strictEqual(result.scan_context, 'user_input');
@@ -135,7 +135,7 @@ describe('JSON Formatter', () => {
 
       const result = formatAuditResult(auditData);
 
-      strictEqual(result.version, '0.9.0');
+      strictEqual(result.version, '1.0.0');
       strictEqual(result.summary.files_scanned, 10);
       strictEqual(result.summary.total_findings, 3);
       strictEqual(result.summary.sessions_directory, '/path/to/sessions');

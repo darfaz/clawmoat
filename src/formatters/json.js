@@ -1,9 +1,11 @@
 /**
  * JSON Report Formatter for ClawMoat
- * 
+ *
  * Converts scan and report data into structured JSON format
  * for programmatic consumption by monitoring dashboards, CI/CD, etc.
  */
+
+const VERSION = require('../../package.json').version;
 
 function formatReport(reportData) {
   const timestamp = new Date().toISOString();
@@ -12,7 +14,7 @@ function formatReport(reportData) {
   return {
     timestamp,
     period,
-    version: "0.9.0", // From package.json version
+    version: VERSION,
     summary: {
       sessions_active: reportData.recentFiles || 0,
       total_entries: reportData.totalEntries || 0,
@@ -39,7 +41,7 @@ function formatScanResult(result) {
   
   return {
     timestamp,
-    version: "0.9.0",
+    version: VERSION,
     safe: result.safe || false,
     total_findings: result.findings?.length || 0,
     findings: (result.findings || []).map(finding => ({
@@ -59,7 +61,7 @@ function formatAuditResult(auditData) {
   
   return {
     timestamp,
-    version: "0.9.0", 
+    version: VERSION,
     summary: {
       files_scanned: auditData.filesScanned || 0,
       total_findings: auditData.totalFindings || 0,

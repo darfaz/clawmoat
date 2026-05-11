@@ -118,11 +118,12 @@ If ClawMoat blocks legitimate work:
 
 ## Version History
 
-- **v0.9.1** (current): Added indirect injection, CI injection, wget upload, known compromised packages, private key content detection in inbound scanner
+- **v1.0.0** (current): ClawMoat positioned as the open-source agent firewall, with runtime containment, MCP scanning, enforcement middleware, live monitoring, and the full multi-module framework unified into the first stable major release
+- **v0.9.1**: Added indirect injection, CI injection, wget upload, known compromised packages, private key content detection in inbound scanner
 - **v0.9.0**: Policy engine, MCP scanner, enforcement middleware, 7-module framework
 - **v0.8.0**: Supply chain scanner, insider threat detection
 - **v0.7.0**: Host Guardian with permission tiers
 
 ---
 
-*Last updated: 2026-03-28*
+*Last updated: 2026-04-14*
