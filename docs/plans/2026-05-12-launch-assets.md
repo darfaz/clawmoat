@@ -258,6 +258,12 @@ Conversion path:
 3. If team usage exists, offer Team plan at $49/mo
 4. If consultant, offer affiliate/badge bundle
 
+## Launch execution files
+
+- `docs/launch/2026-05-13-channel-strategy.md` — channel order, approval boundaries, target scoring rubric.
+- `docs/launch/2026-05-13-github-targets.csv` — first 25 GitHub candidate targets for scan/report offers. All are `candidate_unreviewed`; no external outreach has been sent.
+- `docs/launch/2026-05-13-metrics.csv` — current daily metric baseline.
+
 ## Metrics to track daily
 
 ```csv
