@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/darfaz/clawmoat"
+    "url": "git+https://github.com/darfaz/clawmoat.git"
   },
   "homepage": "https://clawmoat.com",
   "engines": {
