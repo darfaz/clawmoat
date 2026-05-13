@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2026-05-12
+
+### Added
+- Stable v1 positioning: **the open-source agent firewall**.
+- Live monitoring dashboard via `clawmoat watch`.
+- MCP config scanning via `clawmoat scan-mcp`.
+- Vulnerability-ops exploitability scoring and analysis API.
+- Host/runtime protection exports for policy, approval, guardian, and monitoring flows.
+- Framework integrations and docs for LangChain, OpenAI Agents, LiteLLM, CrewAI, and OpenClaw.
+
+### Changed
+- Homepage, README, and package metadata now align around v1 agent-firewall positioning.
+- Package hygiene excludes stale local tarballs, patch scraps, and mutable server key state from npm publishes.
+
+### Fixed
+- Full test suite is green under Node's built-in test runner.
+- Lint script dependency is declared for release hygiene.
+
 ## [0.3.0] - 2025-02-18
 
 ### Added
