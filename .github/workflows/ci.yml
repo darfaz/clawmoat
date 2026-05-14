@@ -41,4 +41,4 @@ jobs:
       - name: Self-scan (ClawMoat audits itself)
         run: |
           node bin/clawmoat.js scan --file src/index.js
-          node bin/clawmoat.js scan --file bin/clawmoat.js
+          node bin/clawmoat.js scan --file src/policy-engine.js
