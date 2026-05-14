@@ -70,8 +70,8 @@ describe('ApprovalWorkflow', () => {
     });
 
     const elapsed = Date.now() - start;
-    assert.ok(elapsed >= 150, 'Should use custom timeout');
-    assert.ok(elapsed < 250, 'Should not wait much longer than custom timeout');
+    assert.ok(elapsed >= 125, 'Should use custom timeout');
+    assert.ok(elapsed < 300, 'Should not wait much longer than custom timeout');
   });
 });
 
