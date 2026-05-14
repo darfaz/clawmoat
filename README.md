@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
@@ -84,6 +84,8 @@ Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your
 - 🔧 **CI/CD ready** — GitHub Actions workflow included, fail builds on security violations
 - 📋 **Policy engine** — YAML-based rules for shell, file, browser, and network access
 - 🏰 **OWASP coverage** — maps to all 10 risks in the OWASP Top 10 for Agentic AI
+
+**Want a second set of eyes?** Send your repo, MCP server, agent framework, or workflow docs for a [free AI agent security assessment](https://clawmoat.com/assessment/). You get a short exposure report that maps what your agent can touch, what can influence it, and where a ClawMoat policy or docs fix would reduce blast radius.
 
 **Works with any agent framework.** ClawMoat scans text — it doesn't care if it came from LangChain, CrewAI, AutoGen, or your custom agent.
 
