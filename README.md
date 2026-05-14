@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing.html">Pricing</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
