@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing.html">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing.html">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
@@ -92,7 +92,9 @@ Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your
 
 ## 🛡️ Badge — Show Your Project is Secured
 
-If your project uses ClawMoat, add this badge to your README:
+If your project uses ClawMoat, add a self-serve badge after a local scan, or request a verified exposure report before making a stronger security claim: <https://clawmoat.com/badge/>.
+
+Basic badge markdown:
 
 ```markdown
 [![Secured by ClawMoat](https://img.shields.io/badge/🛡️_ClawMoat-secured-4c1?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAxTDMgNXY2YzAgNS41NSAzLjg0IDEwLjc0IDkgMTIgNS4xNi0xLjI2IDktNi40NSA5LTEyVjVsMC05LTEgMHoiLz48L3N2Zz4=)](https://github.com/darfaz/clawmoat)

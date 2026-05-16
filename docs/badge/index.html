@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security Score Badge — ClawMoat</title>
-<meta name="description" content="Add a ClawMoat security score badge to your project README. Show the world your AI agent security posture.">
-<meta property="og:title" content="ClawMoat Security Score Badge">
-<meta property="og:description" content="Embeddable badge showing your project's AI agent security score. Free.">
+<title>Secured by ClawMoat Badge — Agent Security Proof for READMEs</title>
+<meta name="description" content="Add a ClawMoat badge to your project README, or request a verified AI Agent Exposure Report before showing a security badge.">
+<meta property="og:title" content="Secured by ClawMoat Badge">
+<meta property="og:description" content="README badges for AI agent projects, plus a verified exposure report path for maintainers who want evidence before they claim security.">
 <link rel="canonical" href="https://clawmoat.com/badge/">
 <link rel="icon" href="/favicon.png">
 <style>
@@ -53,8 +53,8 @@ footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;text-
 </nav>
 
 <div class="hero">
-  <h1>🛡️ Security Score Badge</h1>
-  <p class="hero-sub">Show the world your AI agent security posture. Add a ClawMoat badge to your README — it takes 30 seconds.</p>
+  <h1>🛡️ Secured by ClawMoat</h1>
+  <p class="hero-sub">Give users a visible AI agent security signal. Use the self-serve badge after a local scan, or request a verified exposure report before you claim review-backed coverage.</p>
 </div>
 
 <h2>Example Badges</h2>
@@ -68,7 +68,16 @@ footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;text-
   <img src="scanning.svg" alt="Scanning badge">
 </div>
 
-<h2>Get Your Badge</h2>
+<h2>Choose the right trust signal</h2>
+<div class="card">
+  <p><strong>Self-serve badge:</strong> for projects that ran ClawMoat locally and want to show the scan result.</p>
+  <p><strong>Verified exposure badge:</strong> for maintainers who want a human-reviewed AI Agent Exposure Report before adding a stronger trust claim.</p>
+  <p>Prompt filters inspect text. ClawMoat checks the machine boundary: files, shell, browser/MCP tools, secrets, and outbound data.</p>
+  <a href="/request/" class="btn">Request verified report</a>
+  <a href="/agent-exposure-report-template/" class="btn-outline">See report template</a>
+</div>
+
+<h2>Get Your Self-Serve Badge</h2>
 <ol class="steps">
   <li><strong>Scan your project</strong> — paste your config into the <a href="/scan/">free scanner</a> and get your grade.</li>
   <li><strong>Generate the badge</strong> — enter your repo below and copy the markdown.</li>
@@ -109,8 +118,21 @@ footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 0;text-
   <li style="margin-bottom:.75rem">✅ <strong>Build trust</strong> — show users your project takes AI security seriously</li>
   <li style="margin-bottom:.75rem">✅ <strong>Stand out</strong> — most AI agent projects don't audit security at all</li>
   <li style="margin-bottom:.75rem">✅ <strong>Stay accountable</strong> — a visible score motivates continuous improvement</li>
-  <li style="margin-bottom:.75rem">✅ <strong>Free forever</strong> — badges are static SVGs, no API calls needed</li>
+  <li style="margin-bottom:.75rem">✅ <strong>Route deeper buyers</strong> — a verified report gives security-minded users evidence, not just a sticker</li>
+  <li style="margin-bottom:.75rem">✅ <strong>Free forever</strong> — self-serve badges are static SVGs, no API calls needed</li>
 </ul>
+
+<h2>Verified Badge Outreach Draft</h2>
+<div class="card">
+  <p>Use this when asking a maintainer for permission to run a report. Do not post it cold unless the project is a real fit.</p>
+  <pre style="white-space:pre-wrap;background:#1a1a2e;border:1px solid var(--border);border-radius:6px;padding:1rem;font-size:.9rem">I’m building ClawMoat, an open-source firewall for AI agents.
+
+Your project touches the exact boundary ClawMoat is built for: agent tools with file, shell, browser, MCP, or network access.
+
+If useful, I can run a free exposure review against the public repo/docs and send a short report. If the findings are clean or fixed, you can add a Secured by ClawMoat badge that links to the report.
+
+No pitch deck. Just the boundary map: what can influence the agent, what it can touch, and what should be blocked or logged.</pre>
+</div>
 
 <footer>
   <p>© 2026 ClawMoat · <a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a></p>
