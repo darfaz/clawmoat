@@ -261,8 +261,9 @@ Conversion path:
 ## Launch execution files
 
 - `docs/launch/2026-05-13-channel-strategy.md` — channel order, approval boundaries, target scoring rubric.
-- `docs/launch/2026-05-13-github-targets.csv` — first 25 GitHub candidate targets for scan/report offers. All are `candidate_unreviewed`; no external outreach has been sent.
+- `docs/launch/2026-05-13-github-targets.csv` — first 25 GitHub candidate targets for scan/report offers. All are `candidate_unreviewed` unless explicitly marked reviewed; no external outreach has been sent from autonomous passes.
 - `docs/launch/2026-05-13-metrics.csv` — current daily metric baseline.
+- `docs/launch/2026-05-24-review-ready-outreach-pack.md` — approval-ready maintainer outreach asks for DesktopCommanderMCP, mcp-chrome, and HexStrike AI. Still internal; requires Dar approval before any issue, PR, discussion, email, or DM.
 
 ## Metrics to track daily
 
