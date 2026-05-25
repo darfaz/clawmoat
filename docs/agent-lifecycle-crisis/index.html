@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agent Lifecycle Crisis — ClawMoat</title>
+<meta name="description" content="AI agents now have tools, credentials, memory, MCP servers, and production access. ClawMoat audits lifecycle gaps before agents touch real systems.">
+<link rel="canonical" href="https://clawmoat.com/agent-lifecycle-crisis/">
+<meta property="og:title" content="The Agent Lifecycle Crisis">
+<meta property="og:description" content="Prompt instructions are not permissions. Audit agent identity, credentials, tool policy, audit trails, and kill switches with ClawMoat.">
+<meta property="og:image" content="https://clawmoat.com/og-image.png">
+<meta property="og:url" content="https://clawmoat.com/agent-lifecycle-crisis/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Agent Lifecycle Crisis">
+<meta name="twitter:description" content="AI agents are production actors now. Treat them like it.">
+<meta name="twitter:image" content="https://clawmoat.com/og-image.png">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#f8fafc;line-height:1.65}a{color:#60a5fa;text-decoration:none}a:hover{text-decoration:underline}.container{max-width:1040px;margin:0 auto;padding:0 24px}.nav{padding:22px 0;border-bottom:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.92);position:sticky;top:0;backdrop-filter:blur(10px)}.nav-inner{display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{color:#fff;font-weight:800}.nav-links{display:flex;gap:18px;flex-wrap:wrap;font-size:.92rem}.hero{padding:88px 0 64px;background:radial-gradient(circle at 50% 0,rgba(59,130,246,.22),transparent 55%)}.eyebrow{color:#34d399;text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:800;margin-bottom:16px}.hero h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.02;margin:0 0 24px;letter-spacing:-.05em}.hero p{font-size:1.24rem;color:#cbd5e1;max-width:760px;margin:0 0 30px}.btns{display:flex;gap:14px;flex-wrap:wrap}.btn{display:inline-flex;padding:13px 20px;border-radius:10px;font-weight:750}.primary{background:#2563eb;color:#fff}.secondary{border:1px solid #475569;color:#fff}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.card{background:#111c33;border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:24px}.card h3{margin:0 0 10px}.card p,.card li{color:#cbd5e1}.section{padding:64px 0;border-top:1px solid rgba(148,163,184,.12)}.section h2{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;margin:0 0 18px}.lead{color:#cbd5e1;font-size:1.08rem;max-width:780px}.terminal{background:#020617;border:1px solid rgba(52,211,153,.35);border-radius:16px;padding:22px;overflow:auto;color:#d1fae5;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.92rem}.finding{border-left:4px solid #ef4444;padding:14px 16px;background:rgba(239,68,68,.08);border-radius:10px;margin:12px 0}.finding.good{border-left-color:#34d399;background:rgba(52,211,153,.08)}.quote{font-size:1.35rem;border-left:4px solid #60a5fa;padding-left:18px;color:#e2e8f0}.sources li{margin:8px 0;color:#cbd5e1}.cta{background:linear-gradient(135deg,rgba(37,99,235,.28),rgba(16,185,129,.16));border:1px solid rgba(96,165,250,.32);border-radius:20px;padding:34px}.muted{color:#94a3b8}.pill{display:inline-block;border:1px solid rgba(148,163,184,.25);border-radius:999px;padding:5px 10px;margin:4px;color:#cbd5e1;font-size:.86rem}@media(max-width:720px){.nav-inner{align-items:flex-start;flex-direction:column}.hero{padding-top:54px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"TechArticle",
+  "headline":"The Agent Lifecycle Crisis",
+  "description":"AI agents now have credentials, tools, memory, MCP servers, and production access. ClawMoat audits lifecycle gaps before agents touch real systems.",
+  "author":{"@type":"Organization","name":"ClawMoat"},
+  "datePublished":"2026-05-25",
+  "dateModified":"2026-05-25",
+  "url":"https://clawmoat.com/agent-lifecycle-crisis/"
+}
+</script>
+</head>
+<body>
+<nav class="nav"><div class="container nav-inner"><a class="brand" href="/">🏰 ClawMoat</a><div class="nav-links"><a href="/assessment/">Assessment</a><a href="/pricing/">Pricing</a><a href="/mcp-security-review/">MCP Review</a><a href="https://www.npmjs.com/package/clawmoat">npm</a></div></div></nav>
+<header class="hero"><div class="container">
+  <div class="eyebrow">Agent lifecycle security</div>
+  <h1>Your AI agents have a lifecycle. Your security stack probably does not.</h1>
+  <p>Agents are getting credentials, MCP servers, shell access, browser sessions, memory, calendars, inboxes, repos, and sometimes wallets. Most teams still secure them like chatbots.</p>
+  <div class="btns"><a class="btn primary" href="#run">Run the lifecycle audit</a><a class="btn secondary" href="/assessment/">Request an exposure report</a></div>
+</div></header>
+
+<section class="section"><div class="container">
+  <p class="quote">Prompt instructions are not permissions. Telling an agent “do not touch production” is not the same thing as revoking the tool that can touch production.</p>
+  <p class="lead">That is the agent lifecycle crisis: production actors without production controls. Identity is unclear. Credentials expire silently. Tools are overbroad. Audit trails are incomplete. Kill switches are missing. And MCP turns every new server into another control-plane edge.</p>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="eyebrow">What breaks</div>
+  <h2>The lifecycle gaps are boring until they delete, leak, or trade something.</h2>
+  <div class="grid">
+    <div class="card"><h3>Identity</h3><p>Can you answer which agent, session, user, tool, and credential performed an action?</p></div>
+    <div class="card"><h3>Credential health</h3><p>Can the agent tell you which OAuth token, API key, browser login, or app password is missing, stale, or overbroad?</p></div>
+    <div class="card"><h3>Tool policy</h3><p>Can shell, filesystem, GitHub, browser, network, email, calendar, MCP, and wallet tools be separated into read, write, and admin paths?</p></div>
+    <div class="card"><h3>Audit trail</h3><p>Can you reconstruct the exact input, model decision, tool call, policy decision, and output after an incident?</p></div>
+    <div class="card"><h3>Kill switch</h3><p>Can you freeze risky tools after repeated violations or suspicious sequences?</p></div>
+    <div class="card"><h3>Retirement</h3><p>Can you revoke an agent, session, token, MCP server, scheduled job, or delegated subagent cleanly?</p></div>
+  </div>
+</div></section>
+
+<section id="run" class="section"><div class="container">
+  <div class="eyebrow">New in ClawMoat</div>
+  <h2>Run an Agent Lifecycle Exposure Report from the CLI.</h2>
+  <p class="lead">The audit maps the surfaces your agent can touch, the controls it can find, and the lifecycle gaps that make incident response painful.</p>
+  <pre class="terminal"><code>npm install -g clawmoat
+clawmoat lifecycle audit --path .
+
+# For automation:
+clawmoat lifecycle audit --path . --format json
+clawmoat lifecycle audit --path . --format json --strict</code></pre>
+  <div class="grid" style="margin-top:22px">
+    <div class="finding"><strong>High:</strong> credentials detected without health checks, expiry checks, or rotation path.</div>
+    <div class="finding"><strong>Critical:</strong> shell/filesystem/GitHub/wallet surfaces detected without approval gates.</div>
+    <div class="finding"><strong>High:</strong> MCP configuration detected without visible MCP/tool policy.</div>
+    <div class="finding good"><strong>Controlled:</strong> identity, policy, audit trail, credential health, and kill switch found.</div>
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="eyebrow">Why now</div>
+  <h2>The category is forming in public.</h2>
+  <p class="lead">The market is moving from “chatbot safety” to “agent runtime and lifecycle security.” That matters because agents now act across tools, not just text.</p>
+  <ul class="sources">
+    <li>Cloud Security Alliance reports agent production use and weak real-time agent inventory as a security gap.</li>
+    <li>Okta frames AI agent lifecycle management around deployment, monitoring, permissions, and decommissioning.</li>
+    <li>Microsoft’s Agent Governance Toolkit emphasizes identity, policy enforcement, sandboxing, audit logs, and kill switches.</li>
+    <li>MCP incidents show how untrusted content plus trusted tools can create data exfiltration or host compromise paths.</li>
+  </ul>
+  <p class="muted">ClawMoat’s take: model guardrails are useful, but they are not enough. The control point is the boundary between the agent and the machine, tools, credentials, and networks it can touch.</p>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="cta">
+    <div class="eyebrow">Get a second set of eyes</div>
+    <h2>Request an Agent Lifecycle Exposure Report.</h2>
+    <p class="lead">Send a repo, MCP config, agent workflow, or architecture sketch. You get a short report that maps tool surfaces, credential risk, missing controls, and the fastest policy fixes.</p>
+    <p><span class="pill">MCP servers</span><span class="pill">Coding agents</span><span class="pill">Browser agents</span><span class="pill">Scheduled agents</span><span class="pill">Wallet/tool agents</span></p>
+    <div class="btns"><a class="btn primary" href="/assessment/">Request the report</a><a class="btn secondary" href="/pricing/">See paid review options</a></div>
+  </div>
+</div></section>
+</body>
+</html>

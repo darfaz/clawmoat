@@ -24,6 +24,7 @@ const { CredentialMonitor, CVEVerifier } = require('../src/guardian/index');
 const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
+const { auditAgentLifecycle, formatLifecycleAuditText } = require('../src/lifecycle-audit');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -81,6 +82,9 @@ switch (command) {
   case 'provider':
     cmdProviders(args.slice(1));
     break;
+  case 'lifecycle':
+    cmdLifecycle(args.slice(1));
+    break;
   case 'scan-mcp':
     cmdScanMCP(args.slice(1));
     break;
@@ -95,6 +99,43 @@ switch (command) {
   default:
     printHelp();
     break;
+}
+
+function cmdLifecycle(args) {
+  const sub = args[0] || 'audit';
+  if (sub !== 'audit') {
+    console.error('Usage: clawmoat lifecycle audit [--path DIR] [--format text|json]');
+    process.exit(1);
+  }
+
+  let rootDir = process.cwd();
+  let format = 'text';
+  let strict = false;
+  for (let i = 1; i < args.length; i++) {
+    if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
+      rootDir = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--strict') {
+      strict = true;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const report = auditAgentLifecycle({ rootDir });
+  if (format === 'json') {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatLifecycleAuditText(report));
+  }
+
+  process.exit(strict && !report.ok ? 2 : 0);
 }
 
 async function cmdProviders(args) {
@@ -1212,6 +1253,8 @@ ${BOLD}USAGE${RESET}
   clawmoat insider-scan [session-file]  Scan sessions for insider threats (self-preservation, blackmail, deception)
   clawmoat report [sessions-dir]  24-hour activity summary report
   clawmoat report --format json   Generate JSON report for programmatic use
+  clawmoat lifecycle audit        Find agent identity, credential, permission, audit, and kill-switch gaps
+  clawmoat lifecycle audit --format json --path ./agent-app
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1233,6 +1276,8 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat skill-audit ~/.openclaw/workspace/skills
   clawmoat report
   clawmoat report --format json   # For dashboards/automation
+  clawmoat lifecycle audit --path .
+  clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat test
 
 ${BOLD}CONFIG${RESET}

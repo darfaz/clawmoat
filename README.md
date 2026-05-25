@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing/">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://clawmoat.com/blog/mcp-by-design-rce-agent-firewall.html">Latest MCP RCE Analysis</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/agent-lifecycle-crisis/">Agent Lifecycle Crisis</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing/">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://clawmoat.com/blog/mcp-by-design-rce-agent-firewall.html">Latest MCP RCE Analysis</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
@@ -83,6 +83,7 @@ Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your
 - ⚡ **Zero dependencies** — pure Node.js, no ML models to download, sub-millisecond scans
 - 🔧 **CI/CD ready** — GitHub Actions workflow included, fail builds on security violations
 - 📋 **Policy engine** — YAML-based rules for shell, file, browser, and network access
+- 🧭 **Lifecycle audit** — `clawmoat lifecycle audit` finds missing agent identity, credential health, approval gates, audit trails, MCP policy, and kill switches
 - 🏰 **OWASP coverage** — maps to all 10 risks in the OWASP Top 10 for Agentic AI
 
 **Want a second set of eyes?** Send your repo, MCP server, agent framework, or workflow docs for a [free AI agent security assessment](https://clawmoat.com/assessment/). You get a short exposure report that maps what your agent can touch, what can influence it, and where a ClawMoat policy or docs fix would reduce blast radius.
@@ -161,9 +162,29 @@ clawmoat watch ~/.openclaw/agents/main
 # Audit an agent session
 clawmoat audit ~/.openclaw/agents/main/sessions/
 
+# Map lifecycle gaps before an agent touches real tools
+clawmoat lifecycle audit --path .
+
+# Fail CI if the lifecycle exposure is too high
+clawmoat lifecycle audit --path . --format json --strict
+
 # Run as real-time middleware  
 clawmoat protect --config clawmoat.yml
 ```
+
+### New — Agent Lifecycle Exposure Audit
+
+AI agents are production actors now. `clawmoat lifecycle audit` checks whether a repo or agent workspace has the lifecycle controls that instructions alone cannot provide: agent identity, credential health, tool policy, human approval gates, audit trails, MCP policy, and kill switches.
+
+```bash
+clawmoat lifecycle audit --path .
+clawmoat lifecycle audit --path . --format json
+clawmoat lifecycle audit --path . --format json --strict
+```
+
+Use it before an agent gets shell, filesystem, browser, GitHub, email, calendar, MCP, or wallet access. The output is an Agent Lifecycle Exposure Report: detected surfaces, credential hints, missing controls, risk score, and concrete fixes.
+
+→ Read the launch brief: <https://clawmoat.com/agent-lifecycle-crisis/>
 
 ### New in v1.0.0 — Live Security Monitoring Dashboard
 

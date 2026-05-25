@@ -452,6 +452,11 @@ const ban = require('./ban-scanner');
 module.exports.createBanScanner = ban.createBanScanner;
 module.exports.BAN_PRESETS = ban.PRESETS;
 
+// Agent Lifecycle Audit
+const lifecycleAudit = require('./lifecycle-audit');
+module.exports.auditAgentLifecycle = lifecycleAudit.auditAgentLifecycle;
+module.exports.formatLifecycleAuditText = lifecycleAudit.formatLifecycleAuditText;
+
 // Framework Adapters (also available via require('clawmoat/adapters'))
 const adapters = require('./adapters');
 module.exports.createGuard = adapters.createGuard;
