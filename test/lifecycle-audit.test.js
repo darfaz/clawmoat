@@ -12,7 +12,7 @@ const { promisify } = require('util');
 
 const execFileAsync = promisify(execFile);
 
-const { auditAgentLifecycle } = require('../src/lifecycle-audit');
+const { auditAgentLifecycle, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
 
 function write(file, content) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -105,6 +105,66 @@ policies:
     ok(report.recommendations.some((item) => item.includes('Fix the audit path')));
   });
 
+  it('detects common agent frameworks for better buyer-facing reports', () => {
+    write(path.join(testDir, 'package.json'), JSON.stringify({
+      name: 'agent-app',
+      dependencies: {
+        langchain: '^0.3.0',
+        '@openai/agents': '^0.1.0',
+        '@modelcontextprotocol/sdk': '^1.0.0'
+      }
+    }, null, 2));
+    write(path.join(testDir, 'agent.js'), "import { AgentExecutor } from 'langchain/agents'; await fetch('https://api.example.com');");
+
+    const report = auditAgentLifecycle({ rootDir: testDir });
+
+    ok(report.frameworks.includes('langchain'), 'should detect LangChain');
+    ok(report.frameworks.includes('openai_agents'), 'should detect OpenAI Agents');
+    ok(report.frameworks.includes('mcp'), 'should detect MCP SDK/config usage');
+    strictEqual(report.summary.frameworks, 3);
+  });
+
+  it('detects Python agent framework manifests without treating provider keys as frameworks', () => {
+    write(path.join(testDir, 'requirements.txt'), 'langchain==0.3.1\ncrewai>=0.80\npyautogen~=0.2\n');
+    write(path.join(testDir, '.env'), 'ANTHROPIC_API_KEY=sk-ant-test\n');
+
+    const report = auditAgentLifecycle({ rootDir: testDir });
+
+    ok(report.frameworks.includes('langchain'), 'should detect Python LangChain dependency');
+    ok(report.frameworks.includes('crewai'), 'should detect Python CrewAI dependency');
+    ok(report.frameworks.includes('autogen'), 'should detect Python AutoGen dependency');
+    strictEqual(report.frameworks.includes('anthropic_claude'), false, 'provider credential alone is not a Claude framework');
+  });
+
+  it('ignores generated lifecycle reports so reruns are not self-poisoned', () => {
+    write(path.join(testDir, 'agent.js'), "await tools.shell('git push origin main');");
+    const first = auditAgentLifecycle({ rootDir: testDir });
+    write(path.join(testDir, 'lifecycle-report.md'), formatLifecycleAuditMarkdown(first));
+
+    const second = auditAgentLifecycle({ rootDir: testDir });
+
+    strictEqual(second.controls.humanApproval, false);
+    strictEqual(second.controls.auditTrail, false);
+    strictEqual(second.ok, false);
+    ok(second.findings.some((finding) => finding.id === 'write_tools_without_approval'));
+  });
+
+  it('formats a shareable markdown lifecycle report with checklist and CTA', () => {
+    write(path.join(testDir, '.env'), 'ANTHROPIC_API_KEY=sk-ant-test\n');
+    write(path.join(testDir, 'agent.js'), "await browser.open('https://example.com');");
+
+    const report = auditAgentLifecycle({ rootDir: testDir });
+    const markdown = formatLifecycleAuditMarkdown(report);
+
+    ok(markdown.startsWith('# ClawMoat Agent Lifecycle Exposure Report'));
+    ok(markdown.includes('| Control | Status |'));
+    ok(markdown.includes('## Remediation checklist'));
+    ok(markdown.includes('https://clawmoat.com/assessment/'));
+
+    const escaped = formatLifecycleAuditMarkdown({ ...report, rootDir: path.join(testDir, 'odd`path') });
+    ok(escaped.includes('odd\\`path'));
+  });
+
   it('prints lifecycle audit JSON from the CLI', async () => {
     write(path.join(testDir, '.env'), 'ANTHROPIC_API_KEY=sk-ant-test\n');
     write(path.join(testDir, 'agent.js'), "await browser.open('https://example.com');");
@@ -117,5 +177,20 @@ policies:
     strictEqual(report.rootDir, testDir);
     ok(report.surfaces.includes('browser'));
     ok(report.findings.some((finding) => finding.id === 'credentials_without_health_checks'));
+  });
+
+  it('writes markdown lifecycle audit reports to an output file from the CLI', async () => {
+    write(path.join(testDir, 'package.json'), JSON.stringify({ name: 'agent-app', dependencies: { langchain: '^0.3.0' } }, null, 2));
+    write(path.join(testDir, 'agent.js'), "await tools.shell('git push origin main');");
+    const outFile = path.join(testDir, 'lifecycle-report.md');
+
+    const cli = path.join(originalCwd, 'bin/clawmoat.js');
+    const { stdout } = await execFileAsync('node', [cli, 'lifecycle', 'audit', '--path', testDir, '--format', 'markdown', '--output', outFile]);
+    const markdown = fs.readFileSync(outFile, 'utf8');
+
+    ok(stdout.includes('Wrote lifecycle audit report'));
+    ok(markdown.includes('# ClawMoat Agent Lifecycle Exposure Report'));
+    ok(markdown.includes('langchain'));
+    ok(markdown.includes('write_tools_without_approval'));
   });
 });

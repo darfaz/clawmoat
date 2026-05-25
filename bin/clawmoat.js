@@ -24,7 +24,7 @@ const { CredentialMonitor, CVEVerifier } = require('../src/guardian/index');
 const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
-const { auditAgentLifecycle, formatLifecycleAuditText } = require('../src/lifecycle-audit');
+const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -104,13 +104,14 @@ switch (command) {
 function cmdLifecycle(args) {
   const sub = args[0] || 'audit';
   if (sub !== 'audit') {
-    console.error('Usage: clawmoat lifecycle audit [--path DIR] [--format text|json]');
+    console.error('Usage: clawmoat lifecycle audit [--path DIR] [--format text|json|markdown] [--output FILE] [--strict]');
     process.exit(1);
   }
 
   let rootDir = process.cwd();
   let format = 'text';
   let strict = false;
+  let outputFile = null;
   for (let i = 1; i < args.length; i++) {
     if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
       rootDir = args[i + 1];
@@ -118,21 +119,36 @@ function cmdLifecycle(args) {
     } else if (args[i] === '--format' && args[i + 1]) {
       format = args[i + 1];
       i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
     } else if (args[i] === '--strict') {
       strict = true;
     }
   }
 
-  if (!['text', 'json'].includes(format)) {
-    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+  if (!['text', 'json', 'markdown'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json, markdown${RESET}`);
     process.exit(1);
   }
 
   const report = auditAgentLifecycle({ rootDir });
+  let rendered;
   if (format === 'json') {
-    console.log(JSON.stringify(report, null, 2));
+    rendered = JSON.stringify(report, null, 2);
+  } else if (format === 'markdown') {
+    rendered = formatLifecycleAuditMarkdown(report);
   } else {
-    console.log(formatLifecycleAuditText(report));
+    rendered = formatLifecycleAuditText(report);
+  }
+
+  if (outputFile) {
+    const resolvedOutputFile = path.resolve(outputFile);
+    fs.mkdirSync(path.dirname(resolvedOutputFile), { recursive: true });
+    fs.writeFileSync(resolvedOutputFile, rendered);
+    console.log(`${GREEN}Wrote lifecycle audit report:${RESET} ${resolvedOutputFile}`);
+  } else {
+    console.log(rendered);
   }
 
   process.exit(strict && !report.ok ? 2 : 0);
@@ -1255,6 +1271,7 @@ ${BOLD}USAGE${RESET}
   clawmoat report --format json   Generate JSON report for programmatic use
   clawmoat lifecycle audit        Find agent identity, credential, permission, audit, and kill-switch gaps
   clawmoat lifecycle audit --format json --path ./agent-app
+  clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1277,6 +1294,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat report
   clawmoat report --format json   # For dashboards/automation
   clawmoat lifecycle audit --path .
+  clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat test
 

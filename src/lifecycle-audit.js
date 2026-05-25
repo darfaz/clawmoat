@@ -9,10 +9,13 @@ function auditAgentLifecycle(opts = {}) {
   const rootDir = path.resolve(opts.rootDir || process.cwd());
   const pathExists = fs.existsSync(rootDir);
   const files = pathExists ? collectProjectFiles(rootDir) : [];
-  const fileTexts = files.map((file) => ({ file, rel: path.relative(rootDir, file), text: safeRead(file) }));
+  const fileTexts = files
+    .map((file) => ({ file, rel: path.relative(rootDir, file), text: safeRead(file) }))
+    .filter((entry) => !isGeneratedLifecycleReport(entry));
   const combined = fileTexts.map((entry) => `\n# ${entry.rel}\n${entry.text}`).join('\n');
 
   const surfaces = detectSurfaces(fileTexts, combined);
+  const frameworks = detectFrameworks(fileTexts, combined);
   const credentials = detectCredentialHints(fileTexts);
   const controls = detectControls(fileTexts, combined);
   const findings = buildFindings({ files: fileTexts, combined, surfaces, credentials, controls, pathExists });
@@ -28,9 +31,11 @@ function auditAgentLifecycle(opts = {}) {
       filesScanned: fileTexts.length,
       findings: findings.length,
       surfaces: surfaces.length,
+      frameworks: frameworks.length,
       credentials: credentials.length,
     },
     surfaces,
+    frameworks,
     credentials,
     controls,
     findings,
@@ -65,6 +70,7 @@ function walk(dir, out) {
 
 function isTextProjectFile(file, name) {
   if (CONFIG_NAMES.has(name) || name === '.env' || name.startsWith('.env.')) return true;
+  if (/^(requirements.*\.txt|pyproject\.toml|poetry\.lock|pdm\.lock)$/.test(name)) return true;
   return TEXT_EXTENSIONS.has(path.extname(file));
 }
 
@@ -76,6 +82,11 @@ function safeRead(file) {
   } catch (_err) {
     return '';
   }
+}
+
+function isGeneratedLifecycleReport(entry) {
+  const base = path.basename(entry.rel).toLowerCase();
+  return base === 'lifecycle-report.md' || entry.text.startsWith('# ClawMoat Agent Lifecycle Exposure Report');
 }
 
 function detectSurfaces(fileTexts, combined) {
@@ -93,6 +104,26 @@ function detectSurfaces(fileTexts, combined) {
   if (/mcpservers|modelcontextprotocol|mcp server|@modelcontextprotocol/.test(lower) || hasFile(/(^|\/)(\.mcp\.json|mcp\.json)$/)) surfaces.add('mcp');
 
   return Array.from(surfaces).sort();
+}
+
+function detectFrameworks(fileTexts, combined) {
+  const lower = combined.toLowerCase();
+  const frameworks = new Set();
+  const hasPackage = (name) => fileTexts.some((entry) => entry.rel.endsWith('package.json') && entry.text.toLowerCase().includes(`"${name.toLowerCase()}"`));
+  const hasPythonDependency = (name) => fileTexts.some((entry) => {
+    if (!/(^|\/)(requirements.*\.txt|pyproject\.toml|poetry\.lock|pdm\.lock)$/.test(entry.rel)) return false;
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(^|["'\\s_-])${escaped}(["'\\s<>=~_-]|$)`, 'im').test(entry.text);
+  });
+
+  if (hasPackage('langchain') || hasPythonDependency('langchain') || /from ['"]langchain|require\(['"]langchain|langchain\//.test(lower)) frameworks.add('langchain');
+  if (hasPackage('@openai/agents') || /openai agents|@openai\/agents|agents sdk/.test(lower)) frameworks.add('openai_agents');
+  if (hasPackage('crewai') || hasPythonDependency('crewai') || /from ['"]crewai|import crewai|crew ai/.test(lower)) frameworks.add('crewai');
+  if (hasPackage('autogen') || hasPackage('@microsoft/autogen') || hasPythonDependency('autogen') || hasPythonDependency('pyautogen') || /from ['"]autogen|import autogen|microsoft autogen/.test(lower)) frameworks.add('autogen');
+  if (hasPackage('@modelcontextprotocol/sdk') || hasPythonDependency('mcp') || /mcpservers|modelcontextprotocol|mcp server|@modelcontextprotocol/.test(lower)) frameworks.add('mcp');
+  if (/claude desktop|claude-code|claude code|\.claude\//.test(lower)) frameworks.add('anthropic_claude');
+
+  return Array.from(frameworks).sort();
 }
 
 function detectCredentialHints(fileTexts) {
@@ -205,6 +236,55 @@ function buildRecommendations({ findings, controls, surfaces, credentials }) {
   return Array.from(new Set(recommendations));
 }
 
+function escapeMarkdownCell(value) {
+  return escapeMarkdownInline(value).replace(/\|/g, '\\|').replace(/\n+/g, ' ');
+}
+
+function escapeMarkdownInline(value) {
+  return String(value).replace(/`/g, '\\`').replace(/\n+/g, ' ');
+}
+
+function formatLifecycleAuditMarkdown(report) {
+  const lines = [];
+  lines.push('# ClawMoat Agent Lifecycle Exposure Report');
+  lines.push('');
+  lines.push(`Path: \`${escapeMarkdownInline(report.rootDir)}\``);
+  lines.push(`Risk: **${report.summary.grade.toUpperCase()}** (${report.summary.riskScore}/100)`);
+  lines.push(`Files scanned: **${report.summary.filesScanned}**`);
+  lines.push(`Surfaces: ${report.surfaces.length ? report.surfaces.map((item) => `\`${escapeMarkdownInline(item)}\``).join(', ') : 'none detected'}`);
+  lines.push(`Frameworks: ${report.frameworks.length ? report.frameworks.map((item) => `\`${escapeMarkdownInline(item)}\``).join(', ') : 'none detected'}`);
+  lines.push(`Credential hints: ${report.credentials.length ? report.credentials.map((item) => `\`${escapeMarkdownInline(item)}\``).join(', ') : 'none detected'}`);
+  lines.push('');
+  lines.push('## Lifecycle controls');
+  lines.push('');
+  lines.push('| Control | Status |');
+  lines.push('|---|---|');
+  for (const [name, enabled] of Object.entries(report.controls)) {
+    lines.push(`| ${escapeMarkdownCell(name)} | ${enabled ? '✅ present' : '❌ missing'} |`);
+  }
+  lines.push('');
+  lines.push('## Findings');
+  lines.push('');
+  if (report.findings.length === 0) {
+    lines.push('No lifecycle exposure findings detected.');
+  } else {
+    lines.push('| Severity | Finding | Fix |');
+    lines.push('|---|---|---|');
+    for (const item of report.findings) {
+      lines.push(`| ${item.severity.toUpperCase()} | \`${escapeMarkdownCell(item.id)}\` — ${escapeMarkdownCell(item.message)} | ${escapeMarkdownCell(item.recommendation)} |`);
+    }
+  }
+  lines.push('');
+  lines.push('## Remediation checklist');
+  lines.push('');
+  for (const rec of report.recommendations) lines.push(`- [ ] ${rec}`);
+  lines.push('');
+  lines.push('## Next step');
+  lines.push('');
+  lines.push('Want a second set of eyes? Request a free AI agent security assessment: https://clawmoat.com/assessment/');
+  return lines.join('\n');
+}
+
 function formatLifecycleAuditText(report) {
   const lines = [];
   lines.push('🏰 ClawMoat Agent Lifecycle Exposure Report');
@@ -213,6 +293,7 @@ function formatLifecycleAuditText(report) {
   lines.push(`Risk: ${report.summary.grade.toUpperCase()} (${report.summary.riskScore}/100)`);
   lines.push(`Files scanned: ${report.summary.filesScanned}`);
   lines.push(`Surfaces: ${report.surfaces.length ? report.surfaces.join(', ') : 'none detected'}`);
+  lines.push(`Frameworks: ${report.frameworks.length ? report.frameworks.join(', ') : 'none detected'}`);
   lines.push(`Credential hints: ${report.credentials.length ? report.credentials.join(', ') : 'none detected'}`);
   lines.push('');
   lines.push('Lifecycle controls:');
@@ -241,4 +322,5 @@ function formatLifecycleAuditText(report) {
 module.exports = {
   auditAgentLifecycle,
   formatLifecycleAuditText,
+  formatLifecycleAuditMarkdown,
 };

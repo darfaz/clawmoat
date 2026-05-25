@@ -62,12 +62,13 @@
 <section id="run" class="section"><div class="container">
   <div class="eyebrow">New in ClawMoat</div>
   <h2>Run an Agent Lifecycle Exposure Report from the CLI.</h2>
-  <p class="lead">The audit maps the surfaces your agent can touch, the controls it can find, and the lifecycle gaps that make incident response painful.</p>
+  <p class="lead">The audit maps the surfaces your agent can touch, the frameworks in play, the controls it can find, and the lifecycle gaps that make incident response painful.</p>
   <pre class="terminal"><code>npm install -g clawmoat
 clawmoat lifecycle audit --path .
 
 # For automation:
 clawmoat lifecycle audit --path . --format json
+clawmoat lifecycle audit --path . --format markdown --output lifecycle-report.md
 clawmoat lifecycle audit --path . --format json --strict</code></pre>
   <div class="grid" style="margin-top:22px">
     <div class="finding"><strong>High:</strong> credentials detected without health checks, expiry checks, or rotation path.</div>

@@ -179,10 +179,11 @@ AI agents are production actors now. `clawmoat lifecycle audit` checks whether a
 ```bash
 clawmoat lifecycle audit --path .
 clawmoat lifecycle audit --path . --format json
+clawmoat lifecycle audit --path . --format markdown --output lifecycle-report.md
 clawmoat lifecycle audit --path . --format json --strict
 ```
 
-Use it before an agent gets shell, filesystem, browser, GitHub, email, calendar, MCP, or wallet access. The output is an Agent Lifecycle Exposure Report: detected surfaces, credential hints, missing controls, risk score, and concrete fixes.
+Use it before an agent gets shell, filesystem, browser, GitHub, email, calendar, MCP, or wallet access. The output is an Agent Lifecycle Exposure Report: detected surfaces, frameworks, credential hints, missing controls, risk score, and concrete fixes. Markdown output creates a shareable report you can attach to security reviews or send to maintainers as a free-assessment lead magnet.
 
 → Read the launch brief: <https://clawmoat.com/agent-lifecycle-crisis/>
 
