@@ -3,8 +3,8 @@
 </p>
 
 <h1 align="center">ClawMoat</h1>
-<p align="center"><strong>The open-source agent firewall</strong></p>
-<p align="center">Prevent AI agents from leaking data, using dangerous tools, and importing poisoned dependencies.</p>
+<p align="center"><strong>Run agents on your main computer. Don’t run them naked.</strong></p>
+<p align="center">ClawMoat is the open-source agent seatbelt: runtime security for desktop AI agents with files, shell, browser, MCP, cron, and secret access.</p>
 <p align="center">AI made bug discovery cheap. ClawMoat helps you contain the blast radius while the patch queue catches up.</p>
 
 <p align="center">
@@ -20,12 +20,22 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/agent-lifecycle-crisis/">Agent Lifecycle Crisis</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing/">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://clawmoat.com/blog/mcp-by-design-rce-agent-firewall.html">Latest MCP RCE Analysis</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/agent-seatbelt/">Agent Seatbelt</a> · <a href="https://clawmoat.com/agent-lifecycle-crisis/">Agent Lifecycle Crisis</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing/">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://clawmoat.com/blog/mcp-by-design-rce-agent-firewall.html">Latest MCP RCE Analysis</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
   <strong>🔌 Official <a href="https://github.com/openclaw/openclaw">OpenClaw</a> sanitizer plugin available</strong> — ClawMoat is the reference implementation for OpenClaw's pluggable security pipeline.
 </p>
+
+---
+
+## New: Agent Seatbelt for Desktop Agents
+
+**Run agents on your main computer. Don’t run them naked.**
+
+Agents get useful when they run where the work is: your real files, shell, browser, Gmail, Drive, cron jobs, and MCP tools. That also gives them real blast radius. ClawMoat watches for prompt injection, credential leaks, dangerous tool calls, and audit gaps before your agent turns useful automation into a security incident.
+
+→ Read the launch page: <https://clawmoat.com/agent-seatbelt/>
 
 ---
 
