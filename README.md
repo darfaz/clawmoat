@@ -29,13 +29,13 @@
 
 ---
 
-## New: The Fable Lesson
+## New: The Fable 5 Lesson
 
-Anthropic says perfect jailbreak resistance is probably not possible today. That is the ClawMoat thesis in one sentence: model refusal is not enough when agents can use tools.
+Anthropic suspended Fable's Claude access after jailbreak concerns around Fable 5. That is the ClawMoat thesis in one sentence: model refusal is not enough when agents can use tools.
 
 A jailbreak against a chatbot is a bad answer. A jailbreak against an agent is a tool-use incident.
 
-→ Read the ClawMoat angle: <https://clawmoat.com/fable-lesson/>
+→ Read the Fable 5 ClawMoat angle: <https://clawmoat.com/fable-lesson/>
 
 ## Agent Seatbelt for Desktop Agents
 
