@@ -29,7 +29,15 @@
 
 ---
 
-## New: Agent Seatbelt for Desktop Agents
+## New: The Fable Lesson
+
+Anthropic says perfect jailbreak resistance is probably not possible today. That is the ClawMoat thesis in one sentence: model refusal is not enough when agents can use tools.
+
+A jailbreak against a chatbot is a bad answer. A jailbreak against an agent is a tool-use incident.
+
+→ Read the ClawMoat angle: <https://clawmoat.com/fable-lesson/>
+
+## Agent Seatbelt for Desktop Agents
 
 **Run agents on your main computer. Don’t run them naked.**
 

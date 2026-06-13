@@ -20,7 +20,7 @@
 </head>
 <body>
 <nav><div class="wrap"><a href="/" class="logo">🛡️ ClawMoat</a><div class="navlinks"><a href="/scan/">Free Scanner</a><a href="/attack-demo/">Attack Demo</a><a href="/agent-lifecycle-crisis/">Lifecycle Audit</a><a href="/blog/run-agents-on-main-computer-dont-run-them-naked.html">Manifesto</a><a href="https://github.com/darfaz/clawmoat">GitHub</a><a class="btn-sm" href="/#buy">Buy Seatbelt</a></div></div></nav>
-<header class="hero"><div class="wrap"><div class="eyebrow">Agent seatbelt pricing</div><h1>Pricing should match what the bot does.</h1><p class="lead">ClawMoat is product-first: scan free, then pay for runtime enforcement, alerts, policy gates, and audit trails around desktop AI agents. Human reviews are optional add-ons, not the core pricing model.</p><div class="actions"><a class="btn btn-green" href="/#buy">Buy from the homepage</a><a class="btn btn-outline" href="/scan/">Install free scanner</a></div></div></header>
+<header class="hero"><div class="wrap"><div class="eyebrow">Agent seatbelt pricing</div><h1>Pricing should match what the bot can do.</h1><p class="lead">Anthropic says perfect jailbreak resistance is probably not possible today. If your agent has shell, repo, browser, Gmail, MCP, or credential access, runtime containment is not optional. Scan free, then pay for enforcement, alerts, policy gates, and audit trails.</p><div class="actions"><a class="btn btn-green" href="/#buy">Buy from the homepage</a><a class="btn btn-primary" href="/fable-lesson/">Read the Fable lesson</a><a class="btn btn-outline" href="/scan/">Install free scanner</a></div></div></header>
 <main><div class="wrap">
 <section class="pricing" aria-label="Seatbelt plans">
 <div class="card"><div class="label">Free</div><h2>Free Scanner</h2><p class="desc">For quick local checks before giving an agent more access to your laptop.</p><div class="price">$0</div><p class="note">No checkout required.</p><ul><li>Local prompt-injection scan</li><li>Secret and credential checks</li><li>Dangerous command detection</li><li>Open-source CLI</li><li>Good for first-pass risk checks</li></ul><a class="btn btn-outline" href="/scan/">Install free</a></div>
@@ -37,12 +37,34 @@ function getRef() {
   if (ref && (Date.now() - ts) < 30 * 24 * 60 * 60 * 1000) return ref;
   return null;
 }
+function captureCampaign() {
+  const params = new URLSearchParams(window.location.search);
+  const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const campaign = {};
+  keys.forEach(key => { if (params.get(key)) campaign[key] = params.get(key); });
+  if (Object.keys(campaign).length) {
+    campaign.landing_page = window.location.pathname;
+    localStorage.setItem('clawmoat_campaign', JSON.stringify(campaign));
+    localStorage.setItem('clawmoat_campaign_ts', String(Date.now()));
+  }
+}
+function getCampaign() {
+  const raw = localStorage.getItem('clawmoat_campaign');
+  const ts = parseInt(localStorage.getItem('clawmoat_campaign_ts') || '0');
+  if (raw && (Date.now() - ts) < 30 * 24 * 60 * 60 * 1000) {
+    try { return JSON.parse(raw); } catch (e) { return null; }
+  }
+  return null;
+}
+captureCampaign();
 const API_URL = 'https://clawmoat-production.up.railway.app';
 async function checkout(plan) {
   try {
     const payload = { plan };
     const ref = getRef();
+    const campaign = getCampaign();
     if (ref) payload.client_reference_id = ref;
+    if (campaign) payload.campaign = campaign;
     const res = await fetch(API_URL + '/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

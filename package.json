@@ -32,5 +32,8 @@
   },
   "devDependencies": {
     "eslint": "^10.3.0"
+  },
+  "dependencies": {
+    "stripe": "^22.2.1"
   }
 }

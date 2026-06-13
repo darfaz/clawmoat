@@ -122,21 +122,30 @@ const server = http.createServer(async (req, res) => {
 
     try {
       const isOneTime = ONE_TIME_PLANS.has(body.plan);
+      const attribution = {
+        plan: body.plan,
+        utm_source: body.campaign?.utm_source || '',
+        utm_medium: body.campaign?.utm_medium || '',
+        utm_campaign: body.campaign?.utm_campaign || '',
+        utm_content: body.campaign?.utm_content || '',
+        utm_term: body.campaign?.utm_term || '',
+        landing_page: body.campaign?.landing_page || '',
+      };
       const sessionParams = {
         mode: isOneTime ? 'payment' : 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `https://app.clawmoat.com/dashboard?welcome=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${SITE_URL}/#pricing`,
+        cancel_url: `${SITE_URL}/#buy`,
         allow_promotion_codes: true,
         customer_email: body.email || undefined,
+        client_reference_id: body.client_reference_id || undefined,
+        metadata: attribution,
       };
       if (!isOneTime) {
         sessionParams.subscription_data = {
           trial_period_days: 30,
-          metadata: { plan: body.plan },
+          metadata: attribution,
         };
-      } else {
-        sessionParams.metadata = { plan: body.plan };
       }
       const session = await stripe.checkout.sessions.create(sessionParams);
       return json(res, 200, { url: session.url });
