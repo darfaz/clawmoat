@@ -10,11 +10,11 @@ const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
 const PRICES = {
   // Security Kit (one-time purchase)
   'security-kit':   process.env.PRICE_SECURITY_KIT   || 'price_1T5F3LAUiOw2ZIorTAPB0Q76',  // $29 one-time (legacy)
-  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1TFnOIAUiOw2ZIor6V5PdXBx',  // $9/mo
-  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1TFnOIAUiOw2ZIorJhG9KYZX',  // $90/yr
+  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (current Developer)
+  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (current Developer)
   // Pro subscriptions
-  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (legacy)
-  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (legacy)
+  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (legacy alias)
+  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (legacy alias)
   // Team subscriptions
   'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1TFnOJAUiOw2ZIorunRX8OKm',  // $49/mo
   'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1TFnOJAUiOw2ZIorlOfiCnNk',  // $490/yr
@@ -117,7 +117,7 @@ const server = http.createServer(async (req, res) => {
     const priceId = PRICES[body.plan];
 
     if (!priceId) {
-      return json(res, 400, { error: 'Invalid plan. Use: dev-monthly, dev-yearly, team-monthly, team-yearly' });
+      return json(res, 400, { error: 'Invalid plan. Use: dev-monthly, dev-yearly, shield-monthly, shield-yearly, team-monthly, team-yearly' });
     }
 
     try {
