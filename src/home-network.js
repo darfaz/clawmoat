@@ -1,5 +1,7 @@
 const { execFileSync } = require('child_process');
+const fs = require('fs');
 const os = require('os');
+const path = require('path');
 
 const RISKY_PORTS = {
   23: {
@@ -285,6 +287,164 @@ function formatHomeNetworkText(report) {
   return lines.join('\n');
 }
 
+function createHomeWatchReport(opts = {}) {
+  const current = opts.current || auditHomeNetwork(opts);
+  const baseline = opts.baseline || null;
+  const baselineDevices = Array.isArray(baseline?.devices) ? baseline.devices : [];
+  const currentDevices = Array.isArray(current.devices) ? current.devices : [];
+  const baselineByKey = new Map(baselineDevices.map((device) => [deviceIdentity(device), device]));
+  const currentByKey = new Map(currentDevices.map((device) => [deviceIdentity(device), device]));
+  const firstRun = !baseline;
+  const newDevices = firstRun ? [] : currentDevices.filter((device) => !baselineByKey.has(deviceIdentity(device)));
+  const missingDevices = firstRun ? [] : baselineDevices.filter((device) => !currentByKey.has(deviceIdentity(device)));
+  const changedRiskDevices = currentDevices
+    .map((device) => {
+      const previous = baselineByKey.get(deviceIdentity(device));
+      if (!previous) return null;
+      const previousRiskScore = Number(previous.riskScore || 0);
+      const riskDelta = device.riskScore - previousRiskScore;
+      const previousPorts = Array.isArray(previous.openPorts) ? previous.openPorts : [];
+      const addedPorts = (device.openPorts || []).filter((port) => !previousPorts.includes(port));
+      if (riskDelta < 20 && addedPorts.length === 0 && previous.status === device.status) return null;
+      return { ...device, previousRiskScore, riskDelta, addedPorts, previousStatus: previous.status || null };
+    })
+    .filter(Boolean);
+
+  const alerts = [];
+  for (const device of newDevices) {
+    alerts.push({
+      type: device.riskScore >= 35 ? 'new_high_risk_device' : 'new_device',
+      severity: device.riskScore >= 70 ? 'critical' : device.riskScore >= 35 ? 'high' : 'medium',
+      device: summarizeDeviceForAlert(device),
+      message: `${device.hostname || device.ip} joined the network with risk ${device.riskScore}/100.`,
+    });
+  }
+  for (const device of changedRiskDevices) {
+    alerts.push({
+      type: 'device_risk_changed',
+      severity: device.riskScore >= 70 ? 'critical' : device.riskScore >= 35 ? 'high' : 'medium',
+      device: summarizeDeviceForAlert(device),
+      message: `${device.hostname || device.ip} risk changed by ${device.riskDelta} points${device.addedPorts.length ? `; new open ports: ${device.addedPorts.join(', ')}` : ''}.`,
+    });
+  }
+
+  return {
+    type: 'home_network_watch',
+    ok: alerts.length === 0,
+    firstRun,
+    generatedAt: new Date().toISOString(),
+    baselineGeneratedAt: baseline?.generatedAt || null,
+    current,
+    summary: {
+      devices: current.summary.devices,
+      riskScore: current.summary.riskScore,
+      highRiskDevices: current.summary.highRiskDevices,
+      newDevices: newDevices.length,
+      missingDevices: missingDevices.length,
+      changedRiskDevices: changedRiskDevices.length,
+      alerts: alerts.length,
+    },
+    changes: {
+      newDevices,
+      missingDevices,
+      changedRiskDevices,
+    },
+    alerts,
+    weeklySummary: buildWeeklySummary(current, { newDevices, missingDevices, changedRiskDevices, alerts }),
+  };
+}
+
+function formatHomeWatchText(report) {
+  const lines = [
+    '🏰 ClawMoat Home Watch',
+    '',
+    `Devices: ${report.summary.devices}. New devices: ${report.summary.newDevices}. Missing devices: ${report.summary.missingDevices}. Alerts: ${report.summary.alerts}.`,
+    `Network risk score: ${report.summary.riskScore}/100`,
+    '',
+  ];
+
+  if (report.firstRun) {
+    lines.push('First run: baseline saved. Future runs will alert when new or riskier devices appear.');
+    lines.push('');
+  }
+
+  if (report.alerts.length) {
+    lines.push('Alerts:');
+    for (const alert of report.alerts) lines.push(`- ${alert.severity.toUpperCase()}: ${alert.message}`);
+    lines.push('');
+  }
+
+  if (report.changes.newDevices.length) {
+    lines.push('New devices:');
+    for (const device of report.changes.newDevices) {
+      lines.push(`- ${device.hostname || device.ip} (${device.ip}) — ${device.vendor}; risk ${device.riskScore}/100; ${device.status}`);
+    }
+    lines.push('');
+  }
+
+  if (report.changes.missingDevices.length) {
+    lines.push('Missing devices:');
+    for (const device of report.changes.missingDevices) lines.push(`- ${device.hostname || device.ip} (${device.ip})`);
+    lines.push('');
+  }
+
+  lines.push('Weekly summary:');
+  for (const item of report.weeklySummary) lines.push(`- ${item}`);
+  lines.push('');
+  lines.push('Next: run this from cron/Task Scheduler for weekly reports, or use --daemon once router/DNS integrations are wired in.');
+  return lines.join('\n');
+}
+
+function loadHomeWatchBaseline(statePath = defaultHomeWatchStatePath()) {
+  try {
+    return JSON.parse(fs.readFileSync(statePath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function saveHomeWatchBaseline(report, statePath = defaultHomeWatchStatePath()) {
+  const baseline = {
+    type: 'home_network_baseline',
+    generatedAt: report.generatedAt,
+    scope: report.scope,
+    summary: report.summary,
+    devices: report.devices,
+  };
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
+  fs.writeFileSync(statePath, JSON.stringify(baseline, null, 2));
+  return baseline;
+}
+
+function defaultHomeWatchStatePath() {
+  return path.join(os.homedir(), '.clawmoat', 'home-watch-baseline.json');
+}
+
+function deviceIdentity(device) {
+  return String(device.mac || device.ip || device.hostname || 'unknown').toLowerCase();
+}
+
+function summarizeDeviceForAlert(device) {
+  return {
+    ip: device.ip,
+    mac: device.mac,
+    hostname: device.hostname,
+    vendor: device.vendor,
+    riskScore: device.riskScore,
+    status: device.status,
+  };
+}
+
+function buildWeeklySummary(current, changes) {
+  const summary = [];
+  summary.push(`${current.summary.devices} devices seen; ${current.summary.highRiskDevices} high-risk; ${current.summary.unknownDevices} unknown.`);
+  if (changes.newDevices.length) summary.push(`${changes.newDevices.length} new device${changes.newDevices.length === 1 ? '' : 's'} joined since the saved baseline.`);
+  if (changes.changedRiskDevices.length) summary.push(`${changes.changedRiskDevices.length} device${changes.changedRiskDevices.length === 1 ? '' : 's'} became riskier or exposed new ports.`);
+  if (current.recommendations.length) summary.push(current.recommendations[0]);
+  if (changes.alerts.length === 0) summary.push('No new high-risk device changes since the saved baseline.');
+  return summary;
+}
+
 function sampleHomeNetworkReport() {
   return auditHomeNetwork({
     scope: 'sample-home-network',
@@ -369,10 +529,15 @@ function getLocalNetworkHints() {
 
 module.exports = {
   auditHomeNetwork,
+  createHomeWatchReport,
+  defaultHomeWatchStatePath,
   discoverDevices,
   formatHomeNetworkText,
+  formatHomeWatchText,
   getLocalNetworkHints,
+  loadHomeWatchBaseline,
   parseArpOutput,
   parseIpNeighborOutput,
   sampleHomeNetworkReport,
+  saveHomeWatchBaseline,
 };

@@ -37,9 +37,11 @@ WSJ's residential-proxy reporting makes the pattern obvious: trusted devices bec
 clawmoat home scan
 clawmoat home scan --sample
 clawmoat home scan --sample --format json
+clawmoat home watch --once
+clawmoat home watch --once --format json
 ```
 
-The first release is detection-first. It produces a plain-English report and remediation steps. Actual quarantine/blocking will require router or DNS integrations such as Pi-hole, AdGuard Home, OpenWRT, UniFi, pfSense, or OPNsense.
+`home watch` saves a local baseline in `~/.clawmoat/home-watch-baseline.json`, then compares future scans against it. That gives users the useful version of the WSJ story: “a new Android TV box joined your network and it exposes ADB/Telnet,” not a vague fear article.
 
 → Read the Home Guard page: <https://clawmoat.com/home-network-guard/>
 
@@ -199,6 +201,9 @@ clawmoat lifecycle audit --path .
 
 # Scan your home network for risky IoT/proxy indicators
 clawmoat home scan
+
+# Save a baseline and alert when new/riskier devices appear
+clawmoat home watch --once
 
 # Fail CI if the lifecycle exposure is too high
 clawmoat lifecycle audit --path . --format json --strict

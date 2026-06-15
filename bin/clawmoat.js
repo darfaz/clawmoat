@@ -25,7 +25,7 @@ const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
 const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
-const { auditHomeNetwork, formatHomeNetworkText, sampleHomeNetworkReport } = require('../src/home-network');
+const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, formatHomeNetworkText, formatHomeWatchText, loadHomeWatchBaseline, sampleHomeNetworkReport, saveHomeWatchBaseline } = require('../src/home-network');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -107,14 +107,16 @@ switch (command) {
 
 function cmdHome(args) {
   const sub = args[0] || 'scan';
-  if (sub !== 'scan') {
-    console.error('Usage: clawmoat home scan [--sample] [--format text|json]');
-    process.exit(1);
-  }
+  if (sub === 'scan') return cmdHomeScan(args.slice(1));
+  if (sub === 'watch') return cmdHomeWatch(args.slice(1));
+  console.error('Usage: clawmoat home <scan|watch> [--sample] [--format text|json]');
+  process.exit(1);
+}
 
+function cmdHomeScan(args) {
   let format = 'text';
   let sample = false;
-  for (let i = 1; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     if (args[i] === '--sample') {
       sample = true;
     } else if (args[i] === '--format' && args[i + 1]) {
@@ -136,6 +138,44 @@ function cmdHome(args) {
   }
 
   process.exit(0);
+}
+
+function cmdHomeWatch(args) {
+  let format = 'text';
+  let sample = false;
+  let statePath = defaultHomeWatchStatePath();
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--sample') {
+      sample = true;
+    } else if (args[i] === '--once') {
+      // One-shot is currently the default. Keep the flag for cron-friendly UX.
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--state' && args[i + 1]) {
+      statePath = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const current = sample ? sampleHomeNetworkReport() : auditHomeNetwork();
+  const baseline = loadHomeWatchBaseline(statePath);
+  const report = createHomeWatchReport({ baseline, current });
+  saveHomeWatchBaseline(current, statePath);
+  report.statePath = statePath;
+
+  if (format === 'json') {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatHomeWatchText(report));
+  }
+
+  process.exit(report.alerts.some((alert) => alert.severity === 'critical') ? 2 : report.alerts.length ? 1 : 0);
 }
 
 function cmdLifecycle(args) {
@@ -1311,6 +1351,7 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
   clawmoat home scan --sample --format json  Demo Home Guard JSON report
+  clawmoat home watch --once      Save baseline and alert on new/riskier devices
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1336,6 +1377,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat home scan --sample     # Demo Home Guard risky-device report
+  clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
   clawmoat test
 
 ${BOLD}CONFIG${RESET}

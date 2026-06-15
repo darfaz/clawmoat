@@ -460,9 +460,13 @@ module.exports.formatLifecycleAuditText = lifecycleAudit.formatLifecycleAuditTex
 // Home Network Guard
 const homeNetwork = require('./home-network');
 module.exports.auditHomeNetwork = homeNetwork.auditHomeNetwork;
+module.exports.createHomeWatchReport = homeNetwork.createHomeWatchReport;
 module.exports.discoverHomeNetworkDevices = homeNetwork.discoverDevices;
 module.exports.formatHomeNetworkText = homeNetwork.formatHomeNetworkText;
+module.exports.formatHomeWatchText = homeNetwork.formatHomeWatchText;
+module.exports.loadHomeWatchBaseline = homeNetwork.loadHomeWatchBaseline;
 module.exports.sampleHomeNetworkReport = homeNetwork.sampleHomeNetworkReport;
+module.exports.saveHomeWatchBaseline = homeNetwork.saveHomeWatchBaseline;
 
 // Framework Adapters (also available via require('clawmoat/adapters'))
 const adapters = require('./adapters');

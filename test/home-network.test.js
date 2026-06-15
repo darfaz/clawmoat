@@ -3,7 +3,9 @@
  */
 
 const { describe, it } = require('node:test');
-const { strictEqual, ok } = require('node:assert');
+const { strictEqual, ok, deepStrictEqual } = require('node:assert');
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
@@ -12,7 +14,9 @@ const execFileAsync = promisify(execFile);
 
 const {
   auditHomeNetwork,
+  createHomeWatchReport,
   formatHomeNetworkText,
+  formatHomeWatchText,
   parseIpNeighborOutput,
 } = require('../src/home-network');
 
@@ -94,5 +98,60 @@ fe80::1 dev wlan0 lladdr aa:bb:cc:00:00:02 router STALE
     strictEqual(report.type, 'home_network_audit');
     ok(report.summary.devices >= 2);
     ok(report.devices.some((device) => device.findings.some((finding) => finding.id === 'residential_proxy_indicator')));
+  });
+
+  it('creates a watch report that detects new and missing devices against a saved baseline', () => {
+    const baseline = {
+      generatedAt: '2026-06-01T00:00:00.000Z',
+      devices: [
+        { ip: '192.168.1.10', mac: 'aa:bb:cc:00:00:10', hostname: 'dar-macbook', vendor: 'Apple', riskScore: 0, status: 'ok' },
+        { ip: '192.168.1.51', mac: 'de:ad:be:ef:00:51', hostname: 'driveway-camera', vendor: 'Unknown', riskScore: 45, status: 'review' },
+      ],
+    };
+    const current = auditHomeNetwork({
+      devices: [
+        { ip: '192.168.1.10', mac: 'aa:bb:cc:00:00:10', hostname: 'dar-macbook', vendor: 'Apple', openPorts: [] },
+        { ip: '192.168.1.42', mac: '12:34:56:78:90:ab', hostname: 'android-tv-box', vendor: 'Unknown', openPorts: [5555, 23] },
+      ],
+    });
+
+    const watch = createHomeWatchReport({ baseline, current });
+
+    strictEqual(watch.type, 'home_network_watch');
+    strictEqual(watch.ok, false);
+    deepStrictEqual(watch.changes.newDevices.map((device) => device.ip), ['192.168.1.42']);
+    deepStrictEqual(watch.changes.missingDevices.map((device) => device.ip), ['192.168.1.51']);
+    strictEqual(watch.alerts.some((alert) => alert.type === 'new_high_risk_device'), true);
+    strictEqual(watch.summary.newDevices, 1);
+    strictEqual(watch.summary.missingDevices, 1);
+  });
+
+  it('writes a baseline and reports no changes on the first home watch run', async () => {
+    const cli = path.join(process.cwd(), 'bin/clawmoat.js');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clawmoat-home-watch-'));
+    const statePath = path.join(dir, 'baseline.json');
+
+    const { stdout } = await execFileAsync('node', [cli, 'home', 'watch', '--sample', '--once', '--state', statePath, '--format', 'json']);
+    const report = JSON.parse(stdout);
+
+    strictEqual(report.type, 'home_network_watch');
+    strictEqual(report.firstRun, true);
+    strictEqual(report.ok, true);
+    ok(fs.existsSync(statePath));
+    strictEqual(JSON.parse(fs.readFileSync(statePath, 'utf8')).devices.length >= 2, true);
+  });
+
+  it('formats a home watch report for weekly reports and new-device alerts', () => {
+    const watch = createHomeWatchReport({
+      baseline: { devices: [] },
+      current: auditHomeNetwork({ devices: [{ ip: '192.168.1.42', hostname: 'android-tv-box', vendor: 'Unknown', openPorts: [5555] }] }),
+    });
+
+    const text = formatHomeWatchText(watch);
+
+    ok(text.includes('ClawMoat Home Watch'));
+    ok(text.includes('New devices: 1'));
+    ok(text.includes('android-tv-box'));
+    ok(text.includes('Weekly summary'));
   });
 });
