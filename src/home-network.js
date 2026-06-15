@@ -1,0 +1,378 @@
+const { execFileSync } = require('child_process');
+const os = require('os');
+
+const RISKY_PORTS = {
+  23: {
+    id: 'telnet_exposed',
+    severity: 'critical',
+    score: 35,
+    title: 'Telnet is exposed',
+    evidence: 'Port 23 is open. Telnet is common on compromised or poorly secured IoT devices.',
+    recommendation: 'Move this device to a guest or IoT network and disable Telnet or remove the device.',
+  },
+  2323: {
+    id: 'alternate_telnet_exposed',
+    severity: 'high',
+    score: 25,
+    title: 'Alternate Telnet port is exposed',
+    evidence: 'Port 2323 is open. Malware often scans alternate Telnet ports on IoT devices.',
+    recommendation: 'Move this device to a guest or IoT network and block inbound access to this port.',
+  },
+  5555: {
+    id: 'android_debug_bridge_exposed',
+    severity: 'critical',
+    score: 40,
+    title: 'Android Debug Bridge is exposed',
+    evidence: 'Port 5555 is open. Exposed ADB is a common Android TV box takeover path.',
+    recommendation: 'Unplug or isolate this device until ADB is disabled and the firmware is trusted.',
+  },
+  7547: {
+    id: 'router_management_exposed',
+    severity: 'high',
+    score: 25,
+    title: 'Router management protocol is exposed',
+    evidence: 'Port 7547 is open. TR-069/CWMP exposure has been abused by botnets.',
+    recommendation: 'Disable remote management if possible or isolate the device behind stricter firewall rules.',
+  },
+  1900: {
+    id: 'upnp_exposed',
+    severity: 'medium',
+    score: 15,
+    title: 'UPnP service is visible',
+    evidence: 'Port 1900 is open. UPnP can widen the blast radius when devices are compromised.',
+    recommendation: 'Disable UPnP on the router or isolate IoT devices from laptops and servers.',
+  },
+};
+
+const PROXY_TERMS = [
+  'proxy',
+  'residential-proxy',
+  'socks',
+  'vpn',
+  'tunnel',
+  'peer',
+  'exit-node',
+  'backconnect',
+];
+
+function parseIpNeighborOutput(output = '') {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const ip = line.split(/\s+/)[0];
+      if (!isIpv4(ip)) return null;
+      const devMatch = line.match(/\bdev\s+(\S+)/);
+      const macMatch = line.match(/\blladdr\s+([0-9a-f:]{17})/i);
+      if (!macMatch) return null;
+      return {
+        ip,
+        mac: macMatch[1].toLowerCase(),
+        interface: devMatch ? devMatch[1] : null,
+        source: 'ip-neigh',
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseArpOutput(output = '') {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const ipMatch = line.match(/\(?((?:\d{1,3}\.){3}\d{1,3})\)?/);
+      const macMatch = line.match(/([0-9a-f]{2}(?::[0-9a-f]{2}){5})/i);
+      if (!ipMatch || !macMatch) return null;
+      return {
+        ip: ipMatch[1],
+        mac: macMatch[1].toLowerCase(),
+        source: 'arp',
+      };
+    })
+    .filter(Boolean);
+}
+
+function auditHomeNetwork(opts = {}) {
+  const devices = (opts.devices || discoverDevices(opts)).map(normalizeDevice).map(scoreDevice);
+  const summary = summarize(devices);
+  return {
+    type: 'home_network_audit',
+    ok: summary.highRiskDevices === 0 && summary.criticalFindings === 0,
+    generatedAt: new Date().toISOString(),
+    scope: opts.scope || 'local-network',
+    summary,
+    devices: devices.sort((a, b) => b.riskScore - a.riskScore || a.ip.localeCompare(b.ip)),
+    recommendations: buildNetworkRecommendations(devices),
+    limitations: [
+      'Passive scans cannot prove a device is clean; they identify risky exposure and suspicious behavior.',
+      'Blocking or quarantine requires DNS, router, firewall, Pi-hole, OpenWRT, UniFi, pfSense, or similar integration.',
+      'Encrypted traffic hides payloads, so ClawMoat uses metadata, ports, DNS, and behavior indicators.',
+    ],
+  };
+}
+
+function discoverDevices(opts = {}) {
+  const runner = opts.runner || defaultRunner;
+  const devices = new Map();
+
+  for (const command of [
+    { bin: 'ip', args: ['neigh', 'show'], parser: parseIpNeighborOutput },
+    { bin: 'arp', args: ['-a'], parser: parseArpOutput },
+  ]) {
+    try {
+      const output = runner(command.bin, command.args);
+      for (const device of command.parser(output)) {
+        devices.set(device.ip, { ...(devices.get(device.ip) || {}), ...device });
+      }
+    } catch (_err) {
+      // Discovery should degrade gracefully. Many laptops lack arp/ip tools or permissions.
+    }
+  }
+
+  return Array.from(devices.values());
+}
+
+function defaultRunner(bin, args) {
+  return execFileSync(bin, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 5000 });
+}
+
+function normalizeDevice(device) {
+  const hostname = device.hostname || device.name || null;
+  const vendor = device.vendor || guessVendor(device.mac) || 'Unknown';
+  const openPorts = Array.from(new Set((device.openPorts || []).map(Number).filter(Boolean))).sort((a, b) => a - b);
+  return {
+    ip: device.ip || 'unknown',
+    mac: device.mac || null,
+    hostname,
+    vendor,
+    interface: device.interface || null,
+    type: device.type || guessDeviceType({ hostname, vendor, openPorts }),
+    openPorts,
+    dnsQueries: device.dnsQueries || [],
+    outboundConnections: device.outboundConnections || [],
+    firstSeen: device.firstSeen || null,
+    lastSeen: device.lastSeen || null,
+    source: device.source || 'provided',
+  };
+}
+
+function scoreDevice(device) {
+  const findings = [];
+  let riskScore = 0;
+
+  if (device.vendor === 'Unknown' || !device.mac) {
+    findings.push({
+      id: 'unknown_device_identity',
+      severity: 'medium',
+      title: 'Unknown device identity',
+      evidence: 'ClawMoat could not identify this device vendor from local network metadata.',
+    });
+    riskScore += 10;
+  }
+
+  for (const port of device.openPorts) {
+    const risky = RISKY_PORTS[port];
+    if (risky) {
+      findings.push({ ...risky, port });
+      riskScore += risky.score;
+    }
+  }
+
+  const proxyDnsHits = device.dnsQueries.filter((query) => PROXY_TERMS.some((term) => String(query).toLowerCase().includes(term)));
+  const proxyConnections = device.outboundConnections.filter((conn) => {
+    const haystack = [conn.host, conn.domain, conn.asnType, conn.category].filter(Boolean).join(' ').toLowerCase();
+    return PROXY_TERMS.some((term) => haystack.includes(term)) || conn.asnType === 'datacenter';
+  });
+
+  if (proxyDnsHits.length > 0 || proxyConnections.length >= 3) {
+    findings.push({
+      id: 'residential_proxy_indicator',
+      severity: proxyConnections.length >= 3 ? 'critical' : 'high',
+      title: 'Residential proxy behavior indicator',
+      evidence: `Observed ${proxyDnsHits.length} proxy-like DNS quer${proxyDnsHits.length === 1 ? 'y' : 'ies'} and ${proxyConnections.length} proxy/datacenter-like outbound connection${proxyConnections.length === 1 ? '' : 's'}.`,
+      recommendation: 'Treat this as a possible residential proxy/backdoor signal: isolate the device, review router/DNS logs, and block outbound traffic until verified.',
+    });
+    riskScore += proxyConnections.length >= 3 ? 35 : 25;
+  }
+
+  riskScore = Math.min(100, riskScore);
+  const severity = maxSeverity(findings);
+  return {
+    ...device,
+    riskScore,
+    severity,
+    status: riskScore >= 70 ? 'high-risk' : riskScore >= 35 ? 'review' : findings.length ? 'watch' : 'ok',
+    findings,
+    recommendations: buildDeviceRecommendations({ ...device, findings, riskScore }),
+  };
+}
+
+function summarize(devices) {
+  const findings = devices.flatMap((device) => device.findings);
+  return {
+    devices: devices.length,
+    highRiskDevices: devices.filter((device) => device.riskScore >= 70).length,
+    reviewDevices: devices.filter((device) => device.riskScore >= 35 && device.riskScore < 70).length,
+    unknownDevices: devices.filter((device) => device.vendor === 'Unknown' || !device.mac).length,
+    criticalFindings: findings.filter((finding) => finding.severity === 'critical').length,
+    findings: findings.length,
+    riskScore: devices.length ? Math.max(...devices.map((device) => device.riskScore)) : 0,
+  };
+}
+
+function buildDeviceRecommendations(device) {
+  const recs = [];
+  if (device.riskScore >= 70) {
+    recs.push('Immediately isolate this device from laptops, phones, and servers. Move this device to a guest or IoT network.');
+  }
+  for (const finding of device.findings) {
+    if (finding.recommendation) recs.push(finding.recommendation);
+  }
+  if (device.openPorts.includes(23) || device.openPorts.includes(2323)) {
+    recs.push('Disable Telnet or replace the device if the vendor does not provide a secure firmware update.');
+  }
+  if (device.openPorts.includes(5555)) {
+    recs.push('Disable Android Debug Bridge over the network. Cheap Android TV boxes with exposed ADB are high-risk.');
+  }
+  if (recs.length === 0) recs.push('No immediate action. Keep firmware updated and keep IoT devices segmented from work machines.');
+  return Array.from(new Set(recs));
+}
+
+function buildNetworkRecommendations(devices) {
+  const recs = [];
+  if (devices.some((device) => device.riskScore >= 70)) {
+    recs.push('Quarantine high-risk devices on a guest or IoT VLAN before trusting the network.');
+    recs.push('Block outbound traffic from high-risk devices until you verify firmware and ownership.');
+  }
+  if (devices.some((device) => device.openPorts.includes(23) || device.openPorts.includes(2323))) {
+    recs.push('Disable Telnet across home devices; exposed Telnet is a botnet magnet.');
+  }
+  if (devices.some((device) => device.openPorts.includes(5555))) {
+    recs.push('Disable network ADB on Android TV boxes and streaming devices.');
+  }
+  recs.push('For active blocking, connect ClawMoat to DNS/router controls such as Pi-hole, AdGuard Home, OpenWRT, UniFi, pfSense, or OPNsense.');
+  return Array.from(new Set(recs));
+}
+
+function formatHomeNetworkText(report) {
+  const deviceWord = report.summary.devices === 1 ? 'device' : 'devices';
+  const lines = [
+    '🏰 ClawMoat Home Network Report',
+    '',
+    `${report.summary.devices} ${deviceWord} found. ${report.summary.highRiskDevices} high-risk. ${report.summary.unknownDevices} unknown.`,
+    `Network risk score: ${report.summary.riskScore}/100`,
+    '',
+  ];
+
+  for (const device of report.devices) {
+    const label = device.hostname || device.ip;
+    lines.push(`${device.status.toUpperCase()} — ${label} (${device.ip})`);
+    lines.push(`  Vendor: ${device.vendor}; Type: ${device.type}; Risk: ${device.riskScore}/100`);
+    if (device.openPorts.length) lines.push(`  Open ports: ${device.openPorts.join(', ')}`);
+    for (const finding of device.findings) {
+      lines.push(`  • ${finding.title}: ${finding.evidence}`);
+    }
+    if (device.recommendations.length) lines.push(`  Next: ${device.recommendations[0]}`);
+    lines.push('');
+  }
+
+  lines.push('Recommended actions:');
+  for (const rec of report.recommendations) lines.push(`- ${rec}`);
+  lines.push('');
+  lines.push('Limitations: ClawMoat can detect exposure and suspicious indicators from local metadata. Actual blocking requires DNS/router/firewall integration.');
+  return lines.join('\n');
+}
+
+function sampleHomeNetworkReport() {
+  return auditHomeNetwork({
+    scope: 'sample-home-network',
+    devices: [
+      {
+        ip: '192.168.1.1',
+        mac: 'aa:bb:cc:00:00:01',
+        hostname: 'home-router',
+        vendor: 'Router Vendor',
+        openPorts: [80, 443],
+      },
+      {
+        ip: '192.168.1.42',
+        mac: '12:34:56:78:90:ab',
+        hostname: 'living-room-android-tv-box',
+        vendor: 'Unknown',
+        type: 'streaming-device',
+        openPorts: [23, 5555, 8080],
+        dnsQueries: ['pool.residential-proxy.example', 'updates.vendor.invalid'],
+        outboundConnections: [
+          { host: '203.0.113.10', asnType: 'datacenter' },
+          { host: '198.51.100.20', asnType: 'datacenter' },
+          { host: '192.0.2.30', asnType: 'residential-proxy' },
+        ],
+      },
+      {
+        ip: '192.168.1.51',
+        mac: 'de:ad:be:ef:00:51',
+        hostname: 'driveway-camera',
+        vendor: 'Unknown',
+        type: 'camera',
+        openPorts: [23, 554],
+      },
+    ],
+  });
+}
+
+function guessVendor(mac) {
+  if (!mac) return null;
+  const prefix = mac.toLowerCase().slice(0, 8);
+  const vendors = {
+    '28:cf:e9': 'Apple',
+    'f0:18:98': 'Apple',
+    '3c:5a:b4': 'Google',
+    'd8:31:34': 'Raspberry Pi',
+    'b8:27:eb': 'Raspberry Pi',
+    'dc:a6:32': 'Raspberry Pi',
+    '00:04:20': 'Slim Devices',
+  };
+  return vendors[prefix] || null;
+}
+
+function guessDeviceType({ hostname, vendor, openPorts }) {
+  const name = String(hostname || '').toLowerCase();
+  if (name.includes('camera') || openPorts.includes(554)) return 'camera';
+  if (name.includes('tv') || name.includes('roku') || name.includes('android')) return 'streaming-device';
+  if (name.includes('printer') || openPorts.includes(9100)) return 'printer';
+  if (name.includes('router') || name.includes('gateway')) return 'router';
+  if (vendor === 'Apple') return 'computer-or-phone';
+  if (vendor === 'Raspberry Pi') return 'single-board-computer';
+  return 'unknown';
+}
+
+function maxSeverity(findings) {
+  if (!findings.length) return null;
+  const rank = { low: 1, medium: 2, high: 3, critical: 4 };
+  return findings.reduce((max, finding) => (rank[finding.severity] > rank[max] ? finding.severity : max), 'low');
+}
+
+function isIpv4(value) {
+  return /^(?:\d{1,3}\.){3}\d{1,3}$/.test(value) && value.split('.').every((part) => Number(part) >= 0 && Number(part) <= 255);
+}
+
+function getLocalNetworkHints() {
+  const interfaces = os.networkInterfaces();
+  return Object.entries(interfaces).flatMap(([name, entries]) =>
+    (entries || [])
+      .filter((entry) => entry.family === 'IPv4' && !entry.internal)
+      .map((entry) => ({ interface: name, address: entry.address, cidr: entry.cidr }))
+  );
+}
+
+module.exports = {
+  auditHomeNetwork,
+  discoverDevices,
+  formatHomeNetworkText,
+  getLocalNetworkHints,
+  parseArpOutput,
+  parseIpNeighborOutput,
+  sampleHomeNetworkReport,
+};

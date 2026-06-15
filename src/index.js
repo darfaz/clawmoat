@@ -457,6 +457,13 @@ const lifecycleAudit = require('./lifecycle-audit');
 module.exports.auditAgentLifecycle = lifecycleAudit.auditAgentLifecycle;
 module.exports.formatLifecycleAuditText = lifecycleAudit.formatLifecycleAuditText;
 
+// Home Network Guard
+const homeNetwork = require('./home-network');
+module.exports.auditHomeNetwork = homeNetwork.auditHomeNetwork;
+module.exports.discoverHomeNetworkDevices = homeNetwork.discoverDevices;
+module.exports.formatHomeNetworkText = homeNetwork.formatHomeNetworkText;
+module.exports.sampleHomeNetworkReport = homeNetwork.sampleHomeNetworkReport;
+
 // Framework Adapters (also available via require('clawmoat/adapters'))
 const adapters = require('./adapters');
 module.exports.createGuard = adapters.createGuard;

@@ -29,6 +29,20 @@
 
 ---
 
+## New: Home Network Guard
+
+WSJ's residential-proxy reporting makes the pattern obvious: trusted devices become attack infrastructure when nobody watches runtime behavior. `clawmoat home scan` extends ClawMoat from agent-seatbelt to home-network watchdog by inventorying local devices and flagging risky IoT/proxy indicators such as exposed Telnet, exposed Android Debug Bridge, unknown vendors, and proxy-like DNS or outbound behavior when logs are provided.
+
+```bash
+clawmoat home scan
+clawmoat home scan --sample
+clawmoat home scan --sample --format json
+```
+
+The first release is detection-first. It produces a plain-English report and remediation steps. Actual quarantine/blocking will require router or DNS integrations such as Pi-hole, AdGuard Home, OpenWRT, UniFi, pfSense, or OPNsense.
+
+→ Read the Home Guard page: <https://clawmoat.com/home-network-guard/>
+
 ## New: The Fable 5 Lesson
 
 Anthropic suspended Fable's Claude access after jailbreak concerns around Fable 5. That is the ClawMoat thesis in one sentence: model refusal is not enough when agents can use tools.
@@ -182,6 +196,9 @@ clawmoat audit ~/.openclaw/agents/main/sessions/
 
 # Map lifecycle gaps before an agent touches real tools
 clawmoat lifecycle audit --path .
+
+# Scan your home network for risky IoT/proxy indicators
+clawmoat home scan
 
 # Fail CI if the lifecycle exposure is too high
 clawmoat lifecycle audit --path . --format json --strict

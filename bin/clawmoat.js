@@ -25,6 +25,7 @@ const { InsiderThreatDetector } = require('../src/guardian/insider-threat');
 const { formatReport, formatScanResult, formatAuditResult } = require('../src/formatters/json');
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
 const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
+const { auditHomeNetwork, formatHomeNetworkText, sampleHomeNetworkReport } = require('../src/home-network');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -85,6 +86,9 @@ switch (command) {
   case 'lifecycle':
     cmdLifecycle(args.slice(1));
     break;
+  case 'home':
+    cmdHome(args.slice(1));
+    break;
   case 'scan-mcp':
     cmdScanMCP(args.slice(1));
     break;
@@ -99,6 +103,39 @@ switch (command) {
   default:
     printHelp();
     break;
+}
+
+function cmdHome(args) {
+  const sub = args[0] || 'scan';
+  if (sub !== 'scan') {
+    console.error('Usage: clawmoat home scan [--sample] [--format text|json]');
+    process.exit(1);
+  }
+
+  let format = 'text';
+  let sample = false;
+  for (let i = 1; i < args.length; i++) {
+    if (args[i] === '--sample') {
+      sample = true;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const report = sample ? sampleHomeNetworkReport() : auditHomeNetwork();
+  if (format === 'json') {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatHomeNetworkText(report));
+  }
+
+  process.exit(0);
 }
 
 function cmdLifecycle(args) {
@@ -1272,6 +1309,8 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit        Find agent identity, credential, permission, audit, and kill-switch gaps
   clawmoat lifecycle audit --format json --path ./agent-app
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
+  clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
+  clawmoat home scan --sample --format json  Demo Home Guard JSON report
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1296,6 +1335,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --path .
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
+  clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat test
 
 ${BOLD}CONFIG${RESET}
