@@ -283,7 +283,7 @@ Site: https://clawmoat.com
 
 The first sales target should not be enterprise. It should be:
 
-- 10 Developer subscribers at $15/mo = $150 MRR and validates checkout.
+- 10 Developer subscribers at $14.99/mo = $149.90 MRR and validates checkout.
 - 5 Team subscribers at $49/mo = $245 MRR.
 - 3 setup/service sales at $249-$999 = immediate cash and case studies.
 - 2 consultant affiliates = distribution leverage.
