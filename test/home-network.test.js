@@ -17,7 +17,10 @@ const {
   createHomeWatchReport,
   formatHomeNetworkText,
   formatHomeWatchText,
+  discoverDevices,
+  isWsl,
   parseIpNeighborOutput,
+  parseWindowsArpOutput,
 } = require('../src/home-network');
 
 describe('home network guard', () => {
@@ -33,6 +36,72 @@ fe80::1 dev wlan0 lladdr aa:bb:cc:00:00:02 router STALE
     strictEqual(devices[0].mac, 'aa:bb:cc:00:00:01');
     strictEqual(devices[0].interface, 'wlan0');
     strictEqual(devices[1].ip, '192.168.1.42');
+  });
+
+  it('parses Windows host ARP output and ignores virtual/broadcast/multicast entries', () => {
+    const devices = parseWindowsArpOutput(`
+Interface: 192.168.1.52 --- 0x12
+  Internet Address      Physical Address      Type
+  192.168.1.1           dc-08-da-8b-66-35     dynamic
+  192.168.1.95          ac-f4-66-09-9e-1b     dynamic
+  192.168.1.255         ff-ff-ff-ff-ff-ff     static
+  224.0.0.251           01-00-5e-00-00-fb     static
+
+Interface: 172.18.32.1 --- 0x27
+  Internet Address      Physical Address      Type
+  172.18.38.211         00-15-5d-10-c7-30     dynamic
+`);
+
+    strictEqual(devices.length, 2);
+    deepStrictEqual(devices.map((device) => device.ip), ['192.168.1.1', '192.168.1.95']);
+    strictEqual(devices[0].mac, 'dc:08:da:8b:66:35');
+    strictEqual(devices[0].interface, '192.168.1.52');
+    strictEqual(devices[0].source, 'windows-arp');
+  });
+
+  it('detects WSL from Linux proc version text', () => {
+    strictEqual(isWsl({ platform: 'linux', procVersion: 'Linux version 5.15.167.4-microsoft-standard-WSL2' }), true);
+    strictEqual(isWsl({ platform: 'linux', procVersion: 'Linux version 6.8.0-generic' }), false);
+    strictEqual(isWsl({ platform: 'darwin', procVersion: 'Darwin Kernel Version' }), false);
+  });
+
+  it('prefers Windows host LAN discovery under WSL over virtual Linux neighbors', () => {
+    const outputs = {
+      'powershell.exe -NoProfile -Command arp -a': `
+Interface: 192.168.1.52 --- 0x12
+  Internet Address      Physical Address      Type
+  192.168.1.1           dc-08-da-8b-66-35     dynamic
+  192.168.1.95          ac-f4-66-09-9e-1b     dynamic
+
+Interface: 172.18.32.1 --- 0x27
+  Internet Address      Physical Address      Type
+  172.18.38.211         00-15-5d-10-c7-30     dynamic
+`,
+      'ip neigh show': '172.18.32.1 dev eth0 lladdr 00:15:5d:9b:ae:97 REACHABLE',
+      'arp -a': '? (172.18.32.1) at 00:15:5d:9b:ae:97 [ether] on eth0',
+    };
+    const devices = discoverDevices({
+      platform: 'linux',
+      procVersion: 'Linux version 5.15.167.4-microsoft-standard-WSL2',
+      runner: (bin, args) => outputs[[bin, ...args].join(' ')] || '',
+    });
+
+    deepStrictEqual(devices.map((device) => device.ip).sort(), ['192.168.1.1', '192.168.1.95']);
+    strictEqual(devices.every((device) => device.source === 'windows-arp'), true);
+  });
+
+  it('still parses macOS/Linux ARP output for Apple hosts without WSL', () => {
+    const devices = discoverDevices({
+      platform: 'darwin',
+      runner: (bin, args) => {
+        if (bin === 'arp' && args.join(' ') === '-a') return '? (192.168.1.21) at 28:cf:e9:12:34:56 on en0 ifscope [ethernet]';
+        return '';
+      },
+    });
+
+    strictEqual(devices.length, 1);
+    strictEqual(devices[0].ip, '192.168.1.21');
+    strictEqual(devices[0].mac, '28:cf:e9:12:34:56');
   });
 
   it('flags IoT devices that look like exposed proxy or backdoor risks', () => {

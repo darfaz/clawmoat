@@ -96,6 +96,41 @@ function parseArpOutput(output = '') {
     .filter(Boolean);
 }
 
+function parseWindowsArpOutput(output = '') {
+  const groups = [];
+  let current = null;
+
+  for (const rawLine of output.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    const interfaceMatch = line.match(/^Interface:\s+((?:\d{1,3}\.){3}\d{1,3})\b/i);
+    if (interfaceMatch) {
+      current = { interfaceIp: interfaceMatch[1], devices: [] };
+      groups.push(current);
+      continue;
+    }
+
+    const entryMatch = line.match(/^((?:\d{1,3}\.){3}\d{1,3})\s+([0-9a-f]{2}(?:-[0-9a-f]{2}){5})\s+(dynamic|static)\b/i);
+    if (!entryMatch || !current) continue;
+    const ip = entryMatch[1];
+    const mac = entryMatch[2].toLowerCase().replace(/-/g, ':');
+    const type = entryMatch[3].toLowerCase();
+    if (!isUsefulLanAddress(ip) || isBroadcastMac(mac) || type !== 'dynamic') continue;
+    current.devices.push({
+      ip,
+      mac,
+      interface: current.interfaceIp,
+      source: 'windows-arp',
+    });
+  }
+
+  const usefulGroups = groups.filter((group) => isUsefulLanAddress(group.interfaceIp) && group.devices.length > 0);
+  if (!usefulGroups.length) return [];
+  usefulGroups.sort((a, b) => scoreWindowsInterfaceGroup(b) - scoreWindowsInterfaceGroup(a));
+  return usefulGroups[0].devices;
+}
+
 function auditHomeNetwork(opts = {}) {
   const devices = (opts.devices || discoverDevices(opts)).map(normalizeDevice).map(scoreDevice);
   const summary = summarize(devices);
@@ -119,6 +154,11 @@ function discoverDevices(opts = {}) {
   const runner = opts.runner || defaultRunner;
   const devices = new Map();
 
+  if (isWsl(opts)) {
+    const windowsDevices = discoverWindowsHostDevices({ runner });
+    if (windowsDevices.length) return dedupeDevices(windowsDevices);
+  }
+
   for (const command of [
     { bin: 'ip', args: ['neigh', 'show'], parser: parseIpNeighborOutput },
     { bin: 'arp', args: ['-a'], parser: parseArpOutput },
@@ -136,8 +176,42 @@ function discoverDevices(opts = {}) {
   return Array.from(devices.values());
 }
 
+function discoverWindowsHostDevices(opts = {}) {
+  const runner = opts.runner || defaultRunner;
+  try {
+    return parseWindowsArpOutput(runner('powershell.exe', ['-NoProfile', '-Command', 'arp -a']));
+  } catch (_err) {
+    return [];
+  }
+}
+
 function defaultRunner(bin, args) {
   return execFileSync(bin, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 5000 });
+}
+
+function isWsl(opts = {}) {
+  const platform = opts.platform || process.platform;
+  if (platform !== 'linux') return false;
+  const procVersion = opts.procVersion !== undefined ? opts.procVersion : readProcVersion();
+  const text = String(procVersion || '').toLowerCase();
+  return text.includes('microsoft') || text.includes('wsl');
+}
+
+function readProcVersion() {
+  try {
+    return fs.readFileSync('/proc/version', 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+function dedupeDevices(devices) {
+  const byKey = new Map();
+  for (const device of devices) {
+    const key = device.mac || device.ip;
+    byKey.set(key, { ...(byKey.get(key) || {}), ...device });
+  }
+  return Array.from(byKey.values());
 }
 
 function normalizeDevice(device) {
@@ -518,6 +592,28 @@ function isIpv4(value) {
   return /^(?:\d{1,3}\.){3}\d{1,3}$/.test(value) && value.split('.').every((part) => Number(part) >= 0 && Number(part) <= 255);
 }
 
+function isUsefulLanAddress(value) {
+  if (!isIpv4(value)) return false;
+  const parts = value.split('.').map(Number);
+  if (parts[0] === 0 || parts[0] === 127 || parts[0] === 169 || parts[0] >= 224) return false;
+  if (parts[3] === 0 || parts[3] === 255) return false;
+  return true;
+}
+
+function isBroadcastMac(mac) {
+  return !mac || mac === 'ff:ff:ff:ff:ff:ff' || mac.startsWith('01:00:5e:');
+}
+
+function scoreWindowsInterfaceGroup(group) {
+  const parts = group.interfaceIp.split('.').map(Number);
+  let score = group.devices.length;
+  if (parts[0] === 192 && parts[1] === 168) score += 100;
+  else if (parts[0] === 10) score += 80;
+  else if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) score += 40;
+  if (parts[0] === 172 && (parts[1] === 17 || parts[1] === 18)) score -= 30;
+  return score;
+}
+
 function getLocalNetworkHints() {
   const interfaces = os.networkInterfaces();
   return Object.entries(interfaces).flatMap(([name, entries]) =>
@@ -532,12 +628,15 @@ module.exports = {
   createHomeWatchReport,
   defaultHomeWatchStatePath,
   discoverDevices,
+  discoverWindowsHostDevices,
   formatHomeNetworkText,
   formatHomeWatchText,
   getLocalNetworkHints,
   loadHomeWatchBaseline,
   parseArpOutput,
   parseIpNeighborOutput,
+  parseWindowsArpOutput,
+  isWsl,
   sampleHomeNetworkReport,
   saveHomeWatchBaseline,
 };

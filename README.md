@@ -45,6 +45,8 @@ clawmoat home dns-blocklist --sample --format pihole --output clawmoat-home-bloc
 
 `home watch` saves a local baseline in `~/.clawmoat/home-watch-baseline.json`, then compares future scans against it. That gives users the useful version of the WSJ story: “a new Android TV box joined your network and it exposes ADB/Telnet,” not a vague fear article.
 
+On Windows laptops running ClawMoat inside WSL, Home Guard queries the Windows host ARP table through PowerShell so it sees the real WiFi/Ethernet LAN, not just WSL/Docker virtual networks. On macOS and native Linux, the normal ARP/neighbor table path is used.
+
 `home dns-blocklist` turns suspicious proxy-like DNS telemetry into Pi-hole, AdGuard Home, hosts, or dnsmasq blocklists. This is the first protection layer: ClawMoat can now hand DNS filters concrete domains to block, while still being honest that firmware cleanup and device quarantine require router/firewall control.
 
 → Read the Home Guard page: <https://clawmoat.com/home-network-guard/>

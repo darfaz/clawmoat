@@ -462,9 +462,11 @@ const homeNetwork = require('./home-network');
 module.exports.auditHomeNetwork = homeNetwork.auditHomeNetwork;
 module.exports.createHomeWatchReport = homeNetwork.createHomeWatchReport;
 module.exports.discoverHomeNetworkDevices = homeNetwork.discoverDevices;
+module.exports.discoverWindowsHostDevices = homeNetwork.discoverWindowsHostDevices;
 module.exports.formatHomeNetworkText = homeNetwork.formatHomeNetworkText;
 module.exports.formatHomeWatchText = homeNetwork.formatHomeWatchText;
 module.exports.loadHomeWatchBaseline = homeNetwork.loadHomeWatchBaseline;
+module.exports.parseWindowsArpOutput = homeNetwork.parseWindowsArpOutput;
 module.exports.sampleHomeNetworkReport = homeNetwork.sampleHomeNetworkReport;
 module.exports.saveHomeWatchBaseline = homeNetwork.saveHomeWatchBaseline;
 
