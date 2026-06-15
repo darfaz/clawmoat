@@ -39,9 +39,13 @@ clawmoat home scan --sample
 clawmoat home scan --sample --format json
 clawmoat home watch --once
 clawmoat home watch --once --format json
+clawmoat home dns-plan --sample
+clawmoat home dns-blocklist --sample --format pihole --output clawmoat-home-blocklist.txt
 ```
 
 `home watch` saves a local baseline in `~/.clawmoat/home-watch-baseline.json`, then compares future scans against it. That gives users the useful version of the WSJ story: “a new Android TV box joined your network and it exposes ADB/Telnet,” not a vague fear article.
+
+`home dns-blocklist` turns suspicious proxy-like DNS telemetry into Pi-hole, AdGuard Home, hosts, or dnsmasq blocklists. This is the first protection layer: ClawMoat can now hand DNS filters concrete domains to block, while still being honest that firmware cleanup and device quarantine require router/firewall control.
 
 → Read the Home Guard page: <https://clawmoat.com/home-network-guard/>
 
@@ -204,6 +208,9 @@ clawmoat home scan
 
 # Save a baseline and alert when new/riskier devices appear
 clawmoat home watch --once
+
+# Generate DNS protection for Pi-hole / AdGuard Home
+clawmoat home dns-blocklist --sample --format pihole --output clawmoat-home-blocklist.txt
 
 # Fail CI if the lifecycle exposure is too high
 clawmoat lifecycle audit --path . --format json --strict

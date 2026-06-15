@@ -468,6 +468,14 @@ module.exports.loadHomeWatchBaseline = homeNetwork.loadHomeWatchBaseline;
 module.exports.sampleHomeNetworkReport = homeNetwork.sampleHomeNetworkReport;
 module.exports.saveHomeWatchBaseline = homeNetwork.saveHomeWatchBaseline;
 
+// Home DNS Shield
+const homeDns = require('./home-dns');
+module.exports.buildHomeDnsBlocklist = homeDns.buildHomeDnsBlocklist;
+module.exports.createHomeDnsShieldPlan = homeDns.createHomeDnsShieldPlan;
+module.exports.formatHomeDnsBlocklist = homeDns.formatHomeDnsBlocklist;
+module.exports.formatHomeDnsShieldPlanText = homeDns.formatHomeDnsShieldPlanText;
+module.exports.writeHomeDnsBlocklist = homeDns.writeHomeDnsBlocklist;
+
 // Framework Adapters (also available via require('clawmoat/adapters'))
 const adapters = require('./adapters');
 module.exports.createGuard = adapters.createGuard;

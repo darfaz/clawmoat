@@ -26,6 +26,7 @@ const { formatReport, formatScanResult, formatAuditResult } = require('../src/fo
 const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/formatters/sarif');
 const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
 const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, formatHomeNetworkText, formatHomeWatchText, loadHomeWatchBaseline, sampleHomeNetworkReport, saveHomeWatchBaseline } = require('../src/home-network');
+const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanText, writeHomeDnsBlocklist } = require('../src/home-dns');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -109,7 +110,9 @@ function cmdHome(args) {
   const sub = args[0] || 'scan';
   if (sub === 'scan') return cmdHomeScan(args.slice(1));
   if (sub === 'watch') return cmdHomeWatch(args.slice(1));
-  console.error('Usage: clawmoat home <scan|watch> [--sample] [--format text|json]');
+  if (sub === 'dns-plan') return cmdHomeDnsPlan(args.slice(1));
+  if (sub === 'dns-blocklist') return cmdHomeDnsBlocklist(args.slice(1));
+  console.error('Usage: clawmoat home <scan|watch|dns-plan|dns-blocklist> [--sample] [--format text|json]');
   process.exit(1);
 }
 
@@ -176,6 +179,66 @@ function cmdHomeWatch(args) {
   }
 
   process.exit(report.alerts.some((alert) => alert.severity === 'critical') ? 2 : report.alerts.length ? 1 : 0);
+}
+
+function cmdHomeDnsPlan(args) {
+  let format = 'text';
+  let sample = false;
+  let publicUrl = null;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--sample') {
+      sample = true;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--public-url' && args[i + 1]) {
+      publicUrl = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const report = sample ? sampleHomeNetworkReport() : auditHomeNetwork();
+  const plan = createHomeDnsShieldPlan(report, { publicUrl });
+  if (format === 'json') console.log(JSON.stringify(plan, null, 2));
+  else console.log(formatHomeDnsShieldPlanText(plan));
+  process.exit(0);
+}
+
+function cmdHomeDnsBlocklist(args) {
+  let format = 'pihole';
+  let sample = false;
+  let outputFile = null;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--sample') {
+      sample = true;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['pihole', 'adguard', 'hosts', 'dnsmasq'].includes(format)) {
+    console.error(`${RED}Error: Invalid DNS blocklist format "${format}". Supported: pihole, adguard, hosts, dnsmasq${RESET}`);
+    process.exit(1);
+  }
+
+  const report = sample ? sampleHomeNetworkReport() : auditHomeNetwork();
+  const blocklist = buildHomeDnsBlocklist(report);
+  if (outputFile) {
+    const result = writeHomeDnsBlocklist(blocklist, path.resolve(outputFile), { format });
+    console.log(`${GREEN}Wrote ClawMoat DNS blocklist:${RESET} ${result.outputPath} (${result.domains} domains)`);
+  } else {
+    process.stdout.write(require('../src/home-dns').formatHomeDnsBlocklist(blocklist, { format }));
+  }
+  process.exit(0);
 }
 
 function cmdLifecycle(args) {
@@ -1352,6 +1415,8 @@ ${BOLD}USAGE${RESET}
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
   clawmoat home scan --sample --format json  Demo Home Guard JSON report
   clawmoat home watch --once      Save baseline and alert on new/riskier devices
+  clawmoat home dns-plan --sample --format json  Plan Pi-hole / AdGuard protection
+  clawmoat home dns-blocklist --format pihole --output FILE  Export DNS blocklist
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1378,6 +1443,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
+  clawmoat home dns-blocklist --sample --format adguard  # Export DNS protection
   clawmoat test
 
 ${BOLD}CONFIG${RESET}
