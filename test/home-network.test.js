@@ -20,6 +20,7 @@ const {
   discoverDevices,
   isWsl,
   parseIpNeighborOutput,
+  parseArpOutput,
   parseWindowsArpOutput,
 } = require('../src/home-network');
 
@@ -36,6 +37,19 @@ fe80::1 dev wlan0 lladdr aa:bb:cc:00:00:02 router STALE
     strictEqual(devices[0].mac, 'aa:bb:cc:00:00:01');
     strictEqual(devices[0].interface, 'wlan0');
     strictEqual(devices[1].ip, '192.168.1.42');
+  });
+
+  it('parses macOS ARP output with non-padded MAC octets and ignores broadcast/multicast entries', () => {
+    const devices = parseArpOutput(`
+sbe1v1k.lan (192.168.1.1) at dc:8:da:8b:66:35 on en0 ifscope [ethernet]
+hpi099e1b.lan (192.168.1.95) at ac:f4:66:9:9e:1b on en0 ifscope [ethernet]
+? (192.168.1.255) at ff:ff:ff:ff:ff:ff on en0 ifscope [ethernet]
+mdns.mcast.net (224.0.0.251) at 1:0:5e:0:0:fb on en0 ifscope permanent [ethernet]
+`);
+
+    deepStrictEqual(devices.map((device) => device.ip), ['192.168.1.1', '192.168.1.95']);
+    strictEqual(devices[0].mac, 'dc:08:da:8b:66:35');
+    strictEqual(devices[1].mac, 'ac:f4:66:09:9e:1b');
   });
 
   it('parses Windows host ARP output and ignores virtual/broadcast/multicast entries', () => {

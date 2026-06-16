@@ -85,11 +85,14 @@ function parseArpOutput(output = '') {
     .filter(Boolean)
     .map((line) => {
       const ipMatch = line.match(/\(?((?:\d{1,3}\.){3}\d{1,3})\)?/);
-      const macMatch = line.match(/([0-9a-f]{2}(?::[0-9a-f]{2}){5})/i);
+      const macMatch = line.match(/\bat\s+([0-9a-f]{1,2}(?::[0-9a-f]{1,2}){5})\b/i);
       if (!ipMatch || !macMatch) return null;
+      const ip = ipMatch[1];
+      const mac = normalizeMac(macMatch[1]);
+      if (!isUsefulLanAddress(ip) || isBroadcastMac(mac)) return null;
       return {
-        ip: ipMatch[1],
-        mac: macMatch[1].toLowerCase(),
+        ip,
+        mac,
         source: 'arp',
       };
     })
@@ -598,6 +601,15 @@ function isUsefulLanAddress(value) {
   if (parts[0] === 0 || parts[0] === 127 || parts[0] === 169 || parts[0] >= 224) return false;
   if (parts[3] === 0 || parts[3] === 255) return false;
   return true;
+}
+
+function normalizeMac(mac) {
+  if (!mac) return null;
+  return mac
+    .toLowerCase()
+    .split(':')
+    .map((part) => part.padStart(2, '0'))
+    .join(':');
 }
 
 function isBroadcastMac(mac) {
