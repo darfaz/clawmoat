@@ -66,6 +66,8 @@ const BONJOUR_SERVICES = [
   '_spotify-connect._tcp',
 ];
 
+const DEFAULT_PORT_SCAN_PORTS = [22, 23, 53, 80, 443, 631, 2323, 5000, 5555, 7547, 8000, 8080, 8443, 9100];
+
 function parseIpNeighborOutput(output = '') {
   return output
     .split(/\r?\n/)
@@ -250,7 +252,9 @@ function parseWindowsArpOutput(output = '') {
 }
 
 function auditHomeNetwork(opts = {}) {
-  const devices = (opts.devices || discoverDevices(opts)).map(normalizeDevice).map(scoreDevice);
+  const rawDevices = opts.devices || discoverDevices(opts);
+  const devicesWithPorts = maybeProbeDevicePorts(rawDevices, opts);
+  const devices = devicesWithPorts.map(normalizeDevice).map(scoreDevice);
   const summary = summarize(devices);
   return {
     type: 'home_network_audit',
@@ -368,6 +372,45 @@ function mergeSources(...sources) {
     .join('+') || undefined;
 }
 
+function maybeProbeDevicePorts(devices, opts = {}) {
+  if (!shouldScanPorts(opts)) return devices;
+  return devices.map((device) => {
+    if (!device.ip || (Array.isArray(device.openPorts) && device.openPorts.length)) return device;
+    const openPorts = probeOpenPorts(device.ip, {
+      ports: opts.portScanPorts || DEFAULT_PORT_SCAN_PORTS,
+      runner: opts.portRunner || defaultPortRunner,
+    });
+    return { ...device, openPorts };
+  });
+}
+
+function shouldScanPorts(opts = {}) {
+  if (opts.enablePortScan === true) return true;
+  if (opts.enablePortScan === false) return false;
+  if (opts.devices) return false;
+  return (opts.platform || process.platform) === 'darwin';
+}
+
+function probeOpenPorts(ip, opts = {}) {
+  if (!isUsefulLanAddress(ip)) return [];
+  const runner = opts.runner || defaultPortRunner;
+  const ports = opts.ports || DEFAULT_PORT_SCAN_PORTS;
+  const open = [];
+  for (const port of ports) {
+    try {
+      runner('nc', ['-G', '1', '-z', ip, String(port)]);
+      open.push(Number(port));
+    } catch (_err) {
+      // Closed, filtered, or nc unavailable. Port probing must never break passive discovery.
+    }
+  }
+  return Array.from(new Set(open)).sort((a, b) => a - b);
+}
+
+function defaultPortRunner(bin, args) {
+  return execFileSync(bin, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 1500 });
+}
+
 function normalizeDevice(device) {
   const hostname = device.hostname || device.name || null;
   const vendor = device.vendor || guessVendor(device.mac) || 'Unknown';
@@ -378,7 +421,7 @@ function normalizeDevice(device) {
     hostname,
     vendor,
     interface: device.interface || null,
-    type: device.type || guessDeviceType({ hostname, vendor, openPorts }),
+    type: device.type || guessDeviceType({ ip: device.ip, hostname, vendor, openPorts }),
     openPorts,
     dnsQueries: device.dnsQueries || [],
     outboundConnections: device.outboundConnections || [],
@@ -712,28 +755,47 @@ function sampleHomeNetworkReport() {
 
 function guessVendor(mac) {
   if (!mac) return null;
-  const prefix = mac.toLowerCase().slice(0, 8);
+  const normalized = normalizeMac(mac);
+  const prefix = normalized.slice(0, 8);
   const vendors = {
     '28:cf:e9': 'Apple',
     'f0:18:98': 'Apple',
+    '3c:55:76': 'Microsoft',
     '3c:5a:b4': 'Google',
+    '8c:49:62': 'Roku',
+    'ac:f4:66': 'HP',
+    'dc:08:da': 'ASKEY COMPUTER CORP',
     'd8:31:34': 'Raspberry Pi',
     'b8:27:eb': 'Raspberry Pi',
     'dc:a6:32': 'Raspberry Pi',
     '00:04:20': 'Slim Devices',
   };
-  return vendors[prefix] || null;
+  if (vendors[prefix]) return vendors[prefix];
+  if (isLocallyAdministeredMac(normalized)) return 'Private randomized MAC';
+  return null;
 }
 
-function guessDeviceType({ hostname, vendor, openPorts }) {
+function guessDeviceType({ ip, hostname, vendor, openPorts }) {
   const name = String(hostname || '').toLowerCase();
   if (name.includes('camera') || openPorts.includes(554)) return 'camera';
-  if (name.includes('tv') || name.includes('roku') || name.includes('android')) return 'streaming-device';
-  if (name.includes('printer') || openPorts.includes(9100)) return 'printer';
-  if (name.includes('router') || name.includes('gateway')) return 'router';
-  if (vendor === 'Apple') return 'computer-or-phone';
+  if (name.includes('tv') || name.includes('roku') || name.includes('android') || vendor === 'Roku') return 'streaming-device';
+  if (name.includes('printer') || vendor === 'HP' || openPorts.includes(9100) || openPorts.includes(631)) return 'printer';
+  if (name.includes('router') || name.includes('gateway') || isLikelyGatewayIp(ip) || vendor === 'ASKEY COMPUTER CORP') return 'router';
+  if (vendor === 'Apple' || vendor === 'Microsoft') return 'computer-or-phone';
+  if (vendor === 'Private randomized MAC') return 'phone-or-tablet';
   if (vendor === 'Raspberry Pi') return 'single-board-computer';
   return 'unknown';
+}
+
+function isLocallyAdministeredMac(mac) {
+  const firstOctet = Number.parseInt(String(mac).split(':')[0], 16);
+  return Number.isFinite(firstOctet) && (firstOctet & 0x02) === 0x02;
+}
+
+function isLikelyGatewayIp(ip) {
+  if (!isIpv4(ip)) return false;
+  const last = Number(ip.split('.')[3]);
+  return last === 1 || last === 254;
 }
 
 function maxSeverity(findings) {
@@ -801,6 +863,7 @@ module.exports = {
   parseDnsSdBrowseOutput,
   parseDnsSdLookupOutput,
   parseIpNeighborOutput,
+  probeOpenPorts,
   parseWindowsArpOutput,
   isWsl,
   sampleHomeNetworkReport,

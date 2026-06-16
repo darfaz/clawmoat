@@ -24,6 +24,7 @@ const {
   parseDnsSdBrowseOutput,
   parseDnsSdLookupOutput,
   discoverBonjourDevices,
+  probeOpenPorts,
   parseWindowsArpOutput,
 } = require('../src/home-network');
 
@@ -234,6 +235,58 @@ Interface: 172.18.32.1 --- 0x27
     strictEqual(devices.length, 1);
     strictEqual(devices[0].ip, '192.168.1.21');
     strictEqual(devices[0].mac, '28:cf:e9:12:34:56');
+  });
+
+  it('uses OUI and LAN hints to identify common routers, laptops, and private Apple-style devices', () => {
+    const report = auditHomeNetwork({
+      devices: [
+        { ip: '192.168.1.1', mac: 'dc:08:da:8b:66:35' },
+        { ip: '192.168.1.52', mac: '3c:55:76:79:8e:d7' },
+        { ip: '192.168.1.41', mac: '8a:12:f8:84:53:2d' },
+      ],
+    });
+    const byIp = Object.fromEntries(report.devices.map((device) => [device.ip, device]));
+
+    strictEqual(byIp['192.168.1.1'].vendor, 'ASKEY COMPUTER CORP');
+    strictEqual(byIp['192.168.1.1'].type, 'router');
+    strictEqual(byIp['192.168.1.52'].vendor, 'Microsoft');
+    strictEqual(byIp['192.168.1.52'].type, 'computer-or-phone');
+    strictEqual(byIp['192.168.1.41'].vendor, 'Private randomized MAC');
+    strictEqual(byIp['192.168.1.41'].type, 'phone-or-tablet');
+    strictEqual(report.summary.unknownDevices, 0);
+  });
+
+  it('probes selected TCP ports and folds open services into risk scoring', () => {
+    const open = new Set(['192.168.1.122:22', '192.168.1.122:5000', '192.168.1.95:9100']);
+    const ports = probeOpenPorts('192.168.1.122', {
+      ports: [22, 23, 5000],
+      runner: (bin, args) => {
+        const key = `${args[args.length - 2]}:${args[args.length - 1]}`;
+        if (bin === 'nc' && open.has(key)) return '';
+        throw new Error('closed');
+      },
+    });
+
+    deepStrictEqual(ports, [22, 5000]);
+
+    const report = auditHomeNetwork({
+      enablePortScan: true,
+      portScanPorts: [22, 23, 5000, 9100],
+      devices: [
+        { ip: '192.168.1.122', mac: '9a:86:3f:36:42:89' },
+        { ip: '192.168.1.95', mac: 'ac:f4:66:09:9e:1b' },
+      ],
+      portRunner: (bin, args) => {
+        const key = `${args[args.length - 2]}:${args[args.length - 1]}`;
+        if (bin === 'nc' && open.has(key)) return '';
+        throw new Error('closed');
+      },
+    });
+    const byIp = Object.fromEntries(report.devices.map((device) => [device.ip, device]));
+
+    deepStrictEqual(byIp['192.168.1.122'].openPorts, [22, 5000]);
+    deepStrictEqual(byIp['192.168.1.95'].openPorts, [9100]);
+    strictEqual(byIp['192.168.1.95'].type, 'printer');
   });
 
   it('flags IoT devices that look like exposed proxy or backdoor risks', () => {
