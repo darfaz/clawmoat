@@ -21,6 +21,9 @@ const {
   isWsl,
   parseIpNeighborOutput,
   parseArpOutput,
+  parseDnsSdBrowseOutput,
+  parseDnsSdLookupOutput,
+  discoverBonjourDevices,
   parseWindowsArpOutput,
 } = require('../src/home-network');
 
@@ -50,6 +53,121 @@ mdns.mcast.net (224.0.0.251) at 1:0:5e:0:0:fb on en0 ifscope permanent [ethernet
     deepStrictEqual(devices.map((device) => device.ip), ['192.168.1.1', '192.168.1.95']);
     strictEqual(devices[0].mac, 'dc:08:da:8b:66:35');
     strictEqual(devices[1].mac, 'ac:f4:66:09:9e:1b');
+  });
+
+  it('parses Bonjour browse and lookup output into identifiable local devices', () => {
+    const browse = parseDnsSdBrowseOutput(`
+Browsing for _airplay._tcp.local
+Timestamp     A/R    Flags  if Domain               Service Type         Instance Name
+20:07:24.369  Add        3  14 local.               _airplay._tcp.       Roku Ultra
+`);
+    deepStrictEqual(browse, [{ service: '_airplay._tcp', instance: 'Roku Ultra', domain: 'local' }]);
+
+    const lookup = parseDnsSdLookupOutput('Roku Ultra', '_airplay._tcp', `
+Roku\\032Ultra._airplay._tcp.local. can be reached at YJ0066332471.local.:7000 (interface 14)
+acl=0 deviceid=5A:76:78:62:48:1E model=4670X manufacturer=Roku serialNumber=f4021343
+`);
+
+    strictEqual(lookup.hostname, 'Roku Ultra');
+    strictEqual(lookup.mdnsHost, 'YJ0066332471.local');
+    strictEqual(lookup.vendor, 'Roku');
+    strictEqual(lookup.type, 'streaming-device');
+  });
+
+  it('merges Bonjour identities into ARP-discovered devices by resolved IP', () => {
+    const outputs = {
+      'arp -a': 'rokuultra.lan (192.168.1.227) at 8c:49:62:2:d2:7c on en0 ifscope [ethernet]',
+      'dns-sd -B _airplay._tcp local': `
+Browsing for _airplay._tcp.local
+Timestamp     A/R    Flags  if Domain               Service Type         Instance Name
+20:07:24.369  Add        2  14 local.               _airplay._tcp.       Roku Ultra
+`,
+      'dns-sd -L Roku Ultra _airplay._tcp local': `
+Roku\\032Ultra._airplay._tcp.local. can be reached at YJ0066332471.local.:7000 (interface 14)
+manufacturer=Roku model=4670X
+`,
+      'dscacheutil -q host -a name YJ0066332471.local': `
+name: yj0066332471.local
+ip_address: 192.168.1.227
+`,
+    };
+
+    const devices = discoverDevices({
+      platform: 'darwin',
+      runner: (bin, args) => outputs[[bin, ...args].join(' ')] || '',
+      bonjourServices: ['_airplay._tcp'],
+    });
+
+    strictEqual(devices.length, 1);
+    strictEqual(devices[0].ip, '192.168.1.227');
+    strictEqual(devices[0].hostname, 'Roku Ultra');
+    strictEqual(devices[0].vendor, 'Roku');
+    strictEqual(devices[0].type, 'streaming-device');
+    strictEqual(devices[0].source, 'arp+bonjour');
+  });
+
+  it('keeps stronger Bonjour identity when multiple services resolve to the same IP', () => {
+    const outputs = {
+      'arp -a': 'rokuultra.lan (192.168.1.227) at 8c:49:62:2:d2:7c on en0 ifscope [ethernet]',
+      'dns-sd -B _airplay._tcp local': `
+20:07:24.369  Add        2  14 local.               _airplay._tcp.       Roku Ultra
+`,
+      'dns-sd -L Roku Ultra _airplay._tcp local': `
+Roku\\032Ultra._airplay._tcp.local. can be reached at YJ0066332471.local.:7000 (interface 14)
+manufacturer=Roku model=4670X
+`,
+      'dns-sd -B _spotify-connect._tcp local': `
+20:07:24.369  Add        2  14 local.               _spotify-connect._tcp.       bb3e9496-f97d-5f0b-9763-0241ed4203fd
+`,
+      'dns-sd -L bb3e9496-f97d-5f0b-9763-0241ed4203fd _spotify-connect._tcp local': `
+bb3e9496-f97d-5f0b-9763-0241ed4203fd._spotify-connect._tcp.local. can be reached at YJ0066332471.local.:8009 (interface 14)
+`,
+      'dscacheutil -q host -a name YJ0066332471.local': `
+name: yj0066332471.local
+ip_address: 192.168.1.227
+`,
+    };
+
+    const devices = discoverDevices({
+      platform: 'darwin',
+      runner: (bin, args) => outputs[[bin, ...args].join(' ')] || '',
+      bonjourServices: ['_airplay._tcp', '_spotify-connect._tcp'],
+    });
+
+    strictEqual(devices.length, 1);
+    strictEqual(devices[0].hostname, 'Roku Ultra');
+    strictEqual(devices[0].vendor, 'Roku');
+    strictEqual(devices[0].source, 'arp+bonjour');
+  });
+
+  it('discovers Bonjour printer identity with resolved IP', () => {
+    const outputs = {
+      'dns-sd -B _ipp._tcp local': `
+Browsing for _ipp._tcp.local
+Timestamp     A/R    Flags  if Domain               Service Type         Instance Name
+20:07:30.402  Add        2  14 local.               _ipp._tcp.           HP Envy 6500e series [099E1B]
+`,
+      'dns-sd -L HP Envy 6500e series [099E1B] _ipp._tcp local': `
+HP\\032Envy\\0326500e\\032series\\032[099E1B]._ipp._tcp.local. can be reached at HPACF466099E1B.local.:631 (interface 14)
+usb_MFG=HP ty=HP\\ Envy\\ 6500e\\ series
+`,
+      'dscacheutil -q host -a name HPACF466099E1B.local': `
+name: hpacf466099e1b.local
+ip_address: 192.168.1.95
+`,
+    };
+
+    const devices = discoverBonjourDevices({
+      platform: 'darwin',
+      runner: (bin, args) => outputs[[bin, ...args].join(' ')] || '',
+      bonjourServices: ['_ipp._tcp'],
+    });
+
+    strictEqual(devices.length, 1);
+    strictEqual(devices[0].ip, '192.168.1.95');
+    strictEqual(devices[0].hostname, 'HP Envy 6500e series [099E1B]');
+    strictEqual(devices[0].vendor, 'HP');
+    strictEqual(devices[0].type, 'printer');
   });
 
   it('parses Windows host ARP output and ignores virtual/broadcast/multicast entries', () => {

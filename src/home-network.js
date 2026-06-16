@@ -57,6 +57,15 @@ const PROXY_TERMS = [
   'backconnect',
 ];
 
+const BONJOUR_SERVICES = [
+  '_airplay._tcp',
+  '_raop._tcp',
+  '_ipp._tcp',
+  '_ipps._tcp',
+  '_companion-link._tcp',
+  '_spotify-connect._tcp',
+];
+
 function parseIpNeighborOutput(output = '') {
   return output
     .split(/\r?\n/)
@@ -97,6 +106,112 @@ function parseArpOutput(output = '') {
       };
     })
     .filter(Boolean);
+}
+
+function parseDnsSdBrowseOutput(output = '') {
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(/^\S+\s+Add\s+\d+\s+\d+\s+(\S+)\s+(\S+)\s+(.+)$/);
+      if (!match) return null;
+      return {
+        service: normalizeServiceName(match[2]),
+        instance: decodeDnsSdEscapes(match[3].trim()),
+        domain: String(match[1] || 'local').replace(/\.$/, ''),
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseDnsSdLookupOutput(instance, service, output = '') {
+  const targetMatch = output.match(/can be reached at\s+([^\s:]+)\.:?(\d+)?/i);
+  if (!targetMatch) return null;
+  const text = output.replace(/\\\s/g, ' ');
+  const mdnsHost = targetMatch[1].replace(/\.$/, '');
+  const vendor = inferBonjourVendor(instance, service, text);
+  const type = inferBonjourType(instance, service, text, vendor);
+  return {
+    hostname: decodeDnsSdEscapes(instance),
+    mdnsHost,
+    mdnsService: normalizeServiceName(service),
+    port: targetMatch[2] ? Number(targetMatch[2]) : null,
+    vendor,
+    type,
+    source: 'bonjour',
+  };
+}
+
+function discoverBonjourDevices(opts = {}) {
+  const platform = opts.platform || process.platform;
+  if (platform !== 'darwin' && opts.enableBonjour !== true) return [];
+  const runner = opts.runner || defaultRunner;
+  const services = opts.bonjourServices || BONJOUR_SERVICES;
+  const devices = [];
+  const seen = new Set();
+
+  for (const service of services) {
+    const browseOutput = runDiscoveryCommand(runner, 'dns-sd', ['-B', service, 'local']);
+    for (const entry of parseDnsSdBrowseOutput(browseOutput)) {
+      const lookupKey = `${entry.service}|${entry.instance}`;
+      if (seen.has(lookupKey)) continue;
+      seen.add(lookupKey);
+      const lookupOutput = runDiscoveryCommand(runner, 'dns-sd', ['-L', entry.instance, entry.service, entry.domain || 'local']);
+      const device = parseDnsSdLookupOutput(entry.instance, entry.service, lookupOutput);
+      if (!device) continue;
+      const hostOutput = runDiscoveryCommand(runner, 'dscacheutil', ['-q', 'host', '-a', 'name', device.mdnsHost]);
+      device.ip = parseDscacheutilHostOutput(hostOutput);
+      devices.push(device);
+    }
+  }
+
+  return devices;
+}
+
+function parseDscacheutilHostOutput(output = '') {
+  for (const line of output.split(/\r?\n/)) {
+    const match = line.trim().match(/^ip_address:\s+((?:\d{1,3}\.){3}\d{1,3})$/);
+    if (match && isUsefulLanAddress(match[1])) return match[1];
+  }
+  return null;
+}
+
+function runDiscoveryCommand(runner, bin, args) {
+  try {
+    return runner(bin, args);
+  } catch (err) {
+    if (err && err.stdout) return Buffer.isBuffer(err.stdout) ? err.stdout.toString('utf8') : String(err.stdout);
+    return '';
+  }
+}
+
+function normalizeServiceName(service) {
+  return String(service || '').replace(/\.$/, '');
+}
+
+function decodeDnsSdEscapes(value) {
+  return String(value || '').replace(/\\(\d{3})/g, (_match, code) => String.fromCharCode(Number(code)));
+}
+
+function inferBonjourVendor(instance, service, text = '') {
+  const haystack = `${instance} ${service} ${text}`.toLowerCase();
+  if (haystack.includes('manufacturer=roku') || haystack.includes('roku')) return 'Roku';
+  if (haystack.includes('usb_mfg=hp') || haystack.includes('manufacturer=hp') || haystack.includes('hp envy') || /^hp/i.test(instance)) return 'HP';
+  if (haystack.includes('macbook') || haystack.includes('iphone') || haystack.includes('ipad') || haystack.includes('_airplay') || haystack.includes('_raop') || haystack.includes('_companion-link')) return 'Apple';
+  return 'Unknown';
+}
+
+function inferBonjourType(instance, service, text = '', vendor = 'Unknown') {
+  const name = String(instance || '').toLowerCase();
+  const svc = normalizeServiceName(service);
+  const haystack = `${name} ${text}`.toLowerCase();
+  if (svc === '_ipp._tcp' || svc === '_ipps._tcp' || haystack.includes('printer') || haystack.includes('airprint') || haystack.includes('usb_mfg=hp')) return 'printer';
+  if (name.includes('roku') || haystack.includes('manufacturer=roku')) return 'streaming-device';
+  if (name.includes('tv') || svc === '_airplay._tcp') return 'streaming-device';
+  if (name.includes('macbook') || name.includes('iphone') || name.includes('ipad') || svc === '_companion-link._tcp' || svc === '_raop._tcp' || vendor === 'Apple') return 'computer-or-phone';
+  if (svc === '_spotify-connect._tcp') return 'streaming-device';
+  return 'unknown';
 }
 
 function parseWindowsArpOutput(output = '') {
@@ -169,11 +284,15 @@ function discoverDevices(opts = {}) {
     try {
       const output = runner(command.bin, command.args);
       for (const device of command.parser(output)) {
-        devices.set(device.ip, { ...(devices.get(device.ip) || {}), ...device });
+        mergeDiscoveredDevice(devices, device);
       }
     } catch (_err) {
       // Discovery should degrade gracefully. Many laptops lack arp/ip tools or permissions.
     }
+  }
+
+  for (const device of discoverBonjourDevices({ ...opts, runner })) {
+    mergeDiscoveredDevice(devices, device);
   }
 
   return Array.from(devices.values());
@@ -215,6 +334,38 @@ function dedupeDevices(devices) {
     byKey.set(key, { ...(byKey.get(key) || {}), ...device });
   }
   return Array.from(byKey.values());
+}
+
+function mergeDiscoveredDevice(devices, device) {
+  const key = device.ip || device.mac || device.mdnsHost || device.hostname;
+  if (!key) return;
+  const existing = devices.get(key) || {};
+  const merged = { ...existing, ...device };
+
+  if (existing.hostname && (!device.hostname || identitySignalScore(existing) >= identitySignalScore(device))) merged.hostname = existing.hostname;
+  if (existing.vendor && existing.vendor !== 'Unknown' && (!device.vendor || device.vendor === 'Unknown')) merged.vendor = existing.vendor;
+  if (existing.type && existing.type !== 'unknown' && (!device.type || device.type === 'unknown')) merged.type = existing.type;
+  merged.source = mergeSources(existing.source, device.source);
+
+  devices.set(key, merged);
+}
+
+function identitySignalScore(device = {}) {
+  let score = 0;
+  const hostname = String(device.hostname || '');
+  if (hostname) score += 2;
+  if (hostname && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hostname)) score += 3;
+  if (device.vendor && device.vendor !== 'Unknown') score += 3;
+  if (device.type && device.type !== 'unknown') score += 1;
+  return score;
+}
+
+function mergeSources(...sources) {
+  return sources
+    .filter(Boolean)
+    .flatMap((source) => String(source).split('+'))
+    .filter((source, index, all) => all.indexOf(source) === index)
+    .join('+') || undefined;
 }
 
 function normalizeDevice(device) {
@@ -639,6 +790,7 @@ module.exports = {
   auditHomeNetwork,
   createHomeWatchReport,
   defaultHomeWatchStatePath,
+  discoverBonjourDevices,
   discoverDevices,
   discoverWindowsHostDevices,
   formatHomeNetworkText,
@@ -646,6 +798,8 @@ module.exports = {
   getLocalNetworkHints,
   loadHomeWatchBaseline,
   parseArpOutput,
+  parseDnsSdBrowseOutput,
+  parseDnsSdLookupOutput,
   parseIpNeighborOutput,
   parseWindowsArpOutput,
   isWsl,
