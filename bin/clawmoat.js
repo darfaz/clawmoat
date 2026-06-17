@@ -1156,16 +1156,17 @@ function extractContent(entry) {
 
 function printUpgrade() {
   console.log(`
-${BOLD}🏰 Upgrade to ClawMoat Pro${RESET}
+${BOLD}🏰 Upgrade to ClawMoat Pro or Team${RESET}
 
-  ${GREEN}✦${RESET} Threat intelligence feed & real-time alerts
-  ${GREEN}✦${RESET} Security dashboard with audit logs
-  ${GREEN}✦${RESET} Custom forbidden zones (YAML)
-  ${GREEN}✦${RESET} Priority pattern updates & email support
+  ${GREEN}✦${RESET} Runtime enforcement mode for coding agents and MCP-heavy workflows
+  ${GREEN}✦${RESET} Policy gates for risky tool use
+  ${GREEN}✦${RESET} Local audit trail and workflow alerts
+  ${GREEN}✦${RESET} Team policy templates and CI-ready reports
 
-  ${BOLD}$14.99/mo${RESET} (first 30 days free) or ${BOLD}$149/year${RESET} (save 17%)
+  ${BOLD}Pro: $19/mo${RESET} or ${BOLD}$190/year${RESET}
+  ${BOLD}Team: $99/mo${RESET} or ${BOLD}$990/year${RESET} for up to 10 seats
 
-  ${CYAN}→ https://clawmoat.com/#pricing${RESET}
+  ${CYAN}→ https://clawmoat.com/pricing/${RESET}
 
   Already have a license key? Run:
     ${DIM}clawmoat activate <LICENSE-KEY>${RESET}
@@ -1176,7 +1177,7 @@ function cmdActivate(args) {
   const key = args[0];
   if (!key) {
     console.error('Usage: clawmoat activate <LICENSE-KEY>');
-    console.error('Get your key at https://clawmoat.com/#pricing');
+    console.error('Get your key at https://clawmoat.com/pricing/');
     process.exit(1);
   }
 
@@ -1202,10 +1203,10 @@ function cmdActivate(args) {
           console.log(`${GREEN}✅ License activated!${RESET}`);
           console.log(`   Plan: ${BOLD}${data.plan}${RESET}`);
           console.log(`   Email: ${data.email}`);
-          console.log(`\n   Pro features are now enabled. 🏰`);
+          console.log(`\n   Paid ClawMoat features are now enabled. 🏰`);
         } else {
           console.error(`${RED}Invalid or expired license key.${RESET}`);
-          console.error(`Get a key at https://clawmoat.com/#pricing`);
+          console.error(`Get a key at https://clawmoat.com/pricing/`);
           process.exit(1);
         }
       } catch {

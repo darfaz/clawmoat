@@ -7,7 +7,7 @@
     "clawmoat": "bin/clawmoat.js"
   },
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node server/index.js",
     "test": "node scripts/run-tests.js",
     "lint": "eslint src/"
   },
