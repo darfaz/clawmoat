@@ -27,6 +27,7 @@ const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/fo
 const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
 const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, formatHomeNetworkText, formatHomeWatchText, loadHomeWatchBaseline, sampleHomeNetworkReport, saveHomeWatchBaseline } = require('../src/home-network');
 const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanText, writeHomeDnsBlocklist } = require('../src/home-dns');
+const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-receipt');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -86,6 +87,10 @@ switch (command) {
     break;
   case 'lifecycle':
     cmdLifecycle(args.slice(1));
+    break;
+  case 'receipt':
+  case 'safety-receipt':
+    cmdSafetyReceipt(args.slice(1));
     break;
   case 'home':
     cmdHome(args.slice(1));
@@ -292,6 +297,54 @@ function cmdLifecycle(args) {
   }
 
   process.exit(strict && !report.ok ? 2 : 0);
+}
+
+function cmdSafetyReceipt(args) {
+  let rootDir = process.cwd();
+  let format = 'text';
+  let sessionsProtected = 1;
+  let toolCallsChecked = 0;
+  let riskyActionsBlocked = 0;
+  let secretsExposed = 0;
+
+  for (let i = 0; i < args.length; i++) {
+    if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
+      rootDir = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--sessions' && args[i + 1]) {
+      sessionsProtected = args[i + 1];
+      i++;
+    } else if (args[i] === '--tool-calls' && args[i + 1]) {
+      toolCallsChecked = args[i + 1];
+      i++;
+    } else if (args[i] === '--blocked' && args[i + 1]) {
+      riskyActionsBlocked = args[i + 1];
+      i++;
+    } else if (args[i] === '--secrets-exposed' && args[i + 1]) {
+      secretsExposed = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const audit = auditAgentLifecycle({ rootDir });
+  const receipt = createSafetyReceipt(audit, {
+    sessionsProtected,
+    toolCallsChecked,
+    riskyActionsBlocked,
+    secretsExposed,
+  });
+
+  if (format === 'json') console.log(JSON.stringify(receipt, null, 2));
+  else console.log(formatSafetyReceiptText(receipt));
+  process.exit(0);
 }
 
 async function cmdProviders(args) {
@@ -1413,6 +1466,8 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit        Find agent identity, credential, permission, audit, and kill-switch gaps
   clawmoat lifecycle audit --format json --path ./agent-app
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
+  clawmoat receipt                Print the daily safety receipt / Fresh Workspace Score
+  clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
   clawmoat home scan --sample --format json  Demo Home Guard JSON report
   clawmoat home watch --once      Save baseline and alert on new/riskier devices
@@ -1442,6 +1497,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --path .
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
+  clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
   clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
   clawmoat home dns-blocklist --sample --format adguard  # Export DNS protection
