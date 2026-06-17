@@ -29,6 +29,7 @@ const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, form
 const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanText, writeHomeDnsBlocklist } = require('../src/home-dns');
 const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-receipt');
 const { createAgentGuardReport, formatAgentGuardReportText } = require('../src/dogfood-guard');
+const { createWeeklySummary, exportAuditEvidence, formatWeeklySummaryText, loadReceiptHistory, saveReceipt } = require('../src/receipt-history');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -92,6 +93,9 @@ switch (command) {
   case 'receipt':
   case 'safety-receipt':
     cmdSafetyReceipt(args.slice(1));
+    break;
+  case 'receipts':
+    cmdReceipts(args.slice(1));
     break;
   case 'dogfood':
     cmdDogfood(args.slice(1));
@@ -313,6 +317,8 @@ function cmdSafetyReceipt(args) {
   let toolCallsChecked = 0;
   let riskyActionsBlocked = 0;
   let secretsExposed = 0;
+  let shouldSave = false;
+  let historyFile = null;
 
   for (let i = 0; i < args.length; i++) {
     if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
@@ -320,6 +326,11 @@ function cmdSafetyReceipt(args) {
       i++;
     } else if (args[i] === '--format' && args[i + 1]) {
       format = args[i + 1];
+      i++;
+    } else if (args[i] === '--save') {
+      shouldSave = true;
+    } else if (args[i] === '--history-file' && args[i + 1]) {
+      historyFile = args[i + 1];
       i++;
     } else if (args[i] === '--sessions' && args[i + 1]) {
       sessionsProtected = args[i + 1];
@@ -349,9 +360,69 @@ function cmdSafetyReceipt(args) {
     secretsExposed,
   });
 
-  if (format === 'json') console.log(JSON.stringify(receipt, null, 2));
-  else console.log(formatSafetyReceiptText(receipt));
+  let saveResult = null;
+  if (shouldSave) saveResult = saveReceipt(receipt, { historyFile });
+
+  if (format === 'json') {
+    const payload = saveResult ? { receipt, saved: saveResult } : receipt;
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log(formatSafetyReceiptText(receipt));
+    if (saveResult) console.log(`\n${GREEN}Saved safety receipt:${RESET} ${saveResult.historyFile}`);
+  }
   process.exit(0);
+}
+
+function cmdReceipts(args) {
+  const sub = args[0] || 'weekly';
+  let historyFile = null;
+  let outputFile = null;
+  let format = 'text';
+  let team = null;
+
+  for (let i = 1; i < args.length; i++) {
+    if (args[i] === '--history-file' && args[i + 1]) {
+      historyFile = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--team' && args[i + 1]) {
+      team = args[i + 1];
+      i++;
+    }
+  }
+
+  if (sub === 'weekly') {
+    if (!['text', 'json'].includes(format)) {
+      console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+      process.exit(1);
+    }
+    const receipts = loadReceiptHistory({ historyFile });
+    const summary = createWeeklySummary(receipts);
+    const rendered = format === 'json' ? JSON.stringify(summary, null, 2) : formatWeeklySummaryText(summary);
+    if (outputFile) {
+      const resolvedOutputFile = path.resolve(outputFile);
+      fs.mkdirSync(path.dirname(resolvedOutputFile), { recursive: true });
+      fs.writeFileSync(resolvedOutputFile, rendered);
+      console.log(`${GREEN}Wrote weekly receipt summary:${RESET} ${resolvedOutputFile}`);
+    } else {
+      console.log(rendered);
+    }
+    process.exit(0);
+  }
+
+  if (sub === 'export') {
+    const result = exportAuditEvidence({ historyFile, outputFile, team });
+    console.log(`${GREEN}Wrote ClawMoat audit evidence pack:${RESET} ${result.outputFile}`);
+    process.exit(0);
+  }
+
+  console.error('Usage: clawmoat receipts <weekly|export> [--history-file FILE] [--format text|json] [--output FILE]');
+  process.exit(1);
 }
 
 function cmdAgent(args) {
@@ -1554,7 +1625,10 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit --format json --path ./agent-app
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat receipt                Print the daily safety receipt / Fresh Workspace Score
+  clawmoat receipt --save         Save receipt history for weekly summaries and audit evidence
   clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat receipts weekly        Summarize saved safety receipts from the last 7 days
+  clawmoat receipts export        Export local audit evidence pack from saved receipts
   clawmoat dogfood leo            Run local ClawMoat guard around Leo/Hermes dogfooding
   clawmoat agent guard --agent leo --path . --format json
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
@@ -1587,6 +1661,9 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat receipt --save --history-file ~/.clawmoat/receipts.jsonl
+  clawmoat receipts weekly --history-file ~/.clawmoat/receipts.jsonl
+  clawmoat receipts export --team acme --output audit-evidence.json
   clawmoat dogfood leo --path ~/.hermes/hermes-agent --format json --output leo-guard.json
   clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
