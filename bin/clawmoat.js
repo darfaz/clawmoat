@@ -28,6 +28,7 @@ const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkd
 const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, formatHomeNetworkText, formatHomeWatchText, loadHomeWatchBaseline, sampleHomeNetworkReport, saveHomeWatchBaseline } = require('../src/home-network');
 const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanText, writeHomeDnsBlocklist } = require('../src/home-dns');
 const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-receipt');
+const { createAgentGuardReport, formatAgentGuardReportText } = require('../src/dogfood-guard');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -91,6 +92,12 @@ switch (command) {
   case 'receipt':
   case 'safety-receipt':
     cmdSafetyReceipt(args.slice(1));
+    break;
+  case 'dogfood':
+    cmdDogfood(args.slice(1));
+    break;
+  case 'agent':
+    cmdAgent(args.slice(1));
     break;
   case 'home':
     cmdHome(args.slice(1));
@@ -344,6 +351,86 @@ function cmdSafetyReceipt(args) {
 
   if (format === 'json') console.log(JSON.stringify(receipt, null, 2));
   else console.log(formatSafetyReceiptText(receipt));
+  process.exit(0);
+}
+
+function cmdAgent(args) {
+  const sub = args[0] || 'guard';
+  if (sub !== 'guard') {
+    console.error('Usage: clawmoat agent guard --agent leo [--path DIR] [--format text|json] [--output FILE]');
+    process.exit(1);
+  }
+  return cmdAgentGuard(args.slice(1));
+}
+
+function cmdDogfood(args) {
+  const agent = args[0] && !args[0].startsWith('-') ? args[0] : 'leo';
+  const rest = args[0] && !args[0].startsWith('-') ? args.slice(1) : args;
+  return cmdAgentGuard(['--agent', agent, ...rest]);
+}
+
+function cmdAgentGuard(args) {
+  let rootDir = process.cwd();
+  let agent = 'leo';
+  let format = 'text';
+  let outputFile = null;
+  let sessionsProtected = 1;
+  let toolCallsChecked = 0;
+  let riskyActionsBlocked = 0;
+  let secretsExposed = 0;
+
+  for (let i = 0; i < args.length; i++) {
+    if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
+      rootDir = args[i + 1];
+      i++;
+    } else if (args[i] === '--agent' && args[i + 1]) {
+      agent = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
+    } else if (args[i] === '--sessions' && args[i + 1]) {
+      sessionsProtected = args[i + 1];
+      i++;
+    } else if (args[i] === '--tool-calls' && args[i + 1]) {
+      toolCallsChecked = args[i + 1];
+      i++;
+    } else if (args[i] === '--blocked' && args[i + 1]) {
+      riskyActionsBlocked = args[i + 1];
+      i++;
+    } else if (args[i] === '--secrets-exposed' && args[i + 1]) {
+      secretsExposed = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const report = createAgentGuardReport({
+    agent,
+    rootDir,
+    sessionsProtected,
+    toolCallsChecked,
+    riskyActionsBlocked,
+    secretsExposed,
+  });
+  const rendered = format === 'json' ? JSON.stringify(report, null, 2) : formatAgentGuardReportText(report);
+
+  if (outputFile) {
+    const resolvedOutputFile = path.resolve(outputFile);
+    fs.mkdirSync(path.dirname(resolvedOutputFile), { recursive: true });
+    fs.writeFileSync(resolvedOutputFile, rendered);
+    console.log(`${GREEN}Wrote agent guard report:${RESET} ${resolvedOutputFile}`);
+  } else {
+    console.log(rendered);
+  }
+
   process.exit(0);
 }
 
@@ -1468,6 +1555,8 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat receipt                Print the daily safety receipt / Fresh Workspace Score
   clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat dogfood leo            Run local ClawMoat guard around Leo/Hermes dogfooding
+  clawmoat agent guard --agent leo --path . --format json
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
   clawmoat home scan --sample --format json  Demo Home Guard JSON report
   clawmoat home watch --once      Save baseline and alert on new/riskier devices
@@ -1498,6 +1587,7 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
   clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat dogfood leo --path ~/.hermes/hermes-agent --format json --output leo-guard.json
   clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
   clawmoat home dns-blocklist --sample --format adguard  # Export DNS protection
