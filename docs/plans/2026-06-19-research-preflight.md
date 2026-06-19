@@ -75,6 +75,38 @@ clawmoat research preflight --draft draft.md --source transcript.txt --model mod
 - Export policy pack version, control matrix, and retention evidence in the receipt.
 - Map controls to FINRA 24-09 / Rule 3110 and Rule 2210 supervision themes without overclaiming legal compliance.
 
+### Task 3B: Add supervision ledger and approval evidence
+
+**Objective:** Move from one-off reports to an append-only evidence trail.
+
+**Files:**
+- Create: `src/research-supervision.js`
+- Create: `test/research-supervision.test.js`
+- Modify: `bin/clawmoat.js`
+- Modify: `README.md`
+
+**Behavior:**
+- `clawmoat research preflight --ledger research-supervision.jsonl` appends review packets.
+- `clawmoat research ledger --ledger research-supervision.jsonl` verifies sequence, previous hash, and entry hash.
+- Approval events include reviewer, role, decision, rationale, and source packet hash.
+- Reject analyst self-approval and reject approval when the existing ledger is invalid.
+
+### Task 3C: Add signed external ledger anchors
+
+**Objective:** Make full-ledger rewrite or rollback detectable when an anchor is retained outside the workstation.
+
+**Files:**
+- Modify: `src/research-supervision.js`
+- Modify: `test/research-supervision.test.js`
+- Modify: `bin/clawmoat.js`
+- Modify: `README.md`
+
+**Behavior:**
+- `clawmoat research ledger --ledger research-supervision.jsonl --anchor research-anchor.json --signing-key research-anchor-private.pem` signs the current ledger head with Ed25519.
+- `clawmoat research ledger --ledger research-supervision.jsonl --verify-anchor research-anchor.json --public-key research-anchor-public.pem --format json` verifies chain integrity, head hash, entry count, and signature.
+- Anchor records include anchor ID, retained storage target, ledger head hash, entry count, signature algorithm, signature, and trust-model language.
+- Be explicit: signed anchors are stronger than local JSONL alone, but WORM/17a-4-grade retention still requires external immutable storage or regulated archive controls.
+
 ### Task 4: Add sales page
 
 **Objective:** Create a public vertical page for DB-style equity research buyers.
