@@ -26,6 +26,50 @@ function hashLedgerEntry(entry) {
   return sha256(stableStringify(copy));
 }
 
+function anchorPayload(anchor) {
+  return stableStringify({
+    type: anchor.type,
+    anchorId: anchor.anchorId,
+    generatedAt: anchor.generatedAt,
+    ledgerFile: anchor.ledgerFile,
+    ledgerHeadHash: anchor.ledgerHeadHash,
+    entries: anchor.entries,
+    signatureAlgorithm: anchor.signatureAlgorithm,
+    storageTarget: anchor.storageTarget,
+    previousAnchorHash: anchor.previousAnchorHash || null,
+    trustModel: anchor.trustModel,
+  });
+}
+
+function assertEd25519PrivateKey(privateKeyPem) {
+  const key = crypto.createPrivateKey(privateKeyPem);
+  if (key.asymmetricKeyType !== 'ed25519') throw new Error('Ed25519 private key is required to sign a research ledger anchor');
+  return key;
+}
+
+function isEd25519PublicKey(publicKeyPem) {
+  try {
+    return crypto.createPublicKey(publicKeyPem).asymmetricKeyType === 'ed25519';
+  } catch {
+    return false;
+  }
+}
+
+function signAnchorPayload(anchor, privateKeyPem) {
+  const key = assertEd25519PrivateKey(privateKeyPem);
+  return crypto.sign(null, Buffer.from(anchorPayload(anchor)), key).toString('base64');
+}
+
+function verifyAnchorSignature(anchor, publicKeyPem) {
+  if (!anchor.signature || !publicKeyPem || !isEd25519PublicKey(publicKeyPem)) return false;
+  try {
+    const key = crypto.createPublicKey(publicKeyPem);
+    return crypto.verify(null, Buffer.from(anchorPayload(anchor)), key, Buffer.from(anchor.signature, 'base64'));
+  } catch {
+    return false;
+  }
+}
+
 function safeDate(value) {
   const parsed = new Date(value || new Date().toISOString());
   return Number.isFinite(parsed.getTime()) ? parsed.toISOString() : new Date().toISOString();
@@ -169,6 +213,61 @@ function verifyResearchLedger(entries = []) {
   };
 }
 
+function createResearchLedgerAnchor(ledger, opts = {}) {
+  const verification = verifyResearchLedger(ledger.entries || []);
+  if (!verification.valid) throw new Error('Cannot anchor invalid research supervision ledger');
+  if (!opts.privateKeyPem) throw new Error('privateKeyPem is required to sign a research ledger anchor');
+  const generatedAt = safeDate(opts.generatedAt);
+  const anchor = {
+    type: 'clawmoat_research_ledger_anchor',
+    anchorId: opts.anchorId || `anchor-${sha256([verification.headHash || 'empty', generatedAt, opts.storageTarget || 'external'].join('|')).slice(0, 16)}`,
+    generatedAt,
+    ledgerFile: ledger.ledgerFile || null,
+    ledgerHeadHash: verification.headHash,
+    entries: verification.entries,
+    storageTarget: opts.storageTarget || 'external-retention-target-not-specified',
+    previousAnchorHash: opts.previousAnchorHash || null,
+    signatureAlgorithm: 'ed25519',
+    trustModel: 'signed_head_hash_anchor_detects_rewrite_or_rollback_when_anchor_is_retained_externally',
+  };
+  anchor.signature = signAnchorPayload(anchor, opts.privateKeyPem);
+  anchor.anchorHash = sha256(anchorPayload(anchor));
+  return anchor;
+}
+
+function verifyResearchLedgerAnchor(anchor, opts = {}) {
+  const ledger = opts.ledger || null;
+  const ledgerVerification = ledger ? verifyResearchLedger(ledger.entries || []) : null;
+  const failures = [];
+  if (!anchor || typeof anchor !== 'object' || anchor.type !== 'clawmoat_research_ledger_anchor') {
+    failures.push({ reason: 'invalid_anchor_type' });
+    return {
+      valid: false,
+      anchorId: anchor?.anchorId || null,
+      ledgerHeadHash: anchor?.ledgerHeadHash || null,
+      entries: anchor?.entries || 0,
+      signatureAlgorithm: anchor?.signatureAlgorithm || null,
+      failures,
+    };
+  }
+  if (anchor.signatureAlgorithm !== 'ed25519') failures.push({ reason: 'unsupported_signature_algorithm' });
+  if (!anchor.signature) failures.push({ reason: 'signature_missing' });
+  if (!opts.publicKeyPem) failures.push({ reason: 'public_key_required' });
+  if (ledgerVerification && !ledgerVerification.valid) failures.push({ reason: 'ledger_invalid', failures: ledgerVerification.failures });
+  if (ledgerVerification && anchor.ledgerHeadHash !== ledgerVerification.headHash) failures.push({ reason: 'head_hash_mismatch' });
+  if (ledgerVerification && anchor.entries !== ledgerVerification.entries) failures.push({ reason: 'entry_count_mismatch' });
+  if (opts.publicKeyPem && !verifyAnchorSignature(anchor, opts.publicKeyPem)) failures.push({ reason: 'signature_invalid' });
+  if (anchor.anchorHash && anchor.anchorHash !== sha256(anchorPayload(anchor))) failures.push({ reason: 'anchor_hash_mismatch' });
+  return {
+    valid: failures.length === 0,
+    anchorId: anchor.anchorId || null,
+    ledgerHeadHash: anchor.ledgerHeadHash || null,
+    entries: anchor.entries || 0,
+    signatureAlgorithm: anchor.signatureAlgorithm || null,
+    failures,
+  };
+}
+
 function formatResearchLedgerText(ledger) {
   const lines = [];
   lines.push('ClawMoat Research Supervision Ledger');
@@ -186,10 +285,12 @@ function formatResearchLedgerText(ledger) {
 module.exports = {
   defaultResearchLedgerPath,
   createResearchReviewPacket,
+  createResearchLedgerAnchor,
   appendResearchLedgerEntry,
   approveResearchPacket,
   loadResearchLedger,
   verifyResearchLedger,
+  verifyResearchLedgerAnchor,
   formatResearchLedgerText,
   hashLedgerEntry,
 };

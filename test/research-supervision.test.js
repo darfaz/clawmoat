@@ -4,6 +4,7 @@
 
 const { describe, it, beforeEach, afterEach } = require('node:test');
 const { strictEqual, ok, throws } = require('node:assert');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -17,8 +18,10 @@ const {
   appendResearchLedgerEntry,
   approveResearchPacket,
   createResearchReviewPacket,
+  createResearchLedgerAnchor,
   loadResearchLedger,
   verifyResearchLedger,
+  verifyResearchLedgerAnchor,
 } = require('../src/research-supervision');
 
 function samplePreflight(overrides = {}) {
@@ -135,6 +138,115 @@ describe('research supervision ledger', () => {
       decision: 'approve',
       rationale: 'Should not approve corrupted ledger.',
     }), /ledger is invalid/i);
+  });
+
+  it('creates and verifies a signed external anchor for the ledger head', () => {
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519');
+    const privateKeyPem = privateKey.export({ type: 'pkcs8', format: 'pem' });
+    const publicKeyPem = publicKey.export({ type: 'spki', format: 'pem' });
+    const packet = appendResearchLedgerEntry(createResearchReviewPacket(samplePreflight(), { submittedBy: 'Analyst One' }), { ledgerFile }).entry;
+    approveResearchPacket(packet.packetId, {
+      ledgerFile,
+      reviewer: 'Supervisor Two',
+      role: 'supervisor',
+      decision: 'approve_with_conditions',
+      rationale: 'Approve after corrections are made.',
+    });
+
+    const ledger = loadResearchLedger({ ledgerFile });
+    const staleLedgerForSigning = JSON.parse(JSON.stringify(ledger));
+    staleLedgerForSigning.entries[0].summary.high = 0;
+    throws(() => createResearchLedgerAnchor(staleLedgerForSigning, {
+      privateKeyPem,
+      anchorId: 'stale-ledger',
+      storageTarget: 's3-object-lock://research-supervision/2026/06/19/stale-anchor.json',
+    }), /invalid research supervision ledger/i);
+
+    const anchor = createResearchLedgerAnchor(ledger, {
+      privateKeyPem,
+      anchorId: 'db-vault-2026-06-19',
+      storageTarget: 's3-object-lock://research-supervision/2026/06/19/anchor.json',
+      generatedAt: '2026-06-19T14:00:00.000Z',
+    });
+
+    strictEqual(anchor.type, 'clawmoat_research_ledger_anchor');
+    strictEqual(anchor.anchorId, 'db-vault-2026-06-19');
+    strictEqual(anchor.ledgerHeadHash, ledger.verification.headHash);
+    strictEqual(anchor.entries, 2);
+    strictEqual(anchor.signatureAlgorithm, 'ed25519');
+    ok(anchor.signature.length > 40);
+
+    const verified = verifyResearchLedgerAnchor(anchor, { ledger, publicKeyPem });
+    strictEqual(verified.valid, true);
+
+    const { privateKey: rsaPrivateKey, publicKey: rsaPublicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const rsaPrivateKeyPem = rsaPrivateKey.export({ type: 'pkcs8', format: 'pem' });
+    const rsaPublicKeyPem = rsaPublicKey.export({ type: 'spki', format: 'pem' });
+    throws(() => createResearchLedgerAnchor(ledger, {
+      privateKeyPem: rsaPrivateKeyPem,
+      anchorId: 'rsa-anchor',
+      storageTarget: 's3-object-lock://research-supervision/2026/06/19/rsa-anchor.json',
+    }), /ed25519 private key/i);
+    const rsaPublicKeyCheck = verifyResearchLedgerAnchor(anchor, { ledger, publicKeyPem: rsaPublicKeyPem });
+    strictEqual(rsaPublicKeyCheck.valid, false);
+    ok(rsaPublicKeyCheck.failures.some((failure) => failure.reason === 'signature_invalid'));
+
+    const withoutPublicKey = verifyResearchLedgerAnchor(anchor, { ledger });
+    strictEqual(withoutPublicKey.valid, false);
+    ok(withoutPublicKey.failures.some((failure) => failure.reason === 'public_key_required'));
+
+    const algorithmTampered = { ...anchor, signatureAlgorithm: 'none' };
+    const algorithmCheck = verifyResearchLedgerAnchor(algorithmTampered, { ledger, publicKeyPem });
+    strictEqual(algorithmCheck.valid, false);
+    ok(algorithmCheck.failures.some((failure) => failure.reason === 'unsupported_signature_algorithm' || failure.reason === 'signature_invalid' || failure.reason === 'anchor_hash_mismatch'));
+
+    const nullAnchor = verifyResearchLedgerAnchor(null, { ledger, publicKeyPem });
+    strictEqual(nullAnchor.valid, false);
+    ok(nullAnchor.failures.some((failure) => failure.reason === 'invalid_anchor_type'));
+
+    const staleLedger = JSON.parse(JSON.stringify(ledger));
+    staleLedger.entries[0].summary.high = 0;
+    const staleCheck = verifyResearchLedgerAnchor(anchor, { ledger: staleLedger, publicKeyPem });
+    strictEqual(staleCheck.valid, false);
+    ok(staleCheck.failures.some((failure) => failure.reason === 'ledger_invalid' || failure.reason === 'head_hash_mismatch'));
+
+    const rewritten = JSON.parse(JSON.stringify(ledger));
+    rewritten.entries[0].summary.high = 0;
+    rewritten.verification = verifyResearchLedger(rewritten.entries);
+    const tampered = verifyResearchLedgerAnchor(anchor, { ledger: rewritten, publicKeyPem });
+    strictEqual(tampered.valid, false);
+    ok(tampered.failures.some((failure) => failure.reason === 'ledger_invalid' || failure.reason === 'head_hash_mismatch'));
+  });
+
+  it('can write and verify a signed ledger anchor from the CLI', async () => {
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519');
+    const privateKeyFile = path.join(testDir, 'research-anchor-private.pem');
+    const publicKeyFile = path.join(testDir, 'research-anchor-public.pem');
+    const anchorFile = path.join(testDir, 'research-anchor.json');
+    fs.writeFileSync(privateKeyFile, privateKey.export({ type: 'pkcs8', format: 'pem' }));
+    fs.writeFileSync(publicKeyFile, publicKey.export({ type: 'spki', format: 'pem' }));
+    appendResearchLedgerEntry(createResearchReviewPacket(samplePreflight(), { submittedBy: 'Analyst One' }), { ledgerFile });
+
+    const cli = path.join(originalCwd, 'bin/clawmoat.js');
+    await execFileAsync('node', [cli, 'research', 'ledger', '--ledger', ledgerFile, '--anchor', anchorFile, '--signing-key', privateKeyFile, '--anchor-id', 'external-vault-1'], { maxBuffer: 1024 * 1024 });
+    ok(fs.existsSync(anchorFile));
+
+    const verify = await execFileAsync('node', [cli, 'research', 'ledger', '--ledger', ledgerFile, '--verify-anchor', anchorFile, '--public-key', publicKeyFile, '--format', 'json'], { maxBuffer: 1024 * 1024 });
+    const parsed = JSON.parse(verify.stdout);
+    strictEqual(parsed.anchorVerification.valid, true);
+    strictEqual(parsed.anchorVerification.anchorId, 'external-vault-1');
+
+    const missingPublicKey = await execFileAsync('node', [cli, 'research', 'ledger', '--ledger', ledgerFile, '--verify-anchor', anchorFile, '--format', 'json'], { maxBuffer: 1024 * 1024 }).catch((err) => err);
+    strictEqual(missingPublicKey.code, 1);
+    ok(missingPublicKey.stderr.includes('--public-key is required'));
+
+    const { privateKey: rsaPrivateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const rsaPrivateKeyFile = path.join(testDir, 'research-anchor-rsa-private.pem');
+    const rsaAnchorFile = path.join(testDir, 'research-anchor-rsa.json');
+    fs.writeFileSync(rsaPrivateKeyFile, rsaPrivateKey.export({ type: 'pkcs8', format: 'pem' }));
+    const rsaAnchor = await execFileAsync('node', [cli, 'research', 'ledger', '--ledger', ledgerFile, '--anchor', rsaAnchorFile, '--signing-key', rsaPrivateKeyFile], { maxBuffer: 1024 * 1024 }).catch((err) => err);
+    strictEqual(rsaAnchor.code, 1);
+    ok(rsaAnchor.stderr.toLowerCase().includes('ed25519 private key'));
   });
 
   it('can save a preflight packet to the ledger and verify it from the CLI', async () => {

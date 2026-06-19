@@ -33,7 +33,7 @@
 
 `clawmoat research preflight` adds a regulated-research control layer for teams using Gemini, Copilot, ChatGPT, Claude, or internal models in limited research workflows. It checks drafts, transcripts, filings, model extracts, and restricted lists for unsupported claims, missing source citations, model tie-out mismatches, prompt injection in source text, potential MNPI/selective disclosure, information-barrier hits, required research disclosures, and missing AI usage attestation, then exports an evidence receipt for supervisor review.
 
-The bank-grade policy pack maps checks to FINRA-style supervision concerns: reasonably designed GenAI supervision, communications content standards, source provenance, information barriers, analyst certification, books-and-records evidence, and a tamper-evident supervision ledger with packet hashes, previous-entry hashes, and supervisor/compliance approval events.
+The bank-grade policy pack maps checks to FINRA-style supervision concerns: reasonably designed GenAI supervision, communications content standards, source provenance, information barriers, analyst certification, books-and-records evidence, and a tamper-evident supervision ledger with packet hashes, previous-entry hashes, supervisor/compliance approval events, and optional signed external anchors for retained ledger head hashes.
 
 ```bash
 clawmoat research preflight \
@@ -48,6 +48,8 @@ clawmoat research preflight \
   --ledger research-supervision.jsonl
 
 clawmoat research ledger --ledger research-supervision.jsonl
+clawmoat research ledger --ledger research-supervision.jsonl --anchor research-anchor.json --signing-key research-anchor-private.pem --storage-target s3-object-lock://research-supervision/anchors/2026-06-19.json
+clawmoat research ledger --ledger research-supervision.jsonl --verify-anchor research-anchor.json --public-key research-anchor-public.pem --format json
 ```
 
 → Sales page: <https://clawmoat.com/equity-research-ai-control/>  
