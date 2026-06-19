@@ -30,6 +30,7 @@ const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanT
 const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-receipt');
 const { createAgentGuardReport, formatAgentGuardReportText } = require('../src/dogfood-guard');
 const { createWeeklySummary, exportAuditEvidence, formatWeeklySummaryText, loadReceiptHistory, saveReceipt } = require('../src/receipt-history');
+const { runResearchPreflight, formatResearchPreflightMarkdown } = require('../src/research-preflight');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -106,6 +107,9 @@ switch (command) {
   case 'home':
     cmdHome(args.slice(1));
     break;
+  case 'research':
+    cmdResearch(args.slice(1));
+    break;
   case 'scan-mcp':
     cmdScanMCP(args.slice(1));
     break;
@@ -130,6 +134,65 @@ function cmdHome(args) {
   if (sub === 'dns-blocklist') return cmdHomeDnsBlocklist(args.slice(1));
   console.error('Usage: clawmoat home <scan|watch|dns-plan|dns-blocklist> [--sample] [--format text|json]');
   process.exit(1);
+}
+
+function cmdResearch(args) {
+  const sub = args[0] || 'preflight';
+  if (sub === 'preflight') return cmdResearchPreflight(args.slice(1));
+  console.error('Usage: clawmoat research preflight --draft DRAFT --source SOURCE [--model MODEL] [--restricted CSV] [--provider Gemini] [--output report.json] [--format markdown|json]');
+  process.exit(1);
+}
+
+function cmdResearchPreflight(args) {
+  let draftPath = null;
+  const sourcePaths = [];
+  let modelPath = null;
+  let restrictedPath = null;
+  let provider = 'unspecified';
+  let analyst = 'unspecified';
+  let workflow = 'equity research preflight';
+  let output = null;
+  let format = 'markdown';
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--draft' && args[i + 1]) draftPath = args[++i];
+    else if (arg === '--source' && args[i + 1]) sourcePaths.push(args[++i]);
+    else if (arg === '--model' && args[i + 1]) modelPath = args[++i];
+    else if (arg === '--restricted' && args[i + 1]) restrictedPath = args[++i];
+    else if (arg === '--provider' && args[i + 1]) provider = args[++i];
+    else if (arg === '--analyst' && args[i + 1]) analyst = args[++i];
+    else if (arg === '--workflow' && args[i + 1]) workflow = args[++i];
+    else if (arg === '--output' && args[i + 1]) output = args[++i];
+    else if (arg === '--format' && args[i + 1]) format = args[++i];
+  }
+
+  if (!draftPath) {
+    console.error(`${RED}Error: --draft is required${RESET}`);
+    process.exit(1);
+  }
+  if (!['markdown', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: markdown, json${RESET}`);
+    process.exit(1);
+  }
+
+  const readOptional = (file) => (file ? fs.readFileSync(file, 'utf8') : '');
+  const sourceTexts = {};
+  for (const sourcePath of sourcePaths) sourceTexts[path.basename(sourcePath)] = fs.readFileSync(sourcePath, 'utf8');
+  const report = runResearchPreflight({
+    draftText: fs.readFileSync(draftPath, 'utf8'),
+    sourceTexts,
+    modelText: readOptional(modelPath),
+    restrictedText: readOptional(restrictedPath),
+    workflow,
+    analyst,
+    modelProvider: provider,
+  });
+
+  if (output) fs.writeFileSync(output, JSON.stringify(report, null, 2));
+  if (format === 'json') console.log(JSON.stringify(report, null, 2));
+  else console.log(formatResearchPreflightMarkdown(report));
+  process.exit(report.summary.critical || report.summary.high ? 1 : 0);
 }
 
 function cmdHomeScan(args) {
@@ -1636,6 +1699,7 @@ ${BOLD}USAGE${RESET}
   clawmoat home watch --once      Save baseline and alert on new/riskier devices
   clawmoat home dns-plan --sample --format json  Plan Pi-hole / AdGuard protection
   clawmoat home dns-blocklist --format pihole --output FILE  Export DNS blocklist
+  clawmoat research preflight --draft DRAFT --source SOURCE  Preflight AI-assisted equity research drafts
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
