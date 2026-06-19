@@ -31,6 +31,7 @@ const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-
 const { createAgentGuardReport, formatAgentGuardReportText } = require('../src/dogfood-guard');
 const { createWeeklySummary, exportAuditEvidence, formatWeeklySummaryText, loadReceiptHistory, saveReceipt } = require('../src/receipt-history');
 const { runResearchPreflight, formatResearchPreflightMarkdown } = require('../src/research-preflight');
+const { appendResearchLedgerEntry, createResearchReviewPacket, formatResearchLedgerText, loadResearchLedger } = require('../src/research-supervision');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -139,8 +140,26 @@ function cmdHome(args) {
 function cmdResearch(args) {
   const sub = args[0] || 'preflight';
   if (sub === 'preflight') return cmdResearchPreflight(args.slice(1));
-  console.error('Usage: clawmoat research preflight --draft DRAFT --source SOURCE [--model MODEL] [--restricted CSV] [--provider Gemini] [--bank-grade] [--policy investment-banking-research-v1] [--output report.json] [--format markdown|json]');
+  if (sub === 'ledger') return cmdResearchLedger(args.slice(1));
+  console.error('Usage: clawmoat research <preflight|ledger>');
   process.exit(1);
+}
+
+function cmdResearchLedger(args) {
+  let ledgerFile = null;
+  let format = 'text';
+  for (let i = 0; i < args.length; i++) {
+    if ((args[i] === '--ledger' || args[i] === '--ledger-file') && args[i + 1]) ledgerFile = args[++i];
+    else if (args[i] === '--format' && args[i + 1]) format = args[++i];
+  }
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+  const ledger = loadResearchLedger({ ledgerFile });
+  if (format === 'json') console.log(JSON.stringify(ledger, null, 2));
+  else console.log(formatResearchLedgerText(ledger));
+  process.exit(ledger.verification.valid ? 0 : 2);
 }
 
 function cmdResearchPreflight(args) {
@@ -153,6 +172,9 @@ function cmdResearchPreflight(args) {
   let workflow = 'equity research preflight';
   let policyPack = 'research-preflight-default-v1';
   let output = null;
+  let ledgerFile = null;
+  let coverageGroup = null;
+  let clientDistribution = 'not-specified';
   let format = 'markdown';
 
   for (let i = 0; i < args.length; i++) {
@@ -167,6 +189,9 @@ function cmdResearchPreflight(args) {
     else if ((arg === '--policy' || arg === '--policy-pack') && args[i + 1]) policyPack = args[++i];
     else if (arg === '--bank-grade') policyPack = 'investment-banking-research-v1';
     else if (arg === '--output' && args[i + 1]) output = args[++i];
+    else if ((arg === '--ledger' || arg === '--ledger-file') && args[i + 1]) ledgerFile = args[++i];
+    else if (arg === '--coverage-group' && args[i + 1]) coverageGroup = args[++i];
+    else if (arg === '--client-distribution' && args[i + 1]) clientDistribution = args[++i];
     else if (arg === '--format' && args[i + 1]) format = args[++i];
   }
 
@@ -194,8 +219,27 @@ function cmdResearchPreflight(args) {
   });
 
   if (output) fs.writeFileSync(output, JSON.stringify(report, null, 2));
+  let ledgerSave = null;
+  if (ledgerFile) {
+    const packet = createResearchReviewPacket(report, {
+      submittedBy: analyst,
+      coverageGroup,
+      clientDistribution,
+    });
+    ledgerSave = appendResearchLedgerEntry(packet, { ledgerFile });
+    report.supervisionLedger = {
+      saved: true,
+      ledgerFile: ledgerSave.ledgerFile,
+      packetId: ledgerSave.entry.packetId,
+      sequence: ledgerSave.entry.sequence,
+      entryHash: ledgerSave.entry.entryHash,
+    };
+  }
   if (format === 'json') console.log(JSON.stringify(report, null, 2));
-  else console.log(formatResearchPreflightMarkdown(report));
+  else {
+    console.log(formatResearchPreflightMarkdown(report));
+    if (ledgerSave) console.log(`${GREEN}Saved research review packet:${RESET} ${ledgerSave.entry.packetId} -> ${ledgerSave.ledgerFile}`);
+  }
   process.exit(report.summary.critical || report.summary.high ? 1 : 0);
 }
 
