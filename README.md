@@ -31,7 +31,9 @@
 
 ## New: Research Preflight for AI-Assisted Equity Research
 
-`clawmoat research preflight` adds a regulated-research control layer for teams using Gemini, Copilot, ChatGPT, Claude, or internal models in limited research workflows. It checks drafts, transcripts, filings, model extracts, and restricted lists for unsupported claims, model tie-out mismatches, prompt injection in source text, information-barrier hits, and missing AI usage attestation, then exports an evidence receipt for supervisor review.
+`clawmoat research preflight` adds a regulated-research control layer for teams using Gemini, Copilot, ChatGPT, Claude, or internal models in limited research workflows. It checks drafts, transcripts, filings, model extracts, and restricted lists for unsupported claims, missing source citations, model tie-out mismatches, prompt injection in source text, potential MNPI/selective disclosure, information-barrier hits, required research disclosures, and missing AI usage attestation, then exports an evidence receipt for supervisor review.
+
+The bank-grade policy pack maps checks to FINRA-style supervision concerns: reasonably designed GenAI supervision, communications content standards, source provenance, information barriers, analyst certification, and books-and-records evidence.
 
 ```bash
 clawmoat research preflight \
@@ -41,6 +43,7 @@ clawmoat research preflight \
   --restricted restricted.csv \
   --provider Gemini \
   --analyst "Demo Analyst" \
+  --bank-grade \
   --output research-preflight.json
 ```
 

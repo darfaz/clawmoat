@@ -58,6 +58,61 @@ describe('research preflight', () => {
     ok(report.receipt.sourceHashes.transcript.length >= 16);
   });
 
+  it('applies bank-grade research controls for citations, MNPI, disclosures, and retention evidence', () => {
+    const report = runResearchPreflight({
+      draftText: [
+        'ACME price target moves to $82 on 30% EBITDA margin. [S:approved-model]',
+        'We rate ACME Buy because the CFO privately told us next quarter revenue will beat consensus.',
+        'This draft stops before the compliance appendix.',
+      ].join('\n'),
+      sourceTexts: {
+        'approved-model': 'ACME price target $82, EBITDA margin 30%.',
+        transcript: 'The CFO privately told the analyst that next quarter revenue will beat consensus before public release.',
+      },
+      modelText: 'ticker,metric,value\nACME,price target,$82\nACME,ebitda margin,30%\n',
+      restrictedText: '',
+      workflow: 'db-equity-research',
+      analyst: 'Bank Analyst',
+      modelProvider: 'Gemini',
+      policyPack: 'investment-banking-research-v1',
+    });
+
+    ok(report.findings.some((finding) => finding.type === 'potential_mnpi' && finding.severity === 'critical'));
+    ok(report.findings.some((finding) => finding.type === 'missing_research_disclosure' && finding.evidence.includes('valuation methodology')));
+    ok(report.findings.some((finding) => finding.type === 'missing_research_disclosure' && finding.evidence.includes('analyst certification')));
+    ok(report.receipt.policyPack === 'investment-banking-research-v1');
+    ok(report.receipt.controlMatrix.some((control) => control.id === 'IB-RESEARCH-MNPI'));
+    ok(report.receipt.controlMatrix.some((control) => control.id === 'IB-RESEARCH-DISCLOSURES'));
+    ok(report.receipt.retention.artifactHashes.draft.length >= 16);
+    strictEqual(report.summary.disposition, 'compliance_hold');
+  });
+
+  it('requires source citations on material research claims when bank policy is enabled', () => {
+    const report = runResearchPreflight({
+      draftText: 'ACME revenue increased 14% to $2.4 billion. We rate ACME Buy with an $82 price target.',
+      sourceTexts: { filing: 'ACME revenue increased 14% to $2.4 billion.' },
+      modelText: 'ticker,metric,value\nACME,price target,$82\n',
+      policyPack: 'investment-banking-research-v1',
+    });
+
+    ok(report.findings.some((finding) => finding.type === 'missing_claim_citation' && finding.evidence.includes('price target')));
+    ok(report.receipt.controls.includes('claim_citation_required'));
+  });
+
+  it('requires source citations on every consecutive numeric claim when bank policy is enabled', () => {
+    const report = runResearchPreflight({
+      draftText: 'Revenue increased 10%. Shares rose 12%.',
+      sourceTexts: { filing: 'Revenue increased 10%. Shares rose 12%.' },
+      policyPack: 'investment-banking-research-v1',
+    });
+    const missingCitationClaims = report.findings
+      .filter((finding) => finding.type === 'missing_claim_citation')
+      .map((finding) => finding.evidence);
+
+    ok(missingCitationClaims.some((claim) => claim.includes('Revenue increased 10%')));
+    ok(missingCitationClaims.some((claim) => claim.includes('Shares rose 12%')));
+  });
+
   it('formats a markdown audit packet for supervisors and compliance reviewers', () => {
     const report = runResearchPreflight({
       draftText: 'Revenue increased 10% to $1.0 billion. Analyst reviewed the AI assisted summary.',
@@ -73,6 +128,7 @@ describe('research preflight', () => {
     ok(markdown.includes('Workflow: earnings note'));
     ok(markdown.includes('Model/provider: Gemini'));
     ok(markdown.includes('## Evidence receipt'));
+    ok(markdown.includes('## Control matrix'));
     ok(markdown.includes('## Supervisor checklist'));
   });
 

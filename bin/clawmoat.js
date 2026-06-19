@@ -139,7 +139,7 @@ function cmdHome(args) {
 function cmdResearch(args) {
   const sub = args[0] || 'preflight';
   if (sub === 'preflight') return cmdResearchPreflight(args.slice(1));
-  console.error('Usage: clawmoat research preflight --draft DRAFT --source SOURCE [--model MODEL] [--restricted CSV] [--provider Gemini] [--output report.json] [--format markdown|json]');
+  console.error('Usage: clawmoat research preflight --draft DRAFT --source SOURCE [--model MODEL] [--restricted CSV] [--provider Gemini] [--bank-grade] [--policy investment-banking-research-v1] [--output report.json] [--format markdown|json]');
   process.exit(1);
 }
 
@@ -151,6 +151,7 @@ function cmdResearchPreflight(args) {
   let provider = 'unspecified';
   let analyst = 'unspecified';
   let workflow = 'equity research preflight';
+  let policyPack = 'research-preflight-default-v1';
   let output = null;
   let format = 'markdown';
 
@@ -163,6 +164,8 @@ function cmdResearchPreflight(args) {
     else if (arg === '--provider' && args[i + 1]) provider = args[++i];
     else if (arg === '--analyst' && args[i + 1]) analyst = args[++i];
     else if (arg === '--workflow' && args[i + 1]) workflow = args[++i];
+    else if ((arg === '--policy' || arg === '--policy-pack') && args[i + 1]) policyPack = args[++i];
+    else if (arg === '--bank-grade') policyPack = 'investment-banking-research-v1';
     else if (arg === '--output' && args[i + 1]) output = args[++i];
     else if (arg === '--format' && args[i + 1]) format = args[++i];
   }
@@ -187,6 +190,7 @@ function cmdResearchPreflight(args) {
     workflow,
     analyst,
     modelProvider: provider,
+    policyPack,
   });
 
   if (output) fs.writeFileSync(output, JSON.stringify(report, null, 2));

@@ -55,8 +55,25 @@ clawmoat research preflight --draft draft.md --source transcript.txt --model mod
 **Behavior:**
 - Print Markdown report by default.
 - Support `--format json`.
+- Support `--bank-grade` / `--policy investment-banking-research-v1` for investment-bank controls.
 - Write JSON evidence with `--output`.
 - Exit non-zero when critical/high findings require supervisor review.
+
+### Task 3A: Upgrade to investment-bank grade controls
+
+**Objective:** Move from demo preflight to a DB-style supervisory packet.
+
+**Files:**
+- Modify: `src/research-preflight.js`
+- Modify: `test/research-preflight.test.js`
+- Modify: `bin/clawmoat.js`
+
+**Added checks:**
+- Require source citations on material research claims under the bank-grade policy pack.
+- Hold potential MNPI/selective-disclosure language for compliance review.
+- Detect missing valuation methodology, risk-factor language, and analyst certification.
+- Export policy pack version, control matrix, and retention evidence in the receipt.
+- Map controls to FINRA 24-09 / Rule 3110 and Rule 2210 supervision themes without overclaiming legal compliance.
 
 ### Task 4: Add sales page
 
