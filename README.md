@@ -29,6 +29,27 @@
 
 ---
 
+## New: Research Preflight for AI-Assisted Equity Research
+
+`clawmoat research preflight` adds a regulated-research control layer for teams using Gemini, Copilot, ChatGPT, Claude, or internal models in limited research workflows. It checks drafts, transcripts, filings, model extracts, and restricted lists for unsupported claims, missing source citations, model tie-out mismatches, prompt injection in source text, potential MNPI/selective disclosure, information-barrier hits, required research disclosures, and missing AI usage attestation, then exports an evidence receipt for supervisor review.
+
+The bank-grade policy pack maps checks to FINRA-style supervision concerns: reasonably designed GenAI supervision, communications content standards, source provenance, information barriers, analyst certification, and books-and-records evidence.
+
+```bash
+clawmoat research preflight \
+  --draft draft-note.md \
+  --source earnings-call.txt \
+  --model model.csv \
+  --restricted restricted.csv \
+  --provider Gemini \
+  --analyst "Demo Analyst" \
+  --bank-grade \
+  --output research-preflight.json
+```
+
+→ Sales page: <https://clawmoat.com/equity-research-ai-control/>  
+→ Sample report: <https://clawmoat.com/research-preflight-report-demo/>
+
 ## New: Home Network Guard
 
 WSJ's residential-proxy reporting makes the pattern obvious: trusted devices become attack infrastructure when nobody watches runtime behavior. `clawmoat home scan` extends ClawMoat from agent-seatbelt to home-network watchdog by inventorying local devices and flagging risky IoT/proxy indicators such as exposed Telnet, exposed Android Debug Bridge, unknown vendors, and proxy-like DNS or outbound behavior when logs are provided.

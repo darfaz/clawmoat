@@ -27,6 +27,10 @@ const { formatScanResultAsSarif, formatAuditResultAsSarif } = require('../src/fo
 const { auditAgentLifecycle, formatLifecycleAuditText, formatLifecycleAuditMarkdown } = require('../src/lifecycle-audit');
 const { auditHomeNetwork, createHomeWatchReport, defaultHomeWatchStatePath, formatHomeNetworkText, formatHomeWatchText, loadHomeWatchBaseline, sampleHomeNetworkReport, saveHomeWatchBaseline } = require('../src/home-network');
 const { buildHomeDnsBlocklist, createHomeDnsShieldPlan, formatHomeDnsShieldPlanText, writeHomeDnsBlocklist } = require('../src/home-dns');
+const { createSafetyReceipt, formatSafetyReceiptText } = require('../src/safety-receipt');
+const { createAgentGuardReport, formatAgentGuardReportText } = require('../src/dogfood-guard');
+const { createWeeklySummary, exportAuditEvidence, formatWeeklySummaryText, loadReceiptHistory, saveReceipt } = require('../src/receipt-history');
+const { runResearchPreflight, formatResearchPreflightMarkdown } = require('../src/research-preflight');
 
 const VERSION = require('../package.json').version;
 const BOLD = '\x1b[1m';
@@ -87,8 +91,24 @@ switch (command) {
   case 'lifecycle':
     cmdLifecycle(args.slice(1));
     break;
+  case 'receipt':
+  case 'safety-receipt':
+    cmdSafetyReceipt(args.slice(1));
+    break;
+  case 'receipts':
+    cmdReceipts(args.slice(1));
+    break;
+  case 'dogfood':
+    cmdDogfood(args.slice(1));
+    break;
+  case 'agent':
+    cmdAgent(args.slice(1));
+    break;
   case 'home':
     cmdHome(args.slice(1));
+    break;
+  case 'research':
+    cmdResearch(args.slice(1));
     break;
   case 'scan-mcp':
     cmdScanMCP(args.slice(1));
@@ -114,6 +134,69 @@ function cmdHome(args) {
   if (sub === 'dns-blocklist') return cmdHomeDnsBlocklist(args.slice(1));
   console.error('Usage: clawmoat home <scan|watch|dns-plan|dns-blocklist> [--sample] [--format text|json]');
   process.exit(1);
+}
+
+function cmdResearch(args) {
+  const sub = args[0] || 'preflight';
+  if (sub === 'preflight') return cmdResearchPreflight(args.slice(1));
+  console.error('Usage: clawmoat research preflight --draft DRAFT --source SOURCE [--model MODEL] [--restricted CSV] [--provider Gemini] [--bank-grade] [--policy investment-banking-research-v1] [--output report.json] [--format markdown|json]');
+  process.exit(1);
+}
+
+function cmdResearchPreflight(args) {
+  let draftPath = null;
+  const sourcePaths = [];
+  let modelPath = null;
+  let restrictedPath = null;
+  let provider = 'unspecified';
+  let analyst = 'unspecified';
+  let workflow = 'equity research preflight';
+  let policyPack = 'research-preflight-default-v1';
+  let output = null;
+  let format = 'markdown';
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--draft' && args[i + 1]) draftPath = args[++i];
+    else if (arg === '--source' && args[i + 1]) sourcePaths.push(args[++i]);
+    else if (arg === '--model' && args[i + 1]) modelPath = args[++i];
+    else if (arg === '--restricted' && args[i + 1]) restrictedPath = args[++i];
+    else if (arg === '--provider' && args[i + 1]) provider = args[++i];
+    else if (arg === '--analyst' && args[i + 1]) analyst = args[++i];
+    else if (arg === '--workflow' && args[i + 1]) workflow = args[++i];
+    else if ((arg === '--policy' || arg === '--policy-pack') && args[i + 1]) policyPack = args[++i];
+    else if (arg === '--bank-grade') policyPack = 'investment-banking-research-v1';
+    else if (arg === '--output' && args[i + 1]) output = args[++i];
+    else if (arg === '--format' && args[i + 1]) format = args[++i];
+  }
+
+  if (!draftPath) {
+    console.error(`${RED}Error: --draft is required${RESET}`);
+    process.exit(1);
+  }
+  if (!['markdown', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: markdown, json${RESET}`);
+    process.exit(1);
+  }
+
+  const readOptional = (file) => (file ? fs.readFileSync(file, 'utf8') : '');
+  const sourceTexts = {};
+  for (const sourcePath of sourcePaths) sourceTexts[path.basename(sourcePath)] = fs.readFileSync(sourcePath, 'utf8');
+  const report = runResearchPreflight({
+    draftText: fs.readFileSync(draftPath, 'utf8'),
+    sourceTexts,
+    modelText: readOptional(modelPath),
+    restrictedText: readOptional(restrictedPath),
+    workflow,
+    analyst,
+    modelProvider: provider,
+    policyPack,
+  });
+
+  if (output) fs.writeFileSync(output, JSON.stringify(report, null, 2));
+  if (format === 'json') console.log(JSON.stringify(report, null, 2));
+  else console.log(formatResearchPreflightMarkdown(report));
+  process.exit(report.summary.critical || report.summary.high ? 1 : 0);
 }
 
 function cmdHomeScan(args) {
@@ -292,6 +375,201 @@ function cmdLifecycle(args) {
   }
 
   process.exit(strict && !report.ok ? 2 : 0);
+}
+
+function cmdSafetyReceipt(args) {
+  let rootDir = process.cwd();
+  let format = 'text';
+  let sessionsProtected = 1;
+  let toolCallsChecked = 0;
+  let riskyActionsBlocked = 0;
+  let secretsExposed = 0;
+  let shouldSave = false;
+  let historyFile = null;
+
+  for (let i = 0; i < args.length; i++) {
+    if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
+      rootDir = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--save') {
+      shouldSave = true;
+    } else if (args[i] === '--history-file' && args[i + 1]) {
+      historyFile = args[i + 1];
+      i++;
+    } else if (args[i] === '--sessions' && args[i + 1]) {
+      sessionsProtected = args[i + 1];
+      i++;
+    } else if (args[i] === '--tool-calls' && args[i + 1]) {
+      toolCallsChecked = args[i + 1];
+      i++;
+    } else if (args[i] === '--blocked' && args[i + 1]) {
+      riskyActionsBlocked = args[i + 1];
+      i++;
+    } else if (args[i] === '--secrets-exposed' && args[i + 1]) {
+      secretsExposed = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const audit = auditAgentLifecycle({ rootDir });
+  const receipt = createSafetyReceipt(audit, {
+    sessionsProtected,
+    toolCallsChecked,
+    riskyActionsBlocked,
+    secretsExposed,
+  });
+
+  let saveResult = null;
+  if (shouldSave) saveResult = saveReceipt(receipt, { historyFile });
+
+  if (format === 'json') {
+    const payload = saveResult ? { receipt, saved: saveResult } : receipt;
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log(formatSafetyReceiptText(receipt));
+    if (saveResult) console.log(`\n${GREEN}Saved safety receipt:${RESET} ${saveResult.historyFile}`);
+  }
+  process.exit(0);
+}
+
+function cmdReceipts(args) {
+  const sub = args[0] || 'weekly';
+  let historyFile = null;
+  let outputFile = null;
+  let format = 'text';
+  let team = null;
+
+  for (let i = 1; i < args.length; i++) {
+    if (args[i] === '--history-file' && args[i + 1]) {
+      historyFile = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if (args[i] === '--team' && args[i + 1]) {
+      team = args[i + 1];
+      i++;
+    }
+  }
+
+  if (sub === 'weekly') {
+    if (!['text', 'json'].includes(format)) {
+      console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+      process.exit(1);
+    }
+    const receipts = loadReceiptHistory({ historyFile });
+    const summary = createWeeklySummary(receipts);
+    const rendered = format === 'json' ? JSON.stringify(summary, null, 2) : formatWeeklySummaryText(summary);
+    if (outputFile) {
+      const resolvedOutputFile = path.resolve(outputFile);
+      fs.mkdirSync(path.dirname(resolvedOutputFile), { recursive: true });
+      fs.writeFileSync(resolvedOutputFile, rendered);
+      console.log(`${GREEN}Wrote weekly receipt summary:${RESET} ${resolvedOutputFile}`);
+    } else {
+      console.log(rendered);
+    }
+    process.exit(0);
+  }
+
+  if (sub === 'export') {
+    const result = exportAuditEvidence({ historyFile, outputFile, team });
+    console.log(`${GREEN}Wrote ClawMoat audit evidence pack:${RESET} ${result.outputFile}`);
+    process.exit(0);
+  }
+
+  console.error('Usage: clawmoat receipts <weekly|export> [--history-file FILE] [--format text|json] [--output FILE]');
+  process.exit(1);
+}
+
+function cmdAgent(args) {
+  const sub = args[0] || 'guard';
+  if (sub !== 'guard') {
+    console.error('Usage: clawmoat agent guard --agent leo [--path DIR] [--format text|json] [--output FILE]');
+    process.exit(1);
+  }
+  return cmdAgentGuard(args.slice(1));
+}
+
+function cmdDogfood(args) {
+  const agent = args[0] && !args[0].startsWith('-') ? args[0] : 'leo';
+  const rest = args[0] && !args[0].startsWith('-') ? args.slice(1) : args;
+  return cmdAgentGuard(['--agent', agent, ...rest]);
+}
+
+function cmdAgentGuard(args) {
+  let rootDir = process.cwd();
+  let agent = 'leo';
+  let format = 'text';
+  let outputFile = null;
+  let sessionsProtected = 1;
+  let toolCallsChecked = 0;
+  let riskyActionsBlocked = 0;
+  let secretsExposed = 0;
+
+  for (let i = 0; i < args.length; i++) {
+    if ((args[i] === '--path' || args[i] === '-p') && args[i + 1]) {
+      rootDir = args[i + 1];
+      i++;
+    } else if (args[i] === '--agent' && args[i + 1]) {
+      agent = args[i + 1];
+      i++;
+    } else if (args[i] === '--format' && args[i + 1]) {
+      format = args[i + 1];
+      i++;
+    } else if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
+      outputFile = args[i + 1];
+      i++;
+    } else if (args[i] === '--sessions' && args[i + 1]) {
+      sessionsProtected = args[i + 1];
+      i++;
+    } else if (args[i] === '--tool-calls' && args[i + 1]) {
+      toolCallsChecked = args[i + 1];
+      i++;
+    } else if (args[i] === '--blocked' && args[i + 1]) {
+      riskyActionsBlocked = args[i + 1];
+      i++;
+    } else if (args[i] === '--secrets-exposed' && args[i + 1]) {
+      secretsExposed = args[i + 1];
+      i++;
+    }
+  }
+
+  if (!['text', 'json'].includes(format)) {
+    console.error(`${RED}Error: Invalid format "${format}". Supported: text, json${RESET}`);
+    process.exit(1);
+  }
+
+  const report = createAgentGuardReport({
+    agent,
+    rootDir,
+    sessionsProtected,
+    toolCallsChecked,
+    riskyActionsBlocked,
+    secretsExposed,
+  });
+  const rendered = format === 'json' ? JSON.stringify(report, null, 2) : formatAgentGuardReportText(report);
+
+  if (outputFile) {
+    const resolvedOutputFile = path.resolve(outputFile);
+    fs.mkdirSync(path.dirname(resolvedOutputFile), { recursive: true });
+    fs.writeFileSync(resolvedOutputFile, rendered);
+    console.log(`${GREEN}Wrote agent guard report:${RESET} ${resolvedOutputFile}`);
+  } else {
+    console.log(rendered);
+  }
+
+  process.exit(0);
 }
 
 async function cmdProviders(args) {
@@ -1156,16 +1434,17 @@ function extractContent(entry) {
 
 function printUpgrade() {
   console.log(`
-${BOLD}🏰 Upgrade to ClawMoat Pro${RESET}
+${BOLD}🏰 Upgrade to ClawMoat Pro or Team${RESET}
 
-  ${GREEN}✦${RESET} Threat intelligence feed & real-time alerts
-  ${GREEN}✦${RESET} Security dashboard with audit logs
-  ${GREEN}✦${RESET} Custom forbidden zones (YAML)
-  ${GREEN}✦${RESET} Priority pattern updates & email support
+  ${GREEN}✦${RESET} Runtime enforcement mode for coding agents and MCP-heavy workflows
+  ${GREEN}✦${RESET} Policy gates for risky tool use
+  ${GREEN}✦${RESET} Local audit trail and workflow alerts
+  ${GREEN}✦${RESET} Team policy templates and CI-ready reports
 
-  ${BOLD}$14.99/mo${RESET} (first 30 days free) or ${BOLD}$149/year${RESET} (save 17%)
+  ${BOLD}Pro: $19/mo${RESET} or ${BOLD}$190/year${RESET}
+  ${BOLD}Team: $99/mo${RESET} or ${BOLD}$990/year${RESET} for up to 10 seats
 
-  ${CYAN}→ https://clawmoat.com/#pricing${RESET}
+  ${CYAN}→ https://clawmoat.com/pricing/${RESET}
 
   Already have a license key? Run:
     ${DIM}clawmoat activate <LICENSE-KEY>${RESET}
@@ -1176,7 +1455,7 @@ function cmdActivate(args) {
   const key = args[0];
   if (!key) {
     console.error('Usage: clawmoat activate <LICENSE-KEY>');
-    console.error('Get your key at https://clawmoat.com/#pricing');
+    console.error('Get your key at https://clawmoat.com/pricing/');
     process.exit(1);
   }
 
@@ -1202,10 +1481,10 @@ function cmdActivate(args) {
           console.log(`${GREEN}✅ License activated!${RESET}`);
           console.log(`   Plan: ${BOLD}${data.plan}${RESET}`);
           console.log(`   Email: ${data.email}`);
-          console.log(`\n   Pro features are now enabled. 🏰`);
+          console.log(`\n   Paid ClawMoat features are now enabled. 🏰`);
         } else {
           console.error(`${RED}Invalid or expired license key.${RESET}`);
-          console.error(`Get a key at https://clawmoat.com/#pricing`);
+          console.error(`Get a key at https://clawmoat.com/pricing/`);
           process.exit(1);
         }
       } catch {
@@ -1412,11 +1691,19 @@ ${BOLD}USAGE${RESET}
   clawmoat lifecycle audit        Find agent identity, credential, permission, audit, and kill-switch gaps
   clawmoat lifecycle audit --format json --path ./agent-app
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
+  clawmoat receipt                Print the daily safety receipt / Fresh Workspace Score
+  clawmoat receipt --save         Save receipt history for weekly summaries and audit evidence
+  clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat receipts weekly        Summarize saved safety receipts from the last 7 days
+  clawmoat receipts export        Export local audit evidence pack from saved receipts
+  clawmoat dogfood leo            Run local ClawMoat guard around Leo/Hermes dogfooding
+  clawmoat agent guard --agent leo --path . --format json
   clawmoat home scan              Scan local LAN for risky IoT/proxy indicators
   clawmoat home scan --sample --format json  Demo Home Guard JSON report
   clawmoat home watch --once      Save baseline and alert on new/riskier devices
   clawmoat home dns-plan --sample --format json  Plan Pi-hole / AdGuard protection
   clawmoat home dns-blocklist --format pihole --output FILE  Export DNS blocklist
+  clawmoat research preflight --draft DRAFT --source SOURCE  Preflight AI-assisted equity research drafts
   clawmoat verify-cve <CVE-ID> [url]  Verify a CVE against GitHub Advisory DB
   clawmoat test                   Run detection test suite
   clawmoat providers              Configure AI providers (Claude/ChatGPT/Kimi)
@@ -1441,6 +1728,11 @@ ${BOLD}EXAMPLES${RESET}
   clawmoat lifecycle audit --path .
   clawmoat lifecycle audit --format markdown --output lifecycle-report.md
   clawmoat lifecycle audit --strict --format json  # Fail CI when lifecycle risk is high
+  clawmoat receipt --path . --sessions 3 --tool-calls 12 --blocked 1
+  clawmoat receipt --save --history-file ~/.clawmoat/receipts.jsonl
+  clawmoat receipts weekly --history-file ~/.clawmoat/receipts.jsonl
+  clawmoat receipts export --team acme --output audit-evidence.json
+  clawmoat dogfood leo --path ~/.hermes/hermes-agent --format json --output leo-guard.json
   clawmoat home scan --sample     # Demo Home Guard risky-device report
   clawmoat home watch --once      # Save baseline, then alert on new/riskier devices
   clawmoat home dns-blocklist --sample --format adguard  # Export DNS protection
