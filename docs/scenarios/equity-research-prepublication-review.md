@@ -56,6 +56,11 @@ const review = guard.reviewDraft(draft, {
 
 if (review.action !== 'allow') {
   routeToSupervisor(review);
+  guard.recordDisposition(review.reviewId, {
+    decision: 'rejected',
+    supervisor: 'supervisor-3',
+    rationale: 'Draft uses wall-crossed MNPI and cannot be published.',
+  });
 }
 
 const evidence = guard.exportEvidence({
@@ -64,9 +69,15 @@ const evidence = guard.exportEvidence({
     retentionYears: 6,
   },
 });
+console.log(evidence.supervisorAttestationPacket.packetDigest);
 console.log(evidence.archiveManifest.archiveDigest);
 ```
 
-The evidence export now includes an `equity_research_retention_archive_manifest` with one row per review, a SHA-256 digest of each review record, and a hash chain linking entries together. It is not a WORM store by itself. It is the manifest a firm can hand to its archive vendor or SEC/FINRA books-and-records workflow so the review packet can be exported, retained, and checked for tampering later.
+The evidence export now includes two buyer-visible artifacts:
 
-This is intentionally small. It gives a demo-visible answer to "show me the pre-publication control" and a second answer to "what survives retention review?" without pretending to be a full archive, WORM store, or supervisory workstation yet.
+- `equity_research_supervisor_attestation_packet`: named supervisor decision, rationale, timestamp, mapped controls, pending reviews, and a packet digest.
+- `equity_research_retention_archive_manifest`: one row per review, a SHA-256 digest of each review record, the supervisor disposition digest, and a hash chain linking entries together.
+
+It is not a WORM store by itself. It is the packet a firm can hand to its archive vendor or SEC/FINRA books-and-records workflow so the review evidence can be exported, retained, and checked for tampering later.
+
+This is intentionally small. It gives a demo-visible answer to "show me the supervisor signoff" and a second answer to "what survives retention review?" without pretending to be a full archive, WORM store, or supervisory workstation yet.

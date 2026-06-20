@@ -68,7 +68,10 @@ const CONTROL_MATRIX = [
   { id: 'REGAC-01', name: 'Analyst certification completeness', evidence: 'Reg AC certification present before release', mapsTo: ['Reg AC workflow readiness'] },
   { id: 'SRC-01', name: 'Source trail completeness', evidence: 'Citations/source references attached to AI-assisted claims', mapsTo: ['supervision evidence trail', 'model risk documentation'] },
   { id: 'PT-01', name: 'Price target support', evidence: 'Price target and valuation rationale paired in draft', mapsTo: ['pre-publication review', 'fair and balanced communications'] },
+  { id: 'SUP-01', name: 'Supervisor disposition attestation', evidence: 'Named supervisor decision, rationale, timestamp, and immutable digest tied to the draft hash', mapsTo: ['FINRA 3110 supervision evidence', 'SEC books-and-records readiness', 'SOC 2 CC7 evidence handling'] },
 ];
+
+const DISPOSITIONS = new Set(['approved', 'approved_with_changes', 'rejected', 'escalated']);
 
 function hashText(text) {
   return crypto.createHash('sha256').update(String(text || '')).digest('hex');
@@ -115,6 +118,8 @@ function buildArchiveManifest(reviews, options = {}) {
       action: review.action,
       severity: review.severity,
       draftHash: review.evidence?.draftHash || null,
+      disposition: review.disposition?.decision || null,
+      dispositionDigest: review.disposition?.digest || null,
       recordDigest,
       previousDigest,
       chainDigest,
@@ -140,6 +145,94 @@ function buildArchiveManifest(reviews, options = {}) {
     },
     entries,
     archiveDigest: hashRecord({ generatedAt, firmId, retentionYears, entries }),
+  };
+}
+
+function createDispositionAttestation(review, input = {}, options = {}) {
+  if (!review || !review.reviewId) {
+    throw new Error('review with reviewId is required');
+  }
+
+  const decision = input.decision || input.disposition;
+  if (!DISPOSITIONS.has(decision)) {
+    throw new Error(`disposition must be one of: ${Array.from(DISPOSITIONS).join(', ')}`);
+  }
+
+  const supervisor = input.supervisor || input.reviewer;
+  if (!supervisor) {
+    throw new Error('supervisor is required for research disposition attestation');
+  }
+
+  const rationale = input.rationale || input.reason;
+  if (!rationale) {
+    throw new Error('rationale is required for research disposition attestation');
+  }
+
+  const attestedAt = input.attestedAt || options.attestedAt || new Date().toISOString();
+  const controlIds = Array.from(new Set([
+    'SUP-01',
+    ...(review.findings || []).map(finding => finding.control).filter(Boolean),
+  ]));
+
+  const attestation = {
+    format: 'equity_research_supervisor_disposition_attestation',
+    reviewId: review.reviewId,
+    draftHash: review.evidence?.draftHash || null,
+    decision,
+    supervisor,
+    rationale,
+    attestedAt,
+    requiredForRelease: review.action !== 'allow',
+    controlIds,
+    findingSummary: (review.findings || []).map(finding => ({
+      subtype: finding.subtype,
+      severity: finding.severity,
+      control: finding.control,
+      action: finding.action,
+    })),
+  };
+
+  return {
+    ...attestation,
+    digest: hashRecord(attestation),
+  };
+}
+
+function buildSupervisorAttestationPacket(reviews, options = {}) {
+  const generatedAt = options.generatedAt || new Date().toISOString();
+  const reviewList = reviews || [];
+  const attestations = reviewList
+    .filter(review => review.disposition)
+    .map(review => review.disposition);
+
+  const pending = reviewList
+    .filter(review => review.action !== 'allow' && !review.disposition)
+    .map(review => ({
+      reviewId: review.reviewId,
+      ticker: review.metadata?.ticker || null,
+      analyst: review.metadata?.analyst || null,
+      action: review.action,
+      severity: review.severity,
+      requiredControls: Array.from(new Set(['SUP-01', ...(review.findings || []).map(f => f.control).filter(Boolean)])),
+    }));
+
+  const packet = {
+    generatedAt,
+    format: 'equity_research_supervisor_attestation_packet',
+    summary: {
+      totalReviews: reviewList.length,
+      attested: attestations.length,
+      pending: pending.length,
+      rejected: attestations.filter(a => a.decision === 'rejected').length,
+      escalated: attestations.filter(a => a.decision === 'escalated').length,
+    },
+    attestations,
+    pending,
+  };
+
+  return {
+    ...packet,
+    packetDigest: hashRecord(packet),
   };
 }
 
@@ -281,6 +374,18 @@ class ResearchReviewGuard {
     return record;
   }
 
+  recordDisposition(reviewId, disposition, options = {}) {
+    const review = this.reviews.find(item => item.reviewId === reviewId);
+    if (!review) {
+      throw new Error(`unknown reviewId: ${reviewId}`);
+    }
+
+    const attestation = createDispositionAttestation(review, disposition, options);
+    review.disposition = attestation;
+    review.evidence.dispositionDigest = attestation.digest;
+    return attestation;
+  }
+
   exportEvidence(options = {}) {
     const from = options.fromTimestamp || 0;
     const to = options.toTimestamp || Date.now();
@@ -296,6 +401,7 @@ class ResearchReviewGuard {
         criticalFindings: reviews.reduce((sum, review) => sum + review.findings.filter(f => f.severity === 'critical').length, 0),
       },
       controlMatrix: CONTROL_MATRIX,
+      supervisorAttestationPacket: buildSupervisorAttestationPacket(reviews, options.attestation || {}),
       archiveManifest: buildArchiveManifest(reviews, options.archive || {}),
       reviews,
     };
@@ -306,6 +412,8 @@ module.exports = {
   ResearchReviewGuard,
   scanResearchDraft,
   buildArchiveManifest,
+  buildSupervisorAttestationPacket,
+  createDispositionAttestation,
   CONTROL_MATRIX,
   DEFAULT_RULES,
 };
