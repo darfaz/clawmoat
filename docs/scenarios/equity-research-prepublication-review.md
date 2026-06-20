@@ -58,7 +58,15 @@ if (review.action !== 'allow') {
   routeToSupervisor(review);
 }
 
-const evidence = guard.exportEvidence();
+const evidence = guard.exportEvidence({
+  archive: {
+    firmId: 'demo-bank',
+    retentionYears: 6,
+  },
+});
+console.log(evidence.archiveManifest.archiveDigest);
 ```
 
-This is intentionally small. It gives a demo-visible answer to "show me the pre-publication control" without pretending to be a full archive, WORM store, or supervisory workstation yet.
+The evidence export now includes an `equity_research_retention_archive_manifest` with one row per review, a SHA-256 digest of each review record, and a hash chain linking entries together. It is not a WORM store by itself. It is the manifest a firm can hand to its archive vendor or SEC/FINRA books-and-records workflow so the review packet can be exported, retained, and checked for tampering later.
+
+This is intentionally small. It gives a demo-visible answer to "show me the pre-publication control" and a second answer to "what survives retention review?" without pretending to be a full archive, WORM store, or supervisory workstation yet.

@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { ResearchReviewGuard, scanResearchDraft, CONTROL_MATRIX } = require('../src/finance/research-review');
+const { ResearchReviewGuard, scanResearchDraft, CONTROL_MATRIX, buildArchiveManifest } = require('../src/finance/research-review');
 const ClawMoat = require('../src');
 
 test('blocks draft that appears to use MNPI and missing release controls', () => {
@@ -52,10 +52,52 @@ test('ResearchReviewGuard records exportable pre-publication evidence', () => {
   assert.equal(evidence.summary.totalReviews, 1);
   assert.equal(evidence.summary.blocked, 1);
   assert.ok(evidence.controlMatrix.some(control => control.id === 'MNPI-01'));
+  assert.ok(evidence.archiveManifest);
+  assert.equal(evidence.archiveManifest.format, 'equity_research_retention_archive_manifest');
+  assert.equal(evidence.archiveManifest.summary.totalEntries, 1);
+  assert.match(evidence.archiveManifest.entries[0].recordDigest, /^[a-f0-9]{64}$/);
+  assert.match(evidence.archiveManifest.entries[0].chainDigest, /^[a-f0-9]{64}$/);
   assert.ok(CONTROL_MATRIX.some(control => control.id === 'REGAC-01'));
+});
+
+test('buildArchiveManifest creates deterministic digest chain for retention exports', () => {
+  const reviews = [
+    {
+      reviewId: 'review-1',
+      timestamp: 1781820000000,
+      metadata: { ticker: 'ACME', analyst: 'analyst-17' },
+      action: 'block',
+      severity: 'critical',
+      findings: [{ subtype: 'possible_mnpi', severity: 'critical', control: 'MNPI-01' }],
+      evidence: { draftHash: 'a'.repeat(64) },
+    },
+    {
+      reviewId: 'review-2',
+      timestamp: 1781820060000,
+      metadata: { ticker: 'BETA', analyst: 'analyst-22' },
+      action: 'allow',
+      severity: null,
+      findings: [],
+      evidence: { draftHash: 'b'.repeat(64) },
+    },
+  ];
+
+  const manifest = buildArchiveManifest(reviews, {
+    generatedAt: '2026-06-19T12:00:00.000Z',
+    firmId: 'demo-bank',
+    retentionYears: 6,
+  });
+
+  assert.equal(manifest.firmId, 'demo-bank');
+  assert.equal(manifest.retentionPolicy.archiveMode, 'export_manifest_for_worm_or_sec_17a4_store');
+  assert.equal(manifest.summary.blocked, 1);
+  assert.equal(manifest.entries[0].previousDigest, null);
+  assert.equal(manifest.entries[1].previousDigest, manifest.entries[0].chainDigest);
+  assert.match(manifest.archiveDigest, /^[a-f0-9]{64}$/);
 });
 
 test('top-level package exports ResearchReviewGuard', () => {
   assert.equal(typeof ClawMoat.ResearchReviewGuard, 'function');
   assert.equal(typeof ClawMoat.scanResearchDraft, 'function');
+  assert.equal(typeof ClawMoat.buildResearchArchiveManifest, 'function');
 });

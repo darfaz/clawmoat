@@ -74,6 +74,75 @@ function hashText(text) {
   return crypto.createHash('sha256').update(String(text || '')).digest('hex');
 }
 
+function canonicalize(value) {
+  if (Array.isArray(value)) {
+    return value.map(canonicalize);
+  }
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((acc, key) => {
+      acc[key] = canonicalize(value[key]);
+      return acc;
+    }, {});
+  }
+  return value;
+}
+
+function hashRecord(record) {
+  return hashText(JSON.stringify(canonicalize(record)));
+}
+
+function buildArchiveManifest(reviews, options = {}) {
+  const generatedAt = options.generatedAt || new Date().toISOString();
+  const firmId = options.firmId || 'unassigned-firm';
+  const retentionYears = options.retentionYears || 6;
+  let previousDigest = options.previousDigest || null;
+
+  const entries = reviews.map((review, index) => {
+    const recordDigest = hashRecord(review);
+    const chainInput = JSON.stringify({
+      index,
+      previousDigest,
+      recordDigest,
+      reviewId: review.reviewId,
+    });
+    const chainDigest = hashText(chainInput);
+    const entry = {
+      index,
+      reviewId: review.reviewId,
+      ticker: review.metadata?.ticker || null,
+      analyst: review.metadata?.analyst || null,
+      timestamp: review.timestamp,
+      action: review.action,
+      severity: review.severity,
+      draftHash: review.evidence?.draftHash || null,
+      recordDigest,
+      previousDigest,
+      chainDigest,
+    };
+    previousDigest = chainDigest;
+    return entry;
+  });
+
+  return {
+    generatedAt,
+    format: 'equity_research_retention_archive_manifest',
+    firmId,
+    retentionPolicy: {
+      retentionYears,
+      archiveMode: 'export_manifest_for_worm_or_sec_17a4_store',
+      contents: ['review metadata', 'draft hash', 'policy findings', 'control mappings', 'hash-chain digest'],
+    },
+    summary: {
+      totalEntries: entries.length,
+      blocked: entries.filter(entry => entry.action === 'block').length,
+      reviewRequired: entries.filter(entry => entry.action === 'review').length,
+      allowed: entries.filter(entry => entry.action === 'allow').length,
+    },
+    entries,
+    archiveDigest: hashRecord({ generatedAt, firmId, retentionYears, entries }),
+  };
+}
+
 function maxSeverity(findings) {
   const rank = { low: 0, medium: 1, high: 2, critical: 3 };
   return findings.reduce((max, finding) => (rank[finding.severity] > rank[max] ? finding.severity : max), 'low');
@@ -227,6 +296,7 @@ class ResearchReviewGuard {
         criticalFindings: reviews.reduce((sum, review) => sum + review.findings.filter(f => f.severity === 'critical').length, 0),
       },
       controlMatrix: CONTROL_MATRIX,
+      archiveManifest: buildArchiveManifest(reviews, options.archive || {}),
       reviews,
     };
   }
@@ -235,6 +305,7 @@ class ResearchReviewGuard {
 module.exports = {
   ResearchReviewGuard,
   scanResearchDraft,
+  buildArchiveManifest,
   CONTROL_MATRIX,
   DEFAULT_RULES,
 };
