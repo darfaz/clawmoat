@@ -3,8 +3,8 @@
 </p>
 
 <h1 align="center">ClawMoat</h1>
-<p align="center"><strong>Run agents on your main computer. Don’t run them naked.</strong></p>
-<p align="center">ClawMoat is the open-source agent seatbelt: runtime security for desktop AI agents with files, shell, browser, MCP, cron, and secret access.</p>
+<p align="center"><strong>The open-source agent firewall</strong></p>
+<p align="center">Prevent AI agents from leaking data, using dangerous tools, and importing poisoned dependencies.</p>
 <p align="center">AI made bug discovery cheap. ClawMoat helps you contain the blast radius while the patch queue catches up.</p>
 
 <p align="center">
@@ -20,78 +20,12 @@
 </p>
 
 <p align="center">
-  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/agent-seatbelt/">Agent Seatbelt</a> · <a href="https://clawmoat.com/agent-lifecycle-crisis/">Agent Lifecycle Crisis</a> · <a href="https://clawmoat.com/attack-demo/">Attack Demo</a> · <a href="https://clawmoat.com/assessment/">Free Assessment</a> · <a href="https://clawmoat.com/pricing/">Pricing</a> · <a href="https://clawmoat.com/agent-security-comparison/">Compare</a> · <a href="https://clawmoat.com/mcp-security-review/">MCP Security Review</a> · <a href="https://clawmoat.com/mcp-security-checklist/">MCP Checklist</a> · <a href="https://clawmoat.com/agent-exposure-report-template/">Exposure Report Template</a> · <a href="https://clawmoat.com/badge/">Secured Badge</a> · <a href="https://clawmoat.com/report-demo.html">Sample Report</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://clawmoat.com/blog/mcp-by-design-rce-agent-firewall.html">Latest MCP RCE Analysis</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
+  <a href="https://clawmoat.com">Website</a> · <a href="https://clawmoat.com/blog/">Blog</a> · <a href="https://www.npmjs.com/package/clawmoat">npm</a> · <a href="#quick-start">Quick Start</a> · <a href="https://app.clawmoat.com">Dashboard</a>
 </p>
 
 <p align="center">
   <strong>🔌 Official <a href="https://github.com/openclaw/openclaw">OpenClaw</a> sanitizer plugin available</strong> — ClawMoat is the reference implementation for OpenClaw's pluggable security pipeline.
 </p>
-
----
-
-## New: Research Preflight for AI-Assisted Equity Research
-
-`clawmoat research preflight` adds a regulated-research control layer for teams using Gemini, Copilot, ChatGPT, Claude, or internal models in limited research workflows. It checks drafts, transcripts, filings, model extracts, and restricted lists for unsupported claims, missing source citations, model tie-out mismatches, prompt injection in source text, potential MNPI/selective disclosure, information-barrier hits, required research disclosures, and missing AI usage attestation, then exports an evidence receipt for supervisor review.
-
-The bank-grade policy pack maps checks to FINRA-style supervision concerns: reasonably designed GenAI supervision, communications content standards, source provenance, information barriers, analyst certification, books-and-records evidence, and a tamper-evident supervision ledger with packet hashes, previous-entry hashes, supervisor/compliance approval events, and optional signed external anchors for retained ledger head hashes.
-
-```bash
-clawmoat research preflight \
-  --draft draft-note.md \
-  --source earnings-call.txt \
-  --model model.csv \
-  --restricted restricted.csv \
-  --provider Gemini \
-  --analyst "Demo Analyst" \
-  --bank-grade \
-  --output research-preflight.json \
-  --ledger research-supervision.jsonl
-
-clawmoat research ledger --ledger research-supervision.jsonl
-clawmoat research ledger --ledger research-supervision.jsonl --anchor research-anchor.json --signing-key research-anchor-private.pem --storage-target s3-object-lock://research-supervision/anchors/2026-06-19.json
-clawmoat research ledger --ledger research-supervision.jsonl --verify-anchor research-anchor.json --public-key research-anchor-public.pem --format json
-```
-
-→ Sales page: <https://clawmoat.com/equity-research-ai-control/>  
-→ Sample report: <https://clawmoat.com/research-preflight-report-demo/>
-
-## New: Home Network Guard
-
-WSJ's residential-proxy reporting makes the pattern obvious: trusted devices become attack infrastructure when nobody watches runtime behavior. `clawmoat home scan` extends ClawMoat from agent-seatbelt to home-network watchdog by inventorying local devices and flagging risky IoT/proxy indicators such as exposed Telnet, exposed Android Debug Bridge, unknown vendors, and proxy-like DNS or outbound behavior when logs are provided.
-
-```bash
-clawmoat home scan
-clawmoat home scan --sample
-clawmoat home scan --sample --format json
-clawmoat home watch --once
-clawmoat home watch --once --format json
-clawmoat home dns-plan --sample
-clawmoat home dns-blocklist --sample --format pihole --output clawmoat-home-blocklist.txt
-```
-
-`home watch` saves a local baseline in `~/.clawmoat/home-watch-baseline.json`, then compares future scans against it. That gives users the useful version of the WSJ story: “a new Android TV box joined your network and it exposes ADB/Telnet,” not a vague fear article.
-
-On Windows laptops running ClawMoat inside WSL, Home Guard queries the Windows host ARP table through PowerShell so it sees the real WiFi/Ethernet LAN, not just WSL/Docker virtual networks. On macOS and native Linux, the normal ARP/neighbor table path is used.
-
-`home dns-blocklist` turns suspicious proxy-like DNS telemetry into Pi-hole, AdGuard Home, hosts, or dnsmasq blocklists. This is the first protection layer: ClawMoat can now hand DNS filters concrete domains to block, while still being honest that firmware cleanup and device quarantine require router/firewall control.
-
-→ Read the Home Guard page: <https://clawmoat.com/home-network-guard/>
-
-## New: The Fable 5 Lesson
-
-Anthropic suspended Fable's Claude access after jailbreak concerns around Fable 5. That is the ClawMoat thesis in one sentence: model refusal is not enough when agents can use tools.
-
-A jailbreak against a chatbot is a bad answer. A jailbreak against an agent is a tool-use incident.
-
-→ Read the Fable 5 ClawMoat angle: <https://clawmoat.com/fable-lesson/>
-
-## Agent Seatbelt for Desktop Agents
-
-**Run agents on your main computer. Don’t run them naked.**
-
-Agents get useful when they run where the work is: your real files, shell, browser, Gmail, Drive, cron jobs, and MCP tools. That also gives them real blast radius. ClawMoat watches for prompt injection, credential leaks, dangerous tool calls, and audit gaps before your agent turns useful automation into a security incident.
-
-→ Read the launch page: <https://clawmoat.com/agent-seatbelt/>
 
 ---
 
@@ -149,19 +83,14 @@ Building with **LangChain**, **CrewAI**, **AutoGen**, or **OpenAI Agents**? Your
 - ⚡ **Zero dependencies** — pure Node.js, no ML models to download, sub-millisecond scans
 - 🔧 **CI/CD ready** — GitHub Actions workflow included, fail builds on security violations
 - 📋 **Policy engine** — YAML-based rules for shell, file, browser, and network access
-- 🧭 **Lifecycle audit** — `clawmoat lifecycle audit` finds missing agent identity, credential health, approval gates, audit trails, MCP policy, and kill switches
 - 🏰 **OWASP coverage** — maps to all 10 risks in the OWASP Top 10 for Agentic AI
-
-**Want a second set of eyes?** Send your repo, MCP server, agent framework, or workflow docs for a [free AI agent security assessment](https://clawmoat.com/assessment/). You get a short exposure report that maps what your agent can touch, what can influence it, and where a ClawMoat policy or docs fix would reduce blast radius.
 
 **Works with any agent framework.** ClawMoat scans text — it doesn't care if it came from LangChain, CrewAI, AutoGen, or your custom agent.
 
 
 ## 🛡️ Badge — Show Your Project is Secured
 
-If your project uses ClawMoat, add a self-serve badge after a local scan, or request a verified exposure report before making a stronger security claim: <https://clawmoat.com/badge/>.
-
-Basic badge markdown:
+If your project uses ClawMoat, add this badge to your README:
 
 ```markdown
 [![Secured by ClawMoat](https://img.shields.io/badge/🛡️_ClawMoat-secured-4c1?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAxTDMgNXY2YzAgNS41NSAzLjg0IDEwLjc0IDkgMTIgNS4xNi0xLjI2IDktNi40NSA5LTEyVjVsMC05LTEgMHoiLz48L3N2Zz4=)](https://github.com/darfaz/clawmoat)
@@ -228,39 +157,9 @@ clawmoat watch ~/.openclaw/agents/main
 # Audit an agent session
 clawmoat audit ~/.openclaw/agents/main/sessions/
 
-# Map lifecycle gaps before an agent touches real tools
-clawmoat lifecycle audit --path .
-
-# Scan your home network for risky IoT/proxy indicators
-clawmoat home scan
-
-# Save a baseline and alert when new/riskier devices appear
-clawmoat home watch --once
-
-# Generate DNS protection for Pi-hole / AdGuard Home
-clawmoat home dns-blocklist --sample --format pihole --output clawmoat-home-blocklist.txt
-
-# Fail CI if the lifecycle exposure is too high
-clawmoat lifecycle audit --path . --format json --strict
-
 # Run as real-time middleware  
 clawmoat protect --config clawmoat.yml
 ```
-
-### New — Agent Lifecycle Exposure Audit
-
-AI agents are production actors now. `clawmoat lifecycle audit` checks whether a repo or agent workspace has the lifecycle controls that instructions alone cannot provide: agent identity, credential health, tool policy, human approval gates, audit trails, MCP policy, and kill switches.
-
-```bash
-clawmoat lifecycle audit --path .
-clawmoat lifecycle audit --path . --format json
-clawmoat lifecycle audit --path . --format markdown --output lifecycle-report.md
-clawmoat lifecycle audit --path . --format json --strict
-```
-
-Use it before an agent gets shell, filesystem, browser, GitHub, email, calendar, MCP, or wallet access. The output is an Agent Lifecycle Exposure Report: detected surfaces, frameworks, credential hints, missing controls, risk score, and concrete fixes. Markdown output creates a shareable report you can attach to security reviews or send to maintainers as a free-assessment lead magnet.
-
-→ Read the launch brief: <https://clawmoat.com/agent-lifecycle-crisis/>
 
 ### New in v1.0.0 — Live Security Monitoring Dashboard
 

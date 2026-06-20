@@ -452,32 +452,6 @@ const ban = require('./ban-scanner');
 module.exports.createBanScanner = ban.createBanScanner;
 module.exports.BAN_PRESETS = ban.PRESETS;
 
-// Agent Lifecycle Audit
-const lifecycleAudit = require('./lifecycle-audit');
-module.exports.auditAgentLifecycle = lifecycleAudit.auditAgentLifecycle;
-module.exports.formatLifecycleAuditText = lifecycleAudit.formatLifecycleAuditText;
-
-// Home Network Guard
-const homeNetwork = require('./home-network');
-module.exports.auditHomeNetwork = homeNetwork.auditHomeNetwork;
-module.exports.createHomeWatchReport = homeNetwork.createHomeWatchReport;
-module.exports.discoverHomeNetworkDevices = homeNetwork.discoverDevices;
-module.exports.discoverWindowsHostDevices = homeNetwork.discoverWindowsHostDevices;
-module.exports.formatHomeNetworkText = homeNetwork.formatHomeNetworkText;
-module.exports.formatHomeWatchText = homeNetwork.formatHomeWatchText;
-module.exports.loadHomeWatchBaseline = homeNetwork.loadHomeWatchBaseline;
-module.exports.parseWindowsArpOutput = homeNetwork.parseWindowsArpOutput;
-module.exports.sampleHomeNetworkReport = homeNetwork.sampleHomeNetworkReport;
-module.exports.saveHomeWatchBaseline = homeNetwork.saveHomeWatchBaseline;
-
-// Home DNS Shield
-const homeDns = require('./home-dns');
-module.exports.buildHomeDnsBlocklist = homeDns.buildHomeDnsBlocklist;
-module.exports.createHomeDnsShieldPlan = homeDns.createHomeDnsShieldPlan;
-module.exports.formatHomeDnsBlocklist = homeDns.formatHomeDnsBlocklist;
-module.exports.formatHomeDnsShieldPlanText = homeDns.formatHomeDnsShieldPlanText;
-module.exports.writeHomeDnsBlocklist = homeDns.writeHomeDnsBlocklist;
-
 // Framework Adapters (also available via require('clawmoat/adapters'))
 const adapters = require('./adapters');
 module.exports.createGuard = adapters.createGuard;

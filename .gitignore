@@ -4,5 +4,3 @@ dist/
 .env
 .DS_Store
 coverage/
-server/data/licenses.json
-server/data/email-outbox.jsonl

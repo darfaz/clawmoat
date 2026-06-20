@@ -20,8 +20,8 @@
  */
 
 const { randomUUID } = require('crypto');
-const { existsSync } = require('fs');
-const { appendFile, readFile } = require('fs/promises');
+const { createReadStream, createWriteStream, existsSync } = require('fs');
+const { appendFile } = require('fs/promises');
 const { createInterface } = require('readline');
 const http = require('http');
 
@@ -412,10 +412,10 @@ class ApprovalWorkflow {
     }
 
     const entries = [];
-    const contents = await readFile(this.auditLog, 'utf8');
+    const fileStream = createReadStream(this.auditLog);
+    const rl = createInterface({ input: fileStream });
 
-    for (const line of contents.split(/\r?\n/)) {
-      if (!line.trim()) continue;
+    for await (const line of rl) {
       try {
         const entry = JSON.parse(line);
         

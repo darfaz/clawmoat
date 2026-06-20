@@ -7,7 +7,6 @@ const { describe, it, beforeEach, afterEach } = require('node:test');
 const { strictEqual, ok } = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 
@@ -20,7 +19,7 @@ describe('clawmoat init', () => {
 
   beforeEach(() => {
     originalCwd = process.cwd();
-    testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'clawmoat-test-'));
+    testDir = fs.mkdtempSync('/tmp/clawmoat-test-');
     configPath = path.join(testDir, 'clawmoat.yml');
     process.chdir(testDir);
   });

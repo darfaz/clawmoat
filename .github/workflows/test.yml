@@ -18,4 +18,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run tests
-        run: npm test
+        run: node bin/clawmoat.js test
