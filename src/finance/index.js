@@ -577,9 +577,14 @@ class FinanceGuard {
   }
 }
 
+const researchReview = require('./research-review');
+
 module.exports = {
   FinanceGuard,
   FINANCIAL_FORBIDDEN_ZONES,
   FINANCIAL_SECRET_PATTERNS,
   FINANCIAL_API_DOMAINS,
+  ResearchReviewGuard: researchReview.ResearchReviewGuard,
+  scanResearchDraft: researchReview.scanResearchDraft,
+  RESEARCH_REVIEW_CONTROL_MATRIX: researchReview.CONTROL_MATRIX,
 };

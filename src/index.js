@@ -381,6 +381,10 @@ module.exports.HostGuardian = HostGuardian;
 module.exports.TIERS = TIERS;
 module.exports.GatewayMonitor = require('./guardian/gateway-monitor').GatewayMonitor;
 module.exports.FinanceGuard = require('./finance').FinanceGuard;
+const researchReview = require('./finance/research-review');
+module.exports.ResearchReviewGuard = researchReview.ResearchReviewGuard;
+module.exports.scanResearchDraft = researchReview.scanResearchDraft;
+module.exports.RESEARCH_REVIEW_CONTROL_MATRIX = researchReview.CONTROL_MATRIX;
 module.exports.McpFirewall = require('./finance/mcp-firewall').McpFirewall;
 module.exports.LiveMonitor = require('./watch/live-monitor').LiveMonitor;
 
