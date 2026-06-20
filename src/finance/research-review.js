@@ -12,6 +12,13 @@ const DEFAULT_RULES = {
   blockUnapprovedPersonalData: true,
 };
 
+const DEFAULT_SUPERVISION_SLA_HOURS = {
+  critical: 4,
+  high: 24,
+  medium: 72,
+  low: 168,
+};
+
 const RATING_PATTERN = /\b(?:buy|sell|hold|neutral|underperform|outperform|overweight|underweight|market\s+perform|sector\s+perform|equal\s+weight)\b/i;
 const PRICE_TARGET_PATTERN = /\b(?:price\s+target|PT)\b[^\n$]*(?:\$|USD\s*)\d+(?:\.\d+)?/i;
 const RATIONALE_PATTERN = /\b(?:DCF|discounted cash flow|multiple|EV\/EBITDA|P\/E|EPS|revenue growth|margin|WACC|terminal value|sum-of-the-parts|SOTP)\b/i;
@@ -69,6 +76,7 @@ const CONTROL_MATRIX = [
   { id: 'SRC-01', name: 'Source trail completeness', evidence: 'Citations/source references attached to AI-assisted claims', mapsTo: ['supervision evidence trail', 'model risk documentation'] },
   { id: 'PT-01', name: 'Price target support', evidence: 'Price target and valuation rationale paired in draft', mapsTo: ['pre-publication review', 'fair and balanced communications'] },
   { id: 'SUP-01', name: 'Supervisor disposition attestation', evidence: 'Named supervisor decision, rationale, timestamp, and immutable digest tied to the draft hash', mapsTo: ['FINRA 3110 supervision evidence', 'SEC books-and-records readiness', 'SOC 2 CC7 evidence handling'] },
+  { id: 'SUP-02', name: 'Timed supervisory escalation queue', evidence: 'Pending blocked/review drafts sorted by severity, SLA due time, breach state, and required controls', mapsTo: ['FINRA 3110 supervision workflow', 'SOC 2 CC7 exception monitoring', 'model risk issue management'] },
 ];
 
 const DISPOSITIONS = new Set(['approved', 'approved_with_changes', 'rejected', 'escalated']);
@@ -233,6 +241,75 @@ function buildSupervisorAttestationPacket(reviews, options = {}) {
   return {
     ...packet,
     packetDigest: hashRecord(packet),
+  };
+}
+
+function buildSupervisionQueue(reviews, options = {}) {
+  const generatedAt = options.generatedAt || new Date().toISOString();
+  const nowMs = options.now ? Date.parse(options.now) : Date.now();
+  const slaHours = { ...DEFAULT_SUPERVISION_SLA_HOURS, ...(options.slaHours || {}) };
+  const severityRank = { critical: 3, high: 2, medium: 1, low: 0 };
+
+  const queue = (reviews || [])
+    .filter(review => review.action !== 'allow' && !review.disposition)
+    .map(review => {
+      const severity = review.severity || 'low';
+      const dueAtMs = review.timestamp + (slaHours[severity] || slaHours.low) * 60 * 60 * 1000;
+      const ageHours = Math.max(0, Math.round(((nowMs - review.timestamp) / 3_600_000) * 10) / 10);
+      const dueInHours = Math.round(((dueAtMs - nowMs) / 3_600_000) * 10) / 10;
+      const requiredControls = Array.from(new Set([
+        'SUP-01',
+        'SUP-02',
+        ...(review.findings || []).map(finding => finding.control).filter(Boolean),
+      ]));
+
+      return {
+        reviewId: review.reviewId,
+        ticker: review.metadata?.ticker || null,
+        analyst: review.metadata?.analyst || null,
+        model: review.metadata?.model || null,
+        action: review.action,
+        severity,
+        status: dueAtMs < nowMs ? 'breached' : dueAtMs - nowMs <= 24 * 60 * 60 * 1000 ? 'due_within_24h' : 'open',
+        ageHours,
+        dueInHours,
+        dueAt: new Date(dueAtMs).toISOString(),
+        requiredControls,
+        topFindings: (review.findings || []).slice(0, 3).map(finding => ({
+          subtype: finding.subtype,
+          severity: finding.severity,
+          control: finding.control,
+          action: finding.action,
+        })),
+        recommendedAction: severity === 'critical'
+          ? 'escalate_to_compliance_before_release'
+          : review.action === 'block'
+            ? 'supervisor_rejection_or_cleanroom_redraft'
+            : 'supervisory_review_before_publication',
+      };
+    })
+    .sort((a, b) => {
+      const severityDelta = severityRank[b.severity] - severityRank[a.severity];
+      if (severityDelta) return severityDelta;
+      return Date.parse(a.dueAt) - Date.parse(b.dueAt);
+    });
+
+  const packet = {
+    generatedAt,
+    format: 'equity_research_supervision_queue',
+    slaHours,
+    summary: {
+      pending: queue.length,
+      breached: queue.filter(item => item.status === 'breached').length,
+      dueWithin24Hours: queue.filter(item => item.status === 'due_within_24h').length,
+      critical: queue.filter(item => item.severity === 'critical').length,
+    },
+    queue,
+  };
+
+  return {
+    ...packet,
+    queueDigest: hashRecord(packet),
   };
 }
 
@@ -402,6 +479,7 @@ class ResearchReviewGuard {
       },
       controlMatrix: CONTROL_MATRIX,
       supervisorAttestationPacket: buildSupervisorAttestationPacket(reviews, options.attestation || {}),
+      supervisionQueue: buildSupervisionQueue(reviews, options.supervision || {}),
       archiveManifest: buildArchiveManifest(reviews, options.archive || {}),
       reviews,
     };
@@ -413,7 +491,9 @@ module.exports = {
   scanResearchDraft,
   buildArchiveManifest,
   buildSupervisorAttestationPacket,
+  buildSupervisionQueue,
   createDispositionAttestation,
   CONTROL_MATRIX,
   DEFAULT_RULES,
+  DEFAULT_SUPERVISION_SLA_HOURS,
 };

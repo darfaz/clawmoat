@@ -68,13 +68,18 @@ const evidence = guard.exportEvidence({
     firmId: 'demo-bank',
     retentionYears: 6,
   },
+  supervision: {
+    now: '2026-06-20T13:30:00.000Z',
+  },
 });
+console.log(evidence.supervisionQueue.summary);
 console.log(evidence.supervisorAttestationPacket.packetDigest);
 console.log(evidence.archiveManifest.archiveDigest);
 ```
 
-The evidence export now includes two buyer-visible artifacts:
+The evidence export now includes three buyer-visible artifacts:
 
+- `equity_research_supervision_queue`: pending blocked/review drafts sorted by severity and SLA due time, with breach state, required controls, and recommended escalation action.
 - `equity_research_supervisor_attestation_packet`: named supervisor decision, rationale, timestamp, mapped controls, pending reviews, and a packet digest.
 - `equity_research_retention_archive_manifest`: one row per review, a SHA-256 digest of each review record, the supervisor disposition digest, and a hash chain linking entries together.
 

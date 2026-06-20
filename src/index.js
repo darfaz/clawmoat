@@ -386,6 +386,7 @@ module.exports.ResearchReviewGuard = researchReview.ResearchReviewGuard;
 module.exports.scanResearchDraft = researchReview.scanResearchDraft;
 module.exports.buildResearchArchiveManifest = researchReview.buildArchiveManifest;
 module.exports.buildResearchSupervisorAttestationPacket = researchReview.buildSupervisorAttestationPacket;
+module.exports.buildResearchSupervisionQueue = researchReview.buildSupervisionQueue;
 module.exports.createResearchDispositionAttestation = researchReview.createDispositionAttestation;
 module.exports.RESEARCH_REVIEW_CONTROL_MATRIX = researchReview.CONTROL_MATRIX;
 module.exports.McpFirewall = require('./finance/mcp-firewall').McpFirewall;

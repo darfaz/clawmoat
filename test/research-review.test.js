@@ -8,6 +8,7 @@ const {
   CONTROL_MATRIX,
   buildArchiveManifest,
   buildSupervisorAttestationPacket,
+  buildSupervisionQueue,
 } = require('../src/finance/research-review');
 const ClawMoat = require('../src');
 
@@ -67,6 +68,8 @@ test('ResearchReviewGuard records exportable pre-publication evidence', () => {
   assert.equal(evidence.summary.blocked, 1);
   assert.equal(evidence.supervisorAttestationPacket.summary.attested, 1);
   assert.equal(evidence.supervisorAttestationPacket.summary.rejected, 1);
+  assert.equal(evidence.supervisionQueue.summary.pending, 0);
+  assert.match(evidence.supervisionQueue.queueDigest, /^[a-f0-9]{64}$/);
   assert.match(evidence.supervisorAttestationPacket.packetDigest, /^[a-f0-9]{64}$/);
   assert.ok(evidence.controlMatrix.some(control => control.id === 'MNPI-01'));
   assert.ok(evidence.controlMatrix.some(control => control.id === 'SUP-01'));
@@ -163,10 +166,63 @@ test('buildSupervisorAttestationPacket separates attested and pending supervisor
   assert.match(packet.packetDigest, /^[a-f0-9]{64}$/);
 });
 
+test('buildSupervisionQueue prioritizes overdue critical reviews for escalation', () => {
+  const reviews = [
+    {
+      reviewId: 'review-critical',
+      timestamp: Date.parse('2026-06-20T08:00:00.000Z'),
+      metadata: { ticker: 'ACME', analyst: 'analyst-17', model: 'equity-research-agent' },
+      action: 'block',
+      severity: 'critical',
+      findings: [{ subtype: 'possible_mnpi', severity: 'critical', control: 'MNPI-01', action: 'block' }],
+      evidence: { draftHash: 'a'.repeat(64) },
+    },
+    {
+      reviewId: 'review-high',
+      timestamp: Date.parse('2026-06-20T11:00:00.000Z'),
+      metadata: { ticker: 'BETA', analyst: 'analyst-22', model: 'equity-research-agent' },
+      action: 'review',
+      severity: 'high',
+      findings: [{ subtype: 'unsupported_price_target', severity: 'high', control: 'PT-01', action: 'review' }],
+      evidence: { draftHash: 'b'.repeat(64) },
+    },
+    {
+      reviewId: 'review-approved',
+      timestamp: Date.parse('2026-06-20T09:00:00.000Z'),
+      metadata: { ticker: 'CALM', analyst: 'analyst-31' },
+      action: 'review',
+      severity: 'high',
+      findings: [{ subtype: 'missing_reg_ac_certification', severity: 'high', control: 'REGAC-01', action: 'review' }],
+      evidence: { draftHash: 'c'.repeat(64) },
+      disposition: { decision: 'approved_with_changes', digest: 'd'.repeat(64) },
+    },
+  ];
+
+  const queue = buildSupervisionQueue(reviews, {
+    generatedAt: '2026-06-20T13:30:00.000Z',
+    now: '2026-06-20T13:30:00.000Z',
+  });
+
+  assert.equal(queue.format, 'equity_research_supervision_queue');
+  assert.equal(queue.summary.pending, 2);
+  assert.equal(queue.summary.breached, 1);
+  assert.equal(queue.summary.critical, 1);
+  assert.equal(queue.queue[0].reviewId, 'review-critical');
+  assert.equal(queue.queue[0].status, 'breached');
+  assert.equal(queue.queue[0].dueAt, '2026-06-20T12:00:00.000Z');
+  assert.equal(queue.queue[0].ageHours, 5.5);
+  assert.equal(queue.queue[0].dueInHours, -1.5);
+  assert.equal(queue.queue[0].recommendedAction, 'escalate_to_compliance_before_release');
+  assert.deepEqual(queue.queue[0].requiredControls, ['SUP-01', 'SUP-02', 'MNPI-01']);
+  assert.equal(queue.queue[1].status, 'due_within_24h');
+  assert.match(queue.queueDigest, /^[a-f0-9]{64}$/);
+});
+
 test('top-level package exports ResearchReviewGuard', () => {
   assert.equal(typeof ClawMoat.ResearchReviewGuard, 'function');
   assert.equal(typeof ClawMoat.scanResearchDraft, 'function');
   assert.equal(typeof ClawMoat.buildResearchArchiveManifest, 'function');
   assert.equal(typeof ClawMoat.buildResearchSupervisorAttestationPacket, 'function');
+  assert.equal(typeof ClawMoat.buildResearchSupervisionQueue, 'function');
   assert.equal(typeof ClawMoat.createResearchDispositionAttestation, 'function');
 });
