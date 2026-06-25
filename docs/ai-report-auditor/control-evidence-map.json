@@ -1,0 +1,232 @@
+{
+  "type": "clawmoat_research_control_evidence_map",
+  "generatedAt": "2026-06-19T14:10:00.000Z",
+  "mapId": "controls-1412864894d7f4d3",
+  "currentPain": "equities research buyers need SOC 2/vendor-risk answers, supervisory proof, and retention evidence before adopting AI-assisted research workflows today",
+  "futureAssumption": "AI-assisted research will move from pilot to routine production, making automated control evidence and auditor-ready proof a buying requirement within six months",
+  "ledgerFile": "/home/ildar/clawmoat/docs/ai-report-auditor/_generated/evidence/research-supervision-ledger.jsonl",
+  "ledgerVerification": {
+    "valid": true,
+    "entries": 3,
+    "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "failures": []
+  },
+  "frameworks": {
+    "soc2": [
+      "CC2",
+      "CC3",
+      "CC4",
+      "CC6",
+      "CC7",
+      "CC8",
+      "CC9"
+    ],
+    "soc1": [
+      "research_change_control",
+      "supervisory_review",
+      "segregation_of_duties",
+      "books_and_records_retention",
+      "management_review_evidence"
+    ],
+    "regulatory": [
+      "SEC/FINRA books-and-records evidence",
+      "pre-publication supervision",
+      "information-barrier and MNPI review evidence"
+    ]
+  },
+  "readiness": {
+    "readyControls": 6,
+    "partialControls": 0,
+    "missingControls": 0,
+    "totalControls": 6,
+    "approvalCoverage": {
+      "complete": true,
+      "totalPackets": 1,
+      "completePackets": 1,
+      "incompletePackets": 0,
+      "packets": [
+        {
+          "packetId": "research-43ceefe156824d54",
+          "sequence": 1,
+          "requiredRoles": [
+            "compliance",
+            "supervisor"
+          ],
+          "observedRoles": [
+            "compliance",
+            "supervisor"
+          ],
+          "missingRoles": [],
+          "approvals": [
+            {
+              "sequence": 2,
+              "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+              "reviewer": "Jordan Lee",
+              "role": "research_supervisor",
+              "normalizedRole": "supervisor",
+              "decision": "approve_with_conditions"
+            },
+            {
+              "sequence": 3,
+              "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+              "reviewer": "Casey Compliance",
+              "role": "compliance",
+              "normalizedRole": "compliance",
+              "decision": "approve_with_conditions"
+            }
+          ],
+          "selfApprovalsRejected": true,
+          "complete": true
+        }
+      ]
+    },
+    "demoNarrative": "show the draft, the AI-risk findings, the supervisor decision, the retained manifest, then this SOC/vendor-risk evidence map generated from the same ledger"
+  },
+  "controls": [
+    {
+      "id": "CM-RS-01",
+      "title": "AI-assisted research pre-publication review evidence is captured before distribution",
+      "currentPain": "research supervisors need fast proof that analysts did not publish AI-assisted claims without review",
+      "futurePain": "AI-assisted research volume will make sample-based manual review inadequate within six months",
+      "soc2Criteria": [
+        "CC7.2",
+        "CC8.1"
+      ],
+      "soc1Objective": "Controls provide evidence that research output changes and review packets are complete before client distribution.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "packetId": "research-43ceefe156824d54",
+          "sequence": 1,
+          "entryHash": "3726951b8fcf3a22f46d5e2a4803ebd65db4b1dca9cec72bbb73e8094c341aaa",
+          "analyst": "Maya Chen",
+          "coverageGroup": "US Software",
+          "requiredApprovals": [
+            "supervisor",
+            "compliance"
+          ]
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "id": "CM-RS-02",
+      "title": "Supervisor/compliance approval is independent from the submitting analyst",
+      "currentPain": "buyers need to show AI-assisted research had human supervision, not analyst self-certification",
+      "futurePain": "research teams using copilots will need scalable segregation-of-duty evidence for exceptions and high-risk findings",
+      "soc2Criteria": [
+        "CC6.1",
+        "CC6.3",
+        "CC7.2"
+      ],
+      "soc1Objective": "Controls restrict research approval to authorized reviewers independent of the preparer.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "packetId": "research-43ceefe156824d54",
+          "sequence": 2,
+          "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+          "reviewer": "Jordan Lee",
+          "role": "research_supervisor",
+          "normalizedRole": "supervisor",
+          "decision": "approve_with_conditions"
+        },
+        {
+          "packetId": "research-43ceefe156824d54",
+          "sequence": 3,
+          "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+          "reviewer": "Casey Compliance",
+          "role": "compliance",
+          "normalizedRole": "compliance",
+          "decision": "approve_with_conditions"
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "id": "CM-RS-03",
+      "title": "Research supervision ledger integrity is tamper-evident",
+      "currentPain": "compliance teams need to trust the audit trail after a disputed AI-assisted recommendation",
+      "futurePain": "agentic research workflows will require rollback/rewrite detection, not editable spreadsheets of approvals",
+      "soc2Criteria": [
+        "CC7.4",
+        "CC8.1",
+        "CC9.2"
+      ],
+      "soc1Objective": "Controls detect unauthorized changes to research supervision records.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+          "entries": 3
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "id": "CM-RS-04",
+      "title": "SEC/FINRA books-and-records retention export is manifest-backed",
+      "currentPain": "enterprise buyers ask whether AI review evidence can be retained, exported, and placed under legal hold",
+      "futurePain": "procurement and compliance reviews will expect WORM/object-lock handoff proof before approving AI research tools",
+      "soc2Criteria": [
+        "CC3.2",
+        "CC7.5",
+        "CC8.1"
+      ],
+      "soc1Objective": "Controls evidence completeness of retained research books-and-records exports.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "manifestId": "retention-1048c070e802458b",
+          "manifestHash": "78f24c268421dc927ecde91aa9b6294007a0e79bed1df052a50649559cf15119",
+          "retentionTarget": "s3-object-lock://demo/research/",
+          "legalHold": true
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "id": "CM-RS-05",
+      "title": "AI model usage inventory and model-risk flags are generated from review packets",
+      "currentPain": "model-risk teams need to know which approved or unapproved AI models touched research drafts before publication",
+      "futurePain": "AI governance reviews will expect model usage inventories linked to immutable supervision evidence, not analyst self-attestation",
+      "soc2Criteria": [
+        "CC6.1",
+        "CC7.2",
+        "CC9.2"
+      ],
+      "soc1Objective": "Controls evidence approved model usage and escalation of model-risk exceptions in the research workflow.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "registerId": "model-risk-8382e689fa8679e4",
+          "registerHash": "41380e150663fc3324736e87ed24423a984427a7ac9a3e9fc1a3d8126838827e",
+          "flaggedUses": 1
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "id": "CM-RS-06",
+      "title": "Control evidence map is generated from product evidence, not policy prose",
+      "currentPain": "SOC 2 and vendor-risk questionnaires create sales friction when answers are detached from system evidence",
+      "futurePain": "AI governance buyers will prefer products that generate auditor-facing evidence automatically during workflow execution",
+      "soc2Criteria": [
+        "CC2.1",
+        "CC3.1",
+        "CC4.1"
+      ],
+      "soc1Objective": "Controls provide repeatable evidence for management review and service-organization reporting.",
+      "status": "ready",
+      "evidenceRefs": [
+        {
+          "generatedAt": "2026-06-19T14:10:00.000Z",
+          "source": "clawmoat_research_control_evidence_map",
+          "ledgerHeadHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19"
+        }
+      ],
+      "missingEvidence": []
+    }
+  ],
+  "mapHash": "b17f322d490e1d192656dc665ce4cdfa9f956faccf7f73a0f21e672b33e469e9"
+}

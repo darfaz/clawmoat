@@ -1,0 +1,14 @@
+{
+  "type": "clawmoat_research_ledger_anchor",
+  "anchorId": "db-equities-pilot-anchor",
+  "generatedAt": "2026-06-19T14:00:00.000Z",
+  "ledgerFile": "/home/ildar/clawmoat/docs/ai-report-auditor/_generated/evidence/research-supervision-ledger.jsonl",
+  "ledgerHeadHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+  "entries": 3,
+  "storageTarget": "s3-object-lock://demo/research/anchor.json",
+  "previousAnchorHash": null,
+  "signatureAlgorithm": "ed25519",
+  "trustModel": "signed_head_hash_anchor_detects_rewrite_or_rollback_when_anchor_is_retained_externally",
+  "signature": "UEe/K698fVC1Gg+eTjawNIK4utKAeoZM+aFAjnGR6G7t/AriTn06Aaxy4IsLzdDrcqKJuUuZU8BB5Ji3C6WnCw==",
+  "anchorHash": "864a0eb3a002bd6d2f355985e9d7785473d8b5b6546c47788a775ed59d00dbe6"
+}

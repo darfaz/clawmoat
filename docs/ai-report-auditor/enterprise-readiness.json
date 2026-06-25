@@ -1,0 +1,242 @@
+{
+  "type": "clawmoat_research_enterprise_readiness_report",
+  "generatedAt": "2026-06-19T14:15:00.000Z",
+  "buyer": "DB Equities",
+  "useCase": "official AI-assisted equity research supervision",
+  "verdict": "controlled_pilot_ready_not_official",
+  "officialUseReady": false,
+  "pilotUseReady": true,
+  "summary": {
+    "passedGates": 6,
+    "totalGates": 9,
+    "blockers": 3,
+    "hardTruth": "The product is useful as a controlled demo or pilot, but it is not ready for DB Equities official production use until the blocker gates are cleared."
+  },
+  "gates": [
+    {
+      "id": "DB-EQ-01",
+      "title": "Pre-publication research review packets exist",
+      "status": "pass",
+      "evidence": [
+        {
+          "packetId": "research-43ceefe156824d54",
+          "entryHash": "3726951b8fcf3a22f46d5e2a4803ebd65db4b1dca9cec72bbb73e8094c341aaa"
+        }
+      ],
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-02",
+      "title": "Independent supervisor/compliance approvals exist for every packet",
+      "status": "pass",
+      "evidence": [
+        {
+          "packetId": "research-43ceefe156824d54",
+          "reviewer": "Jordan Lee",
+          "role": "research_supervisor",
+          "normalizedRole": "supervisor",
+          "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167"
+        },
+        {
+          "packetId": "research-43ceefe156824d54",
+          "reviewer": "Casey Compliance",
+          "role": "compliance",
+          "normalizedRole": "compliance",
+          "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19"
+        }
+      ],
+      "approvalCoverage": {
+        "complete": true,
+        "totalPackets": 1,
+        "completePackets": 1,
+        "incompletePackets": 0,
+        "packets": [
+          {
+            "packetId": "research-43ceefe156824d54",
+            "sequence": 1,
+            "requiredRoles": [
+              "compliance",
+              "supervisor"
+            ],
+            "observedRoles": [
+              "compliance",
+              "supervisor"
+            ],
+            "missingRoles": [],
+            "approvals": [
+              {
+                "sequence": 2,
+                "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+                "reviewer": "Jordan Lee",
+                "role": "research_supervisor",
+                "normalizedRole": "supervisor",
+                "decision": "approve_with_conditions"
+              },
+              {
+                "sequence": 3,
+                "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+                "reviewer": "Casey Compliance",
+                "role": "compliance",
+                "normalizedRole": "compliance",
+                "decision": "approve_with_conditions"
+              }
+            ],
+            "selfApprovalsRejected": true,
+            "complete": true
+          }
+        ]
+      },
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-03",
+      "title": "Tamper-evident ledger verifies cleanly",
+      "status": "pass",
+      "evidence": [
+        {
+          "entries": 3,
+          "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19"
+        }
+      ],
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-04",
+      "title": "Externally retained signed ledger anchor is verified",
+      "status": "pass",
+      "evidence": [
+        {
+          "anchorId": "db-equities-pilot-anchor",
+          "ledgerHeadHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19"
+        }
+      ],
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-05",
+      "title": "SEC/FINRA retention manifest targets immutable/WORM storage",
+      "status": "pass",
+      "evidence": [
+        {
+          "manifestId": "retention-1048c070e802458b",
+          "manifestHash": "78f24c268421dc927ecde91aa9b6294007a0e79bed1df052a50649559cf15119",
+          "retentionTarget": "s3-object-lock://demo/research/"
+        }
+      ],
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-06",
+      "title": "SOC/vendor-risk control evidence map is fully ready",
+      "status": "pass",
+      "evidence": [
+        {
+          "mapId": "controls-1412864894d7f4d3",
+          "mapHash": "b17f322d490e1d192656dc665ce4cdfa9f956faccf7f73a0f21e672b33e469e9",
+          "readiness": {
+            "readyControls": 6,
+            "partialControls": 0,
+            "missingControls": 0,
+            "totalControls": 6,
+            "approvalCoverage": {
+              "complete": true,
+              "totalPackets": 1,
+              "completePackets": 1,
+              "incompletePackets": 0,
+              "packets": [
+                {
+                  "packetId": "research-43ceefe156824d54",
+                  "sequence": 1,
+                  "requiredRoles": [
+                    "compliance",
+                    "supervisor"
+                  ],
+                  "observedRoles": [
+                    "compliance",
+                    "supervisor"
+                  ],
+                  "missingRoles": [],
+                  "approvals": [
+                    {
+                      "sequence": 2,
+                      "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+                      "reviewer": "Jordan Lee",
+                      "role": "research_supervisor",
+                      "normalizedRole": "supervisor",
+                      "decision": "approve_with_conditions"
+                    },
+                    {
+                      "sequence": 3,
+                      "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+                      "reviewer": "Casey Compliance",
+                      "role": "compliance",
+                      "normalizedRole": "compliance",
+                      "decision": "approve_with_conditions"
+                    }
+                  ],
+                  "selfApprovalsRejected": true,
+                  "complete": true
+                }
+              ]
+            },
+            "demoNarrative": "show the draft, the AI-risk findings, the supervisor decision, the retained manifest, then this SOC/vendor-risk evidence map generated from the same ledger"
+          }
+        }
+      ],
+      "blocker": null
+    },
+    {
+      "id": "DB-EQ-07",
+      "title": "Enterprise SSO/RBAC and role provisioning are configured",
+      "status": "fail",
+      "evidence": [],
+      "blocker": "No deployable SSO/RBAC integration or role-provisioning evidence is present."
+    },
+    {
+      "id": "DB-EQ-08",
+      "title": "Customer environment connectors and data-boundary controls are configured",
+      "status": "fail",
+      "evidence": [],
+      "blocker": "No verified connectors for DB research sources, restricted lists, approved models, archive, or DLP boundary are configured."
+    },
+    {
+      "id": "DB-EQ-09",
+      "title": "Operational owner, support path, and incident response are defined",
+      "status": "fail",
+      "evidence": [],
+      "blocker": "No official runbook, support SLA, incident path, or production owner evidence is present."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "DB-EQ-07",
+      "title": "Enterprise SSO/RBAC and role provisioning are configured",
+      "blocker": "No deployable SSO/RBAC integration or role-provisioning evidence is present."
+    },
+    {
+      "id": "DB-EQ-08",
+      "title": "Customer environment connectors and data-boundary controls are configured",
+      "blocker": "No verified connectors for DB research sources, restricted lists, approved models, archive, or DLP boundary are configured."
+    },
+    {
+      "id": "DB-EQ-09",
+      "title": "Operational owner, support path, and incident response are defined",
+      "blocker": "No official runbook, support SLA, incident path, or production owner evidence is present."
+    }
+  ],
+  "nextImprovements": [
+    {
+      "gate": "DB-EQ-07",
+      "action": "No deployable SSO/RBAC integration or role-provisioning evidence is present."
+    },
+    {
+      "gate": "DB-EQ-08",
+      "action": "No verified connectors for DB research sources, restricted lists, approved models, archive, or DLP boundary are configured."
+    },
+    {
+      "gate": "DB-EQ-09",
+      "action": "No official runbook, support SLA, incident path, or production owner evidence is present."
+    }
+  ],
+  "readinessHash": "a4e08d9565e9212d51358c21f9ed7199a8bae96d20862b0571a0b6550adc475c"
+}

@@ -1,0 +1,108 @@
+{
+  "type": "clawmoat_research_retention_manifest",
+  "generatedAt": "2026-06-19T14:05:00.000Z",
+  "manifestId": "retention-1048c070e802458b",
+  "retentionTarget": "s3-object-lock://demo/research/",
+  "retentionClass": "sec-finra-research-books-and-records",
+  "minimumRetentionYears": 6,
+  "legalHold": true,
+  "exportMode": "jsonl-ledger-plus-manifest",
+  "buyerPain": "research supervisors need proof that AI-assisted pre-publication review evidence can be retained, exported, and checked without trusting the drafting system",
+  "sixMonthAssumption": "equity research buyers will ask for SEC/FINRA books-and-records export, legal-hold readiness, and WORM/object-lock evidence before letting analysts use agentic research copilots",
+  "ledgerFile": "/home/ildar/clawmoat/docs/ai-report-auditor/_generated/evidence/research-supervision-ledger.jsonl",
+  "ledgerVerification": {
+    "valid": true,
+    "entries": 3,
+    "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "failures": []
+  },
+  "anchor": {
+    "type": "clawmoat_research_ledger_anchor",
+    "anchorId": "db-equities-pilot-anchor",
+    "generatedAt": "2026-06-19T14:00:00.000Z",
+    "ledgerFile": "/home/ildar/clawmoat/docs/ai-report-auditor/_generated/evidence/research-supervision-ledger.jsonl",
+    "ledgerHeadHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "entries": 3,
+    "storageTarget": "s3-object-lock://demo/research/anchor.json",
+    "previousAnchorHash": null,
+    "signatureAlgorithm": "ed25519",
+    "trustModel": "signed_head_hash_anchor_detects_rewrite_or_rollback_when_anchor_is_retained_externally",
+    "signature": "UEe/K698fVC1Gg+eTjawNIK4utKAeoZM+aFAjnGR6G7t/AriTn06Aaxy4IsLzdDrcqKJuUuZU8BB5Ji3C6WnCw==",
+    "anchorHash": "864a0eb3a002bd6d2f355985e9d7785473d8b5b6546c47788a775ed59d00dbe6"
+  },
+  "anchorVerification": {
+    "valid": true,
+    "anchorId": "db-equities-pilot-anchor",
+    "ledgerHeadHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "entries": 3,
+    "signatureAlgorithm": "ed25519",
+    "failures": []
+  },
+  "summary": {
+    "entries": 3,
+    "reviewPackets": 1,
+    "approvals": 2,
+    "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "packetIds": [
+      "research-43ceefe156824d54"
+    ],
+    "analysts": [
+      "Maya Chen"
+    ],
+    "coverageGroups": [
+      "US Software"
+    ],
+    "requiredApprovals": [
+      "compliance",
+      "supervisor"
+    ],
+    "findingTypes": [
+      "ai_usage_attestation",
+      "missing_claim_citation",
+      "model_tie_out",
+      "potential_mnpi",
+      "prompt_injection_source",
+      "unsupported_claim",
+      "unsupported_claim_citation"
+    ]
+  },
+  "controls": [
+    "hash_chain_integrity_verified",
+    "pre_publication_review_packet_indexed",
+    "approval_events_indexed",
+    "export_manifest_hash",
+    "legal_hold_flag",
+    "worm_retention_target_recorded",
+    "signed_external_anchor_verified"
+  ],
+  "evidenceIndex": [
+    {
+      "sequence": 1,
+      "type": "clawmoat_research_review_packet",
+      "entryHash": "3726951b8fcf3a22f46d5e2a4803ebd65db4b1dca9cec72bbb73e8094c341aaa",
+      "previousHash": null,
+      "packetId": "research-43ceefe156824d54",
+      "generatedAt": "2026-06-19T12:05:00.000Z",
+      "retentionClass": "research-supervision-audit-packet"
+    },
+    {
+      "sequence": 2,
+      "type": "clawmoat_research_approval",
+      "entryHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+      "previousHash": "3726951b8fcf3a22f46d5e2a4803ebd65db4b1dca9cec72bbb73e8094c341aaa",
+      "packetId": "research-43ceefe156824d54",
+      "generatedAt": "2026-06-19T13:00:00.000Z",
+      "retentionClass": null
+    },
+    {
+      "sequence": 3,
+      "type": "clawmoat_research_approval",
+      "entryHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+      "previousHash": "7ede2edb11c819fb5f9cda4f25791a141d2f44ca015410a55a8f5f2b715cd167",
+      "packetId": "research-43ceefe156824d54",
+      "generatedAt": "2026-06-19T13:15:00.000Z",
+      "retentionClass": null
+    }
+  ],
+  "manifestHash": "78f24c268421dc927ecde91aa9b6294007a0e79bed1df052a50649559cf15119"
+}

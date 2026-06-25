@@ -1,0 +1,109 @@
+{
+  "type": "clawmoat_research_model_risk_register",
+  "generatedAt": "2026-06-19T14:07:00.000Z",
+  "registerId": "model-risk-8382e689fa8679e4",
+  "currentPain": "research compliance and model-risk teams need proof of which AI models touched each draft, whether usage was approved, and whether risky model outputs were escalated before publication",
+  "futureAssumption": "within six months, equity research buyers will expect AI usage inventories tied to supervision evidence, not self-reported analyst attestations",
+  "ledgerVerification": {
+    "valid": true,
+    "entries": 3,
+    "headHash": "52b0bc59664245b12dc68b5f0052515191a4572e9e83653e1d041d7ca26c8e19",
+    "failures": []
+  },
+  "approvedProviders": [
+    "Gemini"
+  ],
+  "prohibitedProviders": [],
+  "summary": {
+    "packetsReviewed": 1,
+    "uniqueProviders": [
+      "Gemini"
+    ],
+    "flaggedUses": 1,
+    "approvedUseEvidenced": 0
+  },
+  "controls": [
+    "ai_model_usage_inventory_generated",
+    "model_hash_tied_to_review_packet",
+    "approved_provider_policy_checked",
+    "restricted_list_hash_checked",
+    "high_risk_model_outputs_escalated",
+    "model_extraction_assessment_tracked",
+    "model_inversion_assessment_tracked",
+    "data_poisoning_assessment_tracked",
+    "adversarial_evasion_assessment_tracked",
+    "data_provenance_assessment_tracked"
+  ],
+  "riskDomains": [
+    {
+      "id": "model_extraction",
+      "title": "Model extraction exposure",
+      "frameworks": [
+        "OWASP ML Top 10",
+        "corca-ai/awesome-llm-security"
+      ]
+    },
+    {
+      "id": "model_inversion",
+      "title": "Model inversion and privacy exposure",
+      "frameworks": [
+        "OWASP ML Top 10",
+        "DeepSpaceHarbor/Awesome-AI-Security"
+      ]
+    },
+    {
+      "id": "data_poisoning",
+      "title": "Training/retrieval data poisoning exposure",
+      "frameworks": [
+        "CSA AI Model Risk Framework",
+        "OWASP AI Security and Privacy Guide"
+      ]
+    },
+    {
+      "id": "adversarial_evasion",
+      "title": "Adversarial evasion and robustness exposure",
+      "frameworks": [
+        "OWASP ML Top 10",
+        "AI Verify"
+      ]
+    },
+    {
+      "id": "data_provenance",
+      "title": "Model/source data provenance evidence",
+      "frameworks": [
+        "CSA AI Controls Matrix",
+        "AI Verify"
+      ]
+    }
+  ],
+  "modelUses": [
+    {
+      "packetId": "research-43ceefe156824d54",
+      "sequence": 1,
+      "analyst": "Maya Chen",
+      "coverageGroup": "US Software",
+      "modelProvider": "Gemini",
+      "modelHash": "d2f4133cd6936e002f2e7d757cb384236d6d449a89bc583b1a0da486213a372a",
+      "draftHash": "8e78ccbf164a66825f08f04e68e474b9b9bdc8fd3a3d11175c1dfbbe600b193f",
+      "riskAssessments": {
+        "modelExtraction": false,
+        "modelInversion": false,
+        "dataPoisoning": false,
+        "adversarialEvasion": false,
+        "dataProvenance": false
+      },
+      "policyPack": "investment-banking-research-v1",
+      "disposition": "compliance_hold",
+      "riskFlags": [
+        "high_or_critical_preflight_findings",
+        "missing_model_extraction_assessment",
+        "missing_model_inversion_assessment",
+        "missing_poisoning_assessment",
+        "missing_adversarial_evasion_assessment",
+        "missing_data_provenance_assessment"
+      ],
+      "modelRiskRating": "requires_model_risk_review"
+    }
+  ],
+  "registerHash": "41380e150663fc3324736e87ed24423a984427a7ac9a3e9fc1a3d8126838827e"
+}

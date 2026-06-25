@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClawMoat AI Research Release Gate</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; }
+    body { margin: 0; padding: 32px; }
+    main { max-width: 1120px; margin: 0 auto; }
+    .hero { background: linear-gradient(135deg, #111827, #312e81); color: white; border-radius: 28px; padding: 34px; box-shadow: 0 24px 70px rgba(15,23,42,.24); }
+    .eyebrow { text-transform: uppercase; letter-spacing: .14em; color: #c7d2fe; font-size: 12px; font-weight: 700; }
+    h1 { margin: 8px 0 12px; font-size: clamp(32px, 5vw, 56px); line-height: .98; }
+    .hero p { max-width: 780px; color: #e0e7ff; font-size: 18px; }
+    .verdict { display: inline-flex; gap: 10px; align-items: center; margin-top: 18px; padding: 12px 16px; background: rgba(239,68,68,.16); border: 1px solid rgba(248,113,113,.45); border-radius: 999px; font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 22px 0; }
+    .stat { background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    .stat strong { display: block; font-size: 30px; }
+    .stat span { color: #64748b; font-size: 13px; }
+    .section { background: white; border: 1px solid #e2e8f0; border-radius: 22px; padding: 24px; margin-top: 18px; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    h2 { margin: 0 0 14px; }
+    .claim-card { border: 1px solid #e2e8f0; border-left: 8px solid #94a3b8; border-radius: 18px; padding: 18px; margin: 14px 0; background: #fff; }
+    .claim-card.red { border-left-color: #ef4444; background: #fff7f7; }
+    .claim-card.yellow { border-left-color: #f59e0b; background: #fffbeb; }
+    .claim-card.green { border-left-color: #22c55e; background: #f0fdf4; }
+    .claim-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .claim-text { font-size: 17px; font-weight: 700; line-height: 1.45; }
+    .pill { color: white; padding: 4px 9px; border-radius: 999px; }
+    .pill.red { background: #dc2626; }
+    .pill.yellow { background: #d97706; }
+    .pill.green { background: #16a34a; }
+    ul { padding-left: 20px; color: #334155; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; }
+    a { color: #3730a3; font-weight: 700; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .flow { counter-reset: step; display: grid; gap: 12px; }
+    .flow li { list-style: none; position: relative; padding: 14px 14px 14px 52px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; }
+    .flow li:before { counter-increment: step; content: counter(step); position: absolute; left: 14px; top: 14px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 999px; color: white; background: #312e81; font-weight: 900; }
+    @media (max-width: 800px) { body { padding: 16px; } .grid, .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">ClawMoat visual demo · AI Report Auditor · Unsupported Claim Detector</div>
+      <h1>AI Research Release Gate</h1>
+      <p>Visual-first audit of an AI-assisted equity research draft. ClawMoat does not claim universal hallucination detection. It redlines unsupported, uncited, contradicted, misbound, or not-verifiable claims before publication, then preserves the workflow evidence for the CLI/API ledger behind it.</p>
+      <div class="verdict">Blocked before publication · DB Equities · 2026-06-19T14:20:00.000Z</div>
+    </section>
+
+    <section class="grid" aria-label="summary statistics">
+      <div class="stat"><strong>13</strong><span>Total findings</span></div>
+      <div class="stat"><strong>8</strong><span>Blocked claims</span></div>
+      <div class="stat"><strong>2</strong><span>Needs review</span></div>
+      <div class="stat"><strong>0</strong><span>Supported claims</span></div>
+    </section>
+
+    <section class="section">
+      <h2>Marked-up claim ledger</h2>
+      
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C01</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">AI-assisted draft: ACME Software revenue increased 18% to $2.4 billion</p>
+          <ul><li><strong>missing claim citation</strong> <span>Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.</span></li>
+<li><strong>unsupported claim</strong> <span>Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C02</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion</p>
+          <ul><li><strong>missing claim citation</strong> <span>Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.</span></li>
+<li><strong>unsupported claim</strong> <span>Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C03</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">Claim cites approved-model, but that artifact does not support the cited numbers/text. Missing numbers: none. Claim: [S:approved-model]
+The CFO privately told the analyst that next quarter revenue will beat consensus before public release</p>
+          <ul><li><strong>unsupported claim citation</strong> <span>Cite the artifact that actually supports the claim, attach the missing source, or revise/remove the claim before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C04</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">[S:approved-model]
+The CFO privately told the analyst that next quarter revenue will beat consensus before public release</p>
+          <ul><li><strong>unsupported claim</strong> <span>Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C05</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">Risk factors: demand volatility, execution risk, and margin compression could pressure the thesis</p>
+          <ul><li><strong>unsupported claim</strong> <span>Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C06</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">Valuation methodology: price target derived from a peer multiple and approved model export</p>
+          <ul><li><strong>missing claim citation</strong> <span>Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.</span></li>
+<li><strong>unsupported claim</strong> <span>Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.</span></li></ul>
+        </article>
+
+        <article class="claim-card yellow">
+          <div class="claim-meta"><span>C07</span><span class="pill yellow">Needs review</span><span>medium</span></div>
+          <p class="claim-text">Draft uses 18%; model values include $2.4billion, $82, 31%</p>
+          <ul><li><strong>model tie out</strong> <span>Tie every price target, estimate, and margin number to the approved model version before publication.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C08</span><span class="pill red">Blocked</span><span>high</span></div>
+          <p class="claim-text">earnings-call-source.txt: instruction_override</p>
+          <ul><li><strong>prompt injection source</strong> <span>Treat the source as untrusted. Do not allow source text to control tools, retrieval scope, recipients, or model/system instructions.</span></li></ul>
+        </article>
+
+        <article class="claim-card yellow">
+          <div class="claim-meta"><span>C09</span><span class="pill yellow">Needs review</span><span>medium</span></div>
+          <p class="claim-text">Draft references AI assistance but no analyst review/attestation language was detected.</p>
+          <ul><li><strong>ai usage attestation</strong> <span>Record analyst review, source verification, and supervisor approval before relying on AI-assisted content.</span></li></ul>
+        </article>
+
+        <article class="claim-card red">
+          <div class="claim-meta"><span>C10</span><span class="pill red">Blocked</span><span>critical</span></div>
+          <p class="claim-text">The CFO privately told the analyst that next quarter revenue will beat consensus before public release.</p>
+          <ul><li><strong>potential mnpi</strong> <span>Stop distribution. Route to compliance, confirm public-source provenance, and document wall-crossing / information-barrier clearance before any AI-assisted use.</span></li></ul>
+        </article>
+    </section>
+
+    <section class="section">
+      <h2>Claim audit taxonomy</h2>
+      <ul>
+        <li><strong>Supported</strong>: approved source evidence directly supports the claim.</li>
+        <li><strong>Contradicted</strong>: approved source evidence says something different.</li>
+        <li><strong>Misbound</strong>: the cited number, entity, or date appears, but is attached to the wrong metric, period, or source context.</li>
+        <li><strong>Uncited</strong>: a material claim has no explicit source citation.</li>
+        <li><strong>Not verifiable from provided sources</strong>: the claim may be true, but it is not proven by the supplied corpus.</li>
+        <li><strong>Needs human review</strong>: the claim is ambiguous, judgmental, or outside deterministic source scope.</li>
+      </ul>
+    </section>
+
+    <section class="section two-col">
+      <div>
+        <h2>Release gate</h2>
+        <ul>
+          <li>Allowed: <strong>no</strong></li>
+          <li>Verdict: <strong>controlled_pilot_ready_not_official</strong></li>
+          <li>Policy pack: <code>investment-banking-research-v1</code></li>
+          <li>Model provider: <code>Gemini</code></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Workflow evidence generated next</h2>
+        <ul>
+          <li><a href="research-preflight.json">Machine-readable preflight JSON</a></li>
+          <li><a href="supervision-ledger.jsonl">Tamper-evident supervision ledger JSONL</a></li>
+          <li>Supervisor and compliance approval events inside the ledger chain</li>
+          <li><a href="retention-manifest.json">Retention manifest</a> and <a href="signed-ledger-anchor.json">signed ledger anchor</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Workflow CLI/API + ledger + approval chain</h2>
+      <ol class="flow">
+        <li><strong>CLI/API preflight</strong>: run <code>clawmoat research preflight</code> or POST the draft/source/model bundle to <code>/api/research/preflight</code>. Output: <a href="research-preflight.json">research-preflight.json</a>.</li>
+        <li><strong>Review packet</strong>: the preflight becomes a hash-addressed review packet with required approval roles and retained source fingerprints.</li>
+        <li><strong>Approval chain</strong>: supervisor and compliance decisions append as independent ledger events. Analyst self-approval is rejected.</li>
+        <li><strong>Tamper evidence</strong>: every event includes <code>previousHash</code> and <code>entryHash</code>; the signed head hash is retained externally. Output: <a href="supervision-ledger.jsonl">supervision-ledger.jsonl</a> and <a href="signed-ledger-anchor.json">anchor.json</a>.</li>
+        <li><strong>Enterprise handoff</strong>: retention, model-risk, SOC/vendor-risk, and readiness artifacts tell the buyer what is pilot-ready and what still blocks official use.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>

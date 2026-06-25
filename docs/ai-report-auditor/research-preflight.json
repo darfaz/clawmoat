@@ -1,0 +1,323 @@
+{
+  "type": "clawmoat_research_preflight",
+  "generatedAt": "2026-06-19T12:00:00.000Z",
+  "workflow": "db-equity-research",
+  "analyst": "Maya Chen",
+  "modelProvider": "Gemini",
+  "policyPack": "investment-banking-research-v1",
+  "summary": {
+    "totalFindings": 13,
+    "critical": 1,
+    "high": 9,
+    "medium": 3,
+    "low": 0,
+    "disposition": "compliance_hold"
+  },
+  "findings": [
+    {
+      "type": "missing_claim_citation",
+      "severity": "medium",
+      "evidence": "AI-assisted draft: ACME Software revenue increased 18% to $2.4 billion",
+      "recommendation": "Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.",
+      "control": "IB-RESEARCH-CITATIONS"
+    },
+    {
+      "type": "unsupported_claim",
+      "severity": "high",
+      "evidence": "AI-assisted draft: ACME Software revenue increased 18% to $2.4 billion",
+      "recommendation": "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "control": "FINRA-2210-COMMS"
+    },
+    {
+      "type": "missing_claim_citation",
+      "severity": "high",
+      "evidence": "We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion",
+      "recommendation": "Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.",
+      "control": "IB-RESEARCH-CITATIONS"
+    },
+    {
+      "type": "unsupported_claim",
+      "severity": "high",
+      "evidence": "We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion",
+      "recommendation": "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "control": "FINRA-2210-COMMS"
+    },
+    {
+      "type": "unsupported_claim_citation",
+      "severity": "high",
+      "evidence": "Claim cites approved-model, but that artifact does not support the cited numbers/text. Missing numbers: none. Claim: [S:approved-model]\nThe CFO privately told the analyst that next quarter revenue will beat consensus before public release",
+      "recommendation": "Cite the artifact that actually supports the claim, attach the missing source, or revise/remove the claim before supervisor review.",
+      "control": "IB-RESEARCH-CITATIONS"
+    },
+    {
+      "type": "unsupported_claim",
+      "severity": "high",
+      "evidence": "[S:approved-model]\nThe CFO privately told the analyst that next quarter revenue will beat consensus before public release",
+      "recommendation": "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "control": "FINRA-2210-COMMS"
+    },
+    {
+      "type": "unsupported_claim",
+      "severity": "high",
+      "evidence": "Risk factors: demand volatility, execution risk, and margin compression could pressure the thesis",
+      "recommendation": "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "control": "FINRA-2210-COMMS"
+    },
+    {
+      "type": "missing_claim_citation",
+      "severity": "high",
+      "evidence": "Valuation methodology: price target derived from a peer multiple and approved model export",
+      "recommendation": "Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.",
+      "control": "IB-RESEARCH-CITATIONS"
+    },
+    {
+      "type": "unsupported_claim",
+      "severity": "high",
+      "evidence": "Valuation methodology: price target derived from a peer multiple and approved model export",
+      "recommendation": "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "control": "FINRA-2210-COMMS"
+    },
+    {
+      "type": "model_tie_out",
+      "severity": "medium",
+      "evidence": "Draft uses 18%; model values include $2.4billion, $82, 31%",
+      "recommendation": "Tie every price target, estimate, and margin number to the approved model version before publication.",
+      "control": "IB-RESEARCH-CITATIONS"
+    },
+    {
+      "type": "prompt_injection_source",
+      "severity": "high",
+      "evidence": "earnings-call-source.txt: instruction_override",
+      "recommendation": "Treat the source as untrusted. Do not allow source text to control tools, retrieval scope, recipients, or model/system instructions.",
+      "control": "FINRA-3110-GENAI"
+    },
+    {
+      "type": "ai_usage_attestation",
+      "severity": "medium",
+      "evidence": "Draft references AI assistance but no analyst review/attestation language was detected.",
+      "recommendation": "Record analyst review, source verification, and supervisor approval before relying on AI-assisted content.",
+      "control": "FINRA-3110-GENAI"
+    },
+    {
+      "type": "potential_mnpi",
+      "severity": "critical",
+      "evidence": "The CFO privately told the analyst that next quarter revenue will beat consensus before public release.",
+      "recommendation": "Stop distribution. Route to compliance, confirm public-source provenance, and document wall-crossing / information-barrier clearance before any AI-assisted use.",
+      "control": "IB-RESEARCH-MNPI"
+    }
+  ],
+  "releaseGate": {
+    "status": "blocked",
+    "requiredApprovals": [
+      "supervisor",
+      "compliance"
+    ],
+    "blockers": [
+      {
+        "type": "unsupported_claim",
+        "severity": "high",
+        "control": "FINRA-2210-COMMS",
+        "evidence": "AI-assisted draft: ACME Software revenue increased 18% to $2.4 billion"
+      },
+      {
+        "type": "missing_claim_citation",
+        "severity": "high",
+        "control": "IB-RESEARCH-CITATIONS",
+        "evidence": "We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion"
+      },
+      {
+        "type": "unsupported_claim",
+        "severity": "high",
+        "control": "FINRA-2210-COMMS",
+        "evidence": "We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion"
+      },
+      {
+        "type": "unsupported_claim_citation",
+        "severity": "high",
+        "control": "IB-RESEARCH-CITATIONS",
+        "evidence": "Claim cites approved-model, but that artifact does not support the cited numbers/text. Missing numbers: none. Claim: [S:approved-model]\nThe CFO privately told the analyst that next quarter revenue will beat consensus before public release"
+      },
+      {
+        "type": "unsupported_claim",
+        "severity": "high",
+        "control": "FINRA-2210-COMMS",
+        "evidence": "[S:approved-model]\nThe CFO privately told the analyst that next quarter revenue will beat consensus before public release"
+      },
+      {
+        "type": "unsupported_claim",
+        "severity": "high",
+        "control": "FINRA-2210-COMMS",
+        "evidence": "Risk factors: demand volatility, execution risk, and margin compression could pressure the thesis"
+      },
+      {
+        "type": "missing_claim_citation",
+        "severity": "high",
+        "control": "IB-RESEARCH-CITATIONS",
+        "evidence": "Valuation methodology: price target derived from a peer multiple and approved model export"
+      },
+      {
+        "type": "unsupported_claim",
+        "severity": "high",
+        "control": "FINRA-2210-COMMS",
+        "evidence": "Valuation methodology: price target derived from a peer multiple and approved model export"
+      },
+      {
+        "type": "prompt_injection_source",
+        "severity": "high",
+        "control": "FINRA-3110-GENAI",
+        "evidence": "earnings-call-source.txt: instruction_override"
+      },
+      {
+        "type": "potential_mnpi",
+        "severity": "critical",
+        "control": "IB-RESEARCH-MNPI",
+        "evidence": "The CFO privately told the analyst that next quarter revenue will beat consensus before public release."
+      }
+    ],
+    "openActions": [
+      "Link the claim to an approved transcript, filing, model cell, or remove it before supervisor review.",
+      "Add an explicit source citation such as [S:transcript] or [S:model] for every material claim before supervisor review.",
+      "Cite the artifact that actually supports the claim, attach the missing source, or revise/remove the claim before supervisor review.",
+      "Treat the source as untrusted. Do not allow source text to control tools, retrieval scope, recipients, or model/system instructions.",
+      "Stop distribution. Route to compliance, confirm public-source provenance, and document wall-crossing / information-barrier clearance before any AI-assisted use."
+    ],
+    "note": "Do not distribute or archive as final until all blockers are remediated or explicitly approved by the required roles."
+  },
+  "receipt": {
+    "artifactHash": "8e78ccbf164a66825f08f04e68e474b9b9bdc8fd3a3d11175c1dfbbe600b193f",
+    "modelHash": "d2f4133cd6936e002f2e7d757cb384236d6d449a89bc583b1a0da486213a372a",
+    "restrictedListHash": "9f3dc9e23faa90f5fbb58938983b2d85c439f39f2cf84fdf9c3db337e9352910",
+    "sourceHashes": {
+      "earnings-call-source.txt": "68d1d46b8c34da536a368878007b9b38c7971d240c60e5b1744b51a2641b3032"
+    },
+    "policyPack": "investment-banking-research-v1",
+    "controls": [
+      "claim_source_support",
+      "model_number_tie_out",
+      "prompt_injection_source_scan",
+      "restricted_issuer_check",
+      "ai_usage_attestation_check",
+      "claim_citation_required",
+      "claim_citation_source_verification",
+      "mnpi_selective_disclosure_hold",
+      "research_disclosure_check",
+      "audit_retention_packet"
+    ],
+    "controlMatrix": [
+      {
+        "id": "FINRA-3110-GENAI",
+        "name": "Reasonably designed supervision for GenAI use",
+        "source": "FINRA Regulatory Notice 24-09 / Rule 3110"
+      },
+      {
+        "id": "FINRA-2210-COMMS",
+        "name": "Communications content standards apply to AI-generated output",
+        "source": "FINRA Regulatory Notice 24-09 / Rule 2210"
+      },
+      {
+        "id": "IB-RESEARCH-CITATIONS",
+        "name": "Material claims require source citations",
+        "source": "ClawMoat investment-banking research policy"
+      },
+      {
+        "id": "IB-RESEARCH-MNPI",
+        "name": "Potential MNPI and selective-disclosure hold",
+        "source": "ClawMoat investment-banking research policy"
+      },
+      {
+        "id": "IB-RESEARCH-DISCLOSURES",
+        "name": "Research disclosure and analyst-certification checks",
+        "source": "ClawMoat investment-banking research policy"
+      },
+      {
+        "id": "IB-RESEARCH-MODEL-RISK",
+        "name": "Research workflows must use approved AI model providers",
+        "source": "ClawMoat model-risk supervision policy"
+      }
+    ],
+    "approvedModels": [],
+    "claimSourceSupport": {
+      "status": "fail",
+      "claims": [
+        {
+          "claim": "AI-assisted draft: ACME Software revenue increased 18% to $2.4 billion",
+          "citations": [],
+          "status": "missing",
+          "sources": [
+            {
+              "status": "missing",
+              "reason": "material claim has no explicit citation"
+            }
+          ]
+        },
+        {
+          "claim": "We rate ACME Software Buy and raise the price target to $82 on 31% EBITDA margin expansion",
+          "citations": [],
+          "status": "missing",
+          "sources": [
+            {
+              "status": "missing",
+              "reason": "material claim has no explicit citation"
+            }
+          ]
+        },
+        {
+          "claim": "[S:approved-model]\nThe CFO privately told the analyst that next quarter revenue will beat consensus before public release",
+          "citations": [
+            "approved-model"
+          ],
+          "status": "fail",
+          "sources": [
+            {
+              "source": "approved-model",
+              "status": "fail",
+              "missingNumbers": [],
+              "keywordCoverage": 0.13,
+              "excerptFingerprint": {
+                "source": "approved-model",
+                "hash": "d2f4133cd6936e002f2e7d757cb384236d6d449a89bc583b1a0da486213a372a",
+                "previewStart": "ticker,metri",
+                "previewEnd": "a margin,31%",
+                "line": 1,
+                "offset": 0
+              }
+            }
+          ]
+        },
+        {
+          "claim": "Valuation methodology: price target derived from a peer multiple and approved model export",
+          "citations": [],
+          "status": "missing",
+          "sources": [
+            {
+              "status": "missing",
+              "reason": "material claim has no explicit citation"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceExcerptFingerprints": [
+      {
+        "source": "earnings-call-source.txt",
+        "hash": "68d1d46b8c34da536a368878007b9b38c7971d240c60e5b1744b51a2641b3032",
+        "previewStart": "ACME Softwar",
+        "previewEnd": "ide counsel.",
+        "line": 1,
+        "offset": 0
+      }
+    ],
+    "retention": {
+      "artifactHashes": {
+        "draft": "8e78ccbf164a66825f08f04e68e474b9b9bdc8fd3a3d11175c1dfbbe600b193f",
+        "model": "d2f4133cd6936e002f2e7d757cb384236d6d449a89bc583b1a0da486213a372a",
+        "restrictedList": "9f3dc9e23faa90f5fbb58938983b2d85c439f39f2cf84fdf9c3db337e9352910",
+        "sources": {
+          "earnings-call-source.txt": "68d1d46b8c34da536a368878007b9b38c7971d240c60e5b1744b51a2641b3032"
+        }
+      },
+      "retentionClass": "research-supervision-audit-packet",
+      "note": "Archive with the final research artifact, approval workflow, and firm books-and-records system."
+    }
+  }
+}
