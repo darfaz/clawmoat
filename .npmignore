@@ -6,7 +6,9 @@ test/
 coverage/
 .DS_Store
 
-# Do not ship stale local artifacts or mutable server state in the npm package.
+# Do not ship stale local artifacts, mutable server state, or launch/sales ops in the npm package.
 clawmoat-*.tgz
 *.patch
 server/data/api-keys.json
+docs/plans/
+docs/launch/

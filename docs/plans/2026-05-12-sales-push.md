@@ -11,10 +11,10 @@ The weak part: the public product funnel is split across too many offers and som
 ## Current baseline
 
 - GitHub: 39 stars, 6 forks.
-- npm: latest published version is `0.8.0`, while repo `package.json` is `1.0.0`.
+- npm: latest published version is now `1.0.0`, matching repo `package.json`.
 - npm downloads last 30 days: 43.
-- Tests: 527 passing, 0 failing.
-- Site: deployed and current on `clawmoat.com`.
+- Tests: 527 passing, 0 failing on the latest full verification run.
+- Site: deployed and current on `clawmoat.com`; browser, curl, and Python agent-style clients return `200` after Cloudflare bot-setting fix.
 - Checkout endpoint: live at `https://clawmoat-production.up.railway.app/api/checkout` for POST, health check live.
 - Homepage paid CTA exists for Developer and Team plans.
 - Services page has live Stripe links.
@@ -72,11 +72,11 @@ Best offer: Business assessment, compliance report, managed rollout.
 
 ## Funnel problems to fix first
 
-### 1. npm is stale
+### 1. npm release mismatch is fixed
 
-Repo says v1.0.0. npm says v0.8.0. Homepage says v1.0.0. A developer who runs `npm view clawmoat` sees the mismatch. This is the biggest immediate trust leak.
+Repo, homepage, GitHub release, and npm now all say `1.0.0`. That trust leak is closed.
 
-Action: publish `clawmoat@1.0.0` after package hygiene checks.
+Next action: keep package/release metadata in sync for every public push.
 
 ### 2. Package contents include junk
 
@@ -130,11 +130,13 @@ Contrast:
 
 ### Day 0: Product hygiene
 
-- Publish npm `1.0.0`.
-- Add GitHub release notes.
-- Pin attack demo GIF/video in README and homepage.
-- Make `/scan/` the top CTA everywhere.
-- Verify checkout with one test Stripe session.
+- npm `1.0.0` is published.
+- GitHub `v1.0.0` release is live.
+- Package hygiene excludes stale tarballs, patch scraps, and mutable server key state.
+- Website now returns `200` for browser, curl, and Python agent-style clients.
+- Next: pin attack demo GIF/video in README and homepage.
+- Next: make `/scan/` the top CTA everywhere.
+- Next: verify checkout with one test Stripe session if Dar approves.
 
 ### Days 1-3: Founder/dev launch
 
@@ -281,7 +283,7 @@ Site: https://clawmoat.com
 
 The first sales target should not be enterprise. It should be:
 
-- 10 Developer subscribers at $9/mo = tiny but validates checkout.
+- 10 Developer subscribers at $14.99/mo = $149.90 MRR and validates checkout.
 - 5 Team subscribers at $49/mo = $245 MRR.
 - 3 setup/service sales at $249-$999 = immediate cash and case studies.
 - 2 consultant affiliates = distribution leverage.

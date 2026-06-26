@@ -7,8 +7,8 @@
     "clawmoat": "bin/clawmoat.js"
   },
   "scripts": {
-    "start": "node src/server.js",
-    "test": "node --test test/*.test.js",
+    "start": "node server/index.js",
+    "test": "node scripts/run-tests.js",
     "lint": "eslint src/"
   },
   "keywords": [
@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/darfaz/clawmoat"
+    "url": "git+https://github.com/darfaz/clawmoat.git"
   },
   "homepage": "https://clawmoat.com",
   "engines": {
@@ -32,5 +32,8 @@
   },
   "devDependencies": {
     "eslint": "^10.3.0"
+  },
+  "dependencies": {
+    "stripe": "^22.2.1"
   }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawMoat Team Onboarding | 10-minute rollout</title>
+<meta name="description" content="Roll out ClawMoat Team for coding-agent and MCP security with shared policy templates, CI checks, and self-serve activation.">
+<link rel="canonical" href="https://clawmoat.com/team-onboarding/">
+<meta property="og:title" content="ClawMoat Team Onboarding">
+<meta property="og:description" content="A 10-minute small-team rollout path for ClawMoat Team.">
+<meta property="og:url" content="https://clawmoat.com/team-onboarding/">
+<meta property="og:type" content="website">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--navy:#0F172A;--panel:#162033;--ink:#F8FAFC;--muted:#94A3B8;--blue:#3B82F6;--green:#10B981;--line:rgba(255,255,255,.09)}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--navy);color:var(--ink);line-height:1.65}.wrap{max-width:980px;margin:0 auto;padding:0 24px}a{color:var(--blue);text-decoration:none}nav{border-bottom:1px solid var(--line);padding:16px 0;background:rgba(15,23,42,.94)}nav .wrap{display:flex;justify-content:space-between;gap:20px;align-items:center}.logo{font-weight:850;color:var(--ink)}.navlinks{display:flex;gap:18px}.navlinks a{color:var(--muted)}header{padding:76px 0 40px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--green);font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-bottom:14px}h1{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;letter-spacing:-.05em;margin-bottom:18px}.lead{color:var(--muted);font-size:1.12rem;max-width:760px}.section{padding:38px 0}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin:18px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.btn{display:inline-flex;border-radius:10px;padding:12px 20px;font-weight:850;margin-top:18px}.btn-primary{background:var(--green);color:#06131f}.btn-outline{border:1px solid var(--line);color:var(--ink)}pre{background:#070b12;border:1px solid var(--line);border-radius:12px;padding:18px;overflow:auto;margin-top:12px;color:#CBD5E1}code{background:#070b12;border-radius:5px;padding:2px 5px}li{margin:8px 0;color:#CBD5E1}.muted{color:var(--muted)}footer{border-top:1px solid var(--line);padding:26px 0;margin-top:38px}.footer-links{display:flex;gap:16px;flex-wrap:wrap}@media(max-width:760px){.grid{grid-template-columns:1fr}.navlinks{display:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><a href="/" class="logo">🛡️ ClawMoat</a><div class="navlinks"><a href="/pricing/">Pricing</a><a href="/scan/">Free scanner</a><a href="https://github.com/darfaz/clawmoat">GitHub</a></div></div></nav>
+<header><div class="wrap"><div class="eyebrow">Team rollout</div><h1>Put the same coding-agent seatbelt on every developer.</h1><p class="lead">Team is deliberately small-scope: shared policy, CI checks, reports, and support. No custom implementation. No enterprise dashboard promise. This keeps the product self-serve and supportable.</p><a class="btn btn-primary" href="/pricing/">Start Team trial</a></div></header>
+<main class="wrap">
+<section class="section grid">
+<div class="panel"><h2>Who Team is for</h2><ul><li>2 to 10 developers using Claude Code, Cursor, Codex, Copilot, Windsurf, or MCP tools.</li><li>Teams that want a standard policy before people click “always allow.”</li><li>Founders and platform leads who need quick evidence without buying an enterprise AI firewall.</li></ul></div>
+<div class="panel"><h2>What Team includes</h2><ul><li>Shared <code>clawmoat.yml</code> policy examples.</li><li>Repo and MCP scan workflows.</li><li>Markdown/JSON report output for review.</li><li>CI-friendly commands and support docs.</li><li>Email support with a 48-hour target.</li></ul></div>
+</section>
+<section class="section"><div class="panel"><h2>10-minute rollout</h2><ol><li>Install the CLI.</li><li>Activate the Team license from the checkout email.</li><li>Run an MCP and repo scan locally.</li><li>Commit a shared policy file.</li><li>Add the CI command to fail on critical findings.</li></ol><pre>npm install -g clawmoat
+clawmoat activate CM-XXXXX-XXXXX-XXXXX-XXXXX
+clawmoat scan-mcp --json
+clawmoat lifecycle audit --path . --format markdown --output clawmoat-report.md
+clawmoat ci .</pre></div></section>
+<section class="section grid">
+<div class="panel"><h2>Starter policy</h2><pre>version: 1
+agent:
+  mode: team
+policies:
+  block_secret_reads: true
+  block_suspicious_egress: true
+  require_approval_for_shell: true
+  require_approval_for_mcp_servers: true
+reporting:
+  formats: [json, markdown]</pre></div>
+<div class="panel"><h2>Support boundary</h2><p class="muted">Team support covers activation, docs, policy examples, and product bugs. It does not include custom remediation, client-specific reports, compliance certification, or managed security operations.</p><p class="muted">Agency is not the main funnel yet. If you need white-label multi-client reports, email us, but we are not driving paid traffic there until the workflow is productized.</p></div>
+</section>
+</main>
+<footer><div class="wrap footer-links"><a href="/">Home</a><a href="/pricing/">Pricing</a><a href="/scan/">Scanner</a><a href="mailto:hello@clawmoat.com">hello@clawmoat.com</a></div></footer>
+</body>
+</html>

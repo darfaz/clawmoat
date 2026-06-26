@@ -466,11 +466,17 @@ class HostGuardian {
   }
 
   _inWorkspace(p) {
-    return p.startsWith(this.workspace + '/') || p === this.workspace;
+    const candidate = this._normalizePath(p);
+    const workspace = this._normalizePath(this.workspace);
+    return candidate === workspace || candidate.startsWith(workspace + '/');
   }
 
   _inSafeZone(p) {
-    return this.safeZones.some(z => p.startsWith(z + '/') || p === z);
+    const candidate = this._normalizePath(p);
+    return this.safeZones.some(z => {
+      const safeZone = this._normalizePath(z);
+      return candidate === safeZone || candidate.startsWith(safeZone + '/');
+    });
   }
 
   _resolve(p) {

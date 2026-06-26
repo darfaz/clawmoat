@@ -2,28 +2,22 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const Stripe = require('stripe');
+const {
+  canonicalPlan,
+  findLicenseByKeyOrEmail,
+  fulfillCheckoutSession,
+  planConfig,
+  priceIdForPlan,
+  publicPlanList,
+  sendWelcomeEmail,
+  updateSubscriptionStatus,
+  validateLicense,
+} = require('./billing');
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 3000;
 const SITE_URL = process.env.SITE_URL || 'https://clawmoat.com';
-
-const PRICES = {
-  // Security Kit (one-time purchase)
-  'security-kit':   process.env.PRICE_SECURITY_KIT   || 'price_1T5F3LAUiOw2ZIorTAPB0Q76',  // $29 one-time (legacy)
-  'dev-monthly':    process.env.PRICE_DEV_MONTHLY   || 'price_1TFnOIAUiOw2ZIor6V5PdXBx',  // $9/mo
-  'dev-yearly':     process.env.PRICE_DEV_YEARLY    || 'price_1TFnOIAUiOw2ZIorJhG9KYZX',  // $90/yr
-  // Pro subscriptions
-  'shield-monthly': process.env.PRICE_SHIELD_MONTHLY || 'price_1T5F23AUiOw2ZIor2oUgTD8W',  // $14.99/mo (legacy)
-  'shield-yearly':  process.env.PRICE_SHIELD_YEARLY  || 'price_1T5F23AUiOw2ZIorQLdy51G0',  // $149/yr (legacy)
-  // Team subscriptions
-  'team-monthly':   process.env.PRICE_TEAM_MONTHLY   || 'price_1TFnOJAUiOw2ZIorunRX8OKm',  // $49/mo
-  'team-yearly':    process.env.PRICE_TEAM_YEARLY    || 'price_1TFnOJAUiOw2ZIorlOfiCnNk',  // $490/yr
-};
-
-const ONE_TIME_PLANS = new Set(['security-kit']);
-
-// In-memory license store (replace with DB in production)
-const licenses = new Map();
+const APP_URL = process.env.APP_URL || SITE_URL;
 
 // ─── Threat Intel helpers ─────────────────────────────────────────────────────
 
@@ -78,7 +72,7 @@ function generateLicenseKey() {
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
 }
 
 function json(res, status, data) {
@@ -111,32 +105,50 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { status: 'ok', version: '0.1.0' });
   }
 
+  if (req.method === 'GET' && req.url === '/api/plans') {
+    return json(res, 200, { plans: publicPlanList() });
+  }
+
   // Create checkout session
   if (req.method === 'POST' && req.url === '/api/checkout') {
     const body = await readBody(req);
-    const priceId = PRICES[body.plan];
+    const plan = canonicalPlan(body.plan);
+    const config = planConfig(plan);
+    const priceId = priceIdForPlan(plan);
 
+    if (!config) {
+      return json(res, 400, { error: 'Invalid plan. Use: pro-monthly, pro-yearly, team-monthly, team-yearly' });
+    }
     if (!priceId) {
-      return json(res, 400, { error: 'Invalid plan. Use: dev-monthly, dev-yearly, team-monthly, team-yearly' });
+      return json(res, 503, { error: `Stripe price is not configured for ${plan}` });
     }
 
     try {
-      const isOneTime = ONE_TIME_PLANS.has(body.plan);
+      const isOneTime = Boolean(config.oneTime);
+      const attribution = {
+        plan,
+        utm_source: body.campaign?.utm_source || '',
+        utm_medium: body.campaign?.utm_medium || '',
+        utm_campaign: body.campaign?.utm_campaign || '',
+        utm_content: body.campaign?.utm_content || '',
+        utm_term: body.campaign?.utm_term || '',
+        landing_page: body.campaign?.landing_page || '',
+      };
       const sessionParams = {
         mode: isOneTime ? 'payment' : 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `https://app.clawmoat.com/dashboard?welcome=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${SITE_URL}/#pricing`,
+        success_url: `${SITE_URL}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${SITE_URL}/pricing/`,
         allow_promotion_codes: true,
         customer_email: body.email || undefined,
+        client_reference_id: body.client_reference_id || undefined,
+        metadata: attribution,
       };
       if (!isOneTime) {
         sessionParams.subscription_data = {
           trial_period_days: 30,
-          metadata: { plan: body.plan },
+          metadata: attribution,
         };
-      } else {
-        sessionParams.metadata = { plan: body.plan };
       }
       const session = await stripe.checkout.sessions.create(sessionParams);
       return json(res, 200, { url: session.url });
@@ -174,36 +186,47 @@ const server = http.createServer(async (req, res) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const email = session.customer_email || session.customer_details?.email;
-        const licenseKey = generateLicenseKey();
-        console.log(`New customer: ${email}, license: ${licenseKey}`);
-        // TODO: Store in database, send welcome email with license key
-        // For now, log it — license fulfillment is manual via email
-        licenses.set(licenseKey, {
-          email,
-          customerId: session.customer,
-          subscriptionId: session.subscription,
-          plan: session.metadata?.plan || 'unknown',
-          createdAt: new Date().toISOString(),
-          active: true,
-        });
+        const { licenseKey, license, duplicate } = fulfillCheckoutSession(session);
+        console.log(`Checkout fulfilled: ${license.email || 'no-email'}, plan=${license.plan}, license=${licenseKey}, duplicate=${duplicate}`);
+        if (!duplicate) {
+          try {
+            const emailResult = await sendWelcomeEmail(licenseKey, license);
+            console.log(`Welcome email result: ${JSON.stringify(emailResult)}`);
+          } catch (err) {
+            console.error('Welcome email failed:', err.message);
+          }
+        }
         break;
       }
       case 'customer.subscription.deleted':
       case 'customer.subscription.updated': {
         const sub = event.data.object;
-        // Deactivate license if subscription cancelled
-        for (const [key, lic] of licenses.entries()) {
-          if (lic.subscriptionId === sub.id) {
-            lic.active = sub.status === 'active' || sub.status === 'trialing';
-            console.log(`License ${key}: active=${lic.active} (status=${sub.status})`);
-          }
-        }
+        const license = updateSubscriptionStatus(sub);
+        if (license) console.log(`License ${license.key}: active=${license.active} (status=${license.status})`);
         break;
       }
     }
 
     return json(res, 200, { received: true });
+  }
+
+  // Stripe customer portal. Requires a valid license key or purchaser email.
+  if (req.method === 'POST' && req.url === '/api/portal') {
+    const body = await readBody(req);
+    const license = findLicenseByKeyOrEmail({ key: body.key, email: body.email });
+    if (!license || !license.customerId) {
+      return json(res, 404, { error: 'No active customer found for that license/email' });
+    }
+
+    try {
+      const session = await stripe.billingPortal.sessions.create({
+        customer: license.customerId,
+        return_url: `${APP_URL}/pricing/`,
+      });
+      return json(res, 200, { url: session.url });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
   }
 
   // Live stats endpoint (cached 15 min)
@@ -374,11 +397,7 @@ const server = http.createServer(async (req, res) => {
     const key = body.key;
     if (!key) return json(res, 400, { error: 'Missing key' });
 
-    const lic = licenses.get(key);
-    if (!lic || !lic.active) {
-      return json(res, 200, { valid: false });
-    }
-    return json(res, 200, { valid: true, plan: lic.plan, email: lic.email });
+    return json(res, 200, validateLicense(key));
   }
 
   json(res, 404, { error: 'Not found' });
