@@ -146,7 +146,6 @@ const server = http.createServer(async (req, res) => {
       };
       if (!isOneTime) {
         sessionParams.subscription_data = {
-          trial_period_days: 30,
           metadata: attribution,
         };
       }
