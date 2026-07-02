@@ -67,6 +67,30 @@ test('subscription updates deactivate licenses', () => {
   assert.deepEqual(billing.validateLicense(licenseKey), { valid: false });
 });
 
+test('all self-serve paid plans have live Stripe price fallbacks', () => {
+  const { billing } = freshBilling();
+  assert.equal(billing.priceIdForPlan('pro-monthly'), 'price_1T5F23AUiOw2ZIor2oUgTD8W');
+  assert.equal(billing.priceIdForPlan('pro-yearly'), 'price_1T5F23AUiOw2ZIorQLdy51G0');
+  assert.equal(billing.priceIdForPlan('team-monthly'), 'price_1T5F2aAUiOw2ZIorodyK4wwQ');
+  assert.equal(billing.priceIdForPlan('team-yearly'), 'price_1T5F2vAUiOw2ZIor5Jcga7kB');
+  assert.deepEqual(
+    billing.publicPlanList().map((plan) => ({ plan: plan.plan, configured: plan.configured, displayPrice: plan.displayPrice })),
+    [
+      { plan: 'pro-monthly', configured: true, displayPrice: '$14.99/mo' },
+      { plan: 'pro-yearly', configured: true, displayPrice: '$149/yr' },
+      { plan: 'team-monthly', configured: true, displayPrice: '$49/mo' },
+      { plan: 'team-yearly', configured: true, displayPrice: '$499/yr' },
+    ]
+  );
+});
+
+test('environment price IDs override live fallbacks', () => {
+  process.env.PRICE_PRO_MONTHLY = 'price_env_pro_monthly';
+  const { billing } = freshBilling();
+  assert.equal(billing.priceIdForPlan('pro-monthly'), 'price_env_pro_monthly');
+  delete process.env.PRICE_PRO_MONTHLY;
+});
+
 test('welcome email queues locally when no provider is configured', async () => {
   const { billing, dir } = freshBilling();
   delete process.env.RESEND_API_KEY;

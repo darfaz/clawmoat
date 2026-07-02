@@ -15,8 +15,9 @@ const PLAN_CATALOG = {
     label: 'ClawMoat Pro',
     billing: 'monthly',
     seats: 1,
-    displayPrice: '$19/mo',
+    displayPrice: '$14.99/mo',
     env: 'PRICE_PRO_MONTHLY',
+    liveFallback: 'price_1T5F23AUiOw2ZIor2oUgTD8W',
   },
   'pro-yearly': {
     plan: 'pro-yearly',
@@ -24,8 +25,9 @@ const PLAN_CATALOG = {
     label: 'ClawMoat Pro',
     billing: 'yearly',
     seats: 1,
-    displayPrice: '$190/yr',
+    displayPrice: '$149/yr',
     env: 'PRICE_PRO_YEARLY',
+    liveFallback: 'price_1T5F23AUiOw2ZIorQLdy51G0',
   },
   'team-monthly': {
     plan: 'team-monthly',
@@ -33,8 +35,9 @@ const PLAN_CATALOG = {
     label: 'ClawMoat Team',
     billing: 'monthly',
     seats: 10,
-    displayPrice: '$99/mo',
+    displayPrice: '$49/mo',
     env: 'PRICE_TEAM_MONTHLY',
+    liveFallback: 'price_1T5F2aAUiOw2ZIorodyK4wwQ',
   },
   'team-yearly': {
     plan: 'team-yearly',
@@ -42,8 +45,9 @@ const PLAN_CATALOG = {
     label: 'ClawMoat Team',
     billing: 'yearly',
     seats: 10,
-    displayPrice: '$990/yr',
+    displayPrice: '$499/yr',
     env: 'PRICE_TEAM_YEARLY',
+    liveFallback: 'price_1T5F2vAUiOw2ZIor5Jcga7kB',
   },
   'security-kit': {
     plan: 'security-kit',
@@ -84,6 +88,7 @@ function priceIdForPlan(plan) {
     || (config.legacyEnv ? process.env[config.legacyEnv] : undefined)
     || (legacyStripeStyleEnv ? process.env[legacyStripeStyleEnv] : undefined)
     || (config.allowLegacyFallback ? config.legacyFallback : undefined)
+    || config.liveFallback
     || null;
 }
 
