@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const Stripe = require('stripe');
+const { parseStripeWebhook } = require('./stripe-webhook');
 const {
   canonicalPlan,
   findLicenseByKeyOrEmail,
@@ -159,25 +160,25 @@ const server = http.createServer(async (req, res) => {
   // Stripe webhook
   if (req.method === 'POST' && req.url === '/api/webhook') {
     const rawBody = await new Promise((resolve) => {
-      let body = '';
-      req.on('data', c => body += c);
-      req.on('end', () => resolve(body));
+      const chunks = [];
+      req.on('data', chunk => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+      req.on('end', () => resolve(Buffer.concat(chunks)));
     });
 
-    const sig = req.headers['stripe-signature'];
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
     let event;
-    if (endpointSecret && sig) {
-      try {
-        event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
-      } catch (err) {
-        console.error('Webhook signature verification failed:', err.message);
-        return json(res, 400, { error: 'Invalid signature' });
-      }
-    } else {
-      try { event = JSON.parse(rawBody); }
-      catch { return json(res, 400, { error: 'Invalid JSON' }); }
+    try {
+      event = parseStripeWebhook({
+        rawBody,
+        signature: req.headers['stripe-signature'],
+        endpointSecret: process.env.STRIPE_WEBHOOK_SECRET,
+        stripe,
+      });
+    } catch (err) {
+      const detail = err.cause?.message ? `: ${err.cause.message}` : '';
+      console.error(`Webhook rejected: ${err.message}${detail}`);
+      return json(res, err.statusCode || 500, {
+        error: err.publicMessage || 'Webhook processing failed',
+      });
     }
 
     console.log(`Webhook: ${event.type}`);
